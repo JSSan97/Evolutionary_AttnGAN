@@ -12,7 +12,7 @@ TREE:
 
 TRAIN:
     FLAG: True
-    NET_G: ''  # '../models/bird_AttnGAN2.pth'
+    NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 20  # 22
     MAX_EPOCH: 600
@@ -20,7 +20,7 @@ TRAIN:
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
     #
-    NET_E: '/content/drive/MyDrive/Github/AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
+    NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
     SMOOTH:
         GAMMA1: 4.0  # 1,2,5 good 4 best  10&100bad
         GAMMA2: 5.0

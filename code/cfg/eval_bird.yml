@@ -12,10 +12,10 @@ TREE:
 
 TRAIN:
     FLAG: False
-    NET_G: '/content/drive/MyDrive/Github/AttnGAN/models/bird_AttnGAN2.pth'
+    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
     B_NET_D: False
     BATCH_SIZE: 100
-    NET_E: '/content/drive/MyDrive/Github/AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
+    NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
 
 
 GAN:
