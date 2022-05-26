@@ -5,7 +5,7 @@ DATA_DIR: '/content/coco'
 GPU_ID: 3
 WORKERS: 1
 
-B_VALIDATION: False
+B_VALIDATION: True
 B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/eval_coco_img_array.npy'
 
 TREE:
