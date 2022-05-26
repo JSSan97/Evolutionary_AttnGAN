@@ -1,7 +1,7 @@
 CONFIG_NAME: 'glu-gan2'
 
 DATASET_NAME: 'coco'
-DATA_DIR: '../data/coco'
+DATA_DIR: '/content/coco'
 GPU_ID: 0
 WORKERS: 4
 
@@ -12,7 +12,7 @@ TREE:
 
 TRAIN:
     FLAG: True
-    NET_G: ''  # '../models/coco_AttnGAN2.pth'
+    NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 14  # 32
     MAX_EPOCH: 120
@@ -20,7 +20,7 @@ TRAIN:
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
     #
-    NET_E: '../DAMSMencoders/coco/text_encoder100.pth'
+    NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/coco/text_encoder100.pth'
     SMOOTH:
         GAMMA1: 4.0  # 1,2,5 good 4 best  10&100bad
         GAMMA2: 5.0
