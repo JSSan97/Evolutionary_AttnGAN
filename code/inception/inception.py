@@ -74,7 +74,7 @@ def _init_inception():
     graph_def.ParseFromString(f.read())
     _ = tf.import_graph_def(graph_def, name='')
   # Works with an arbitrary minibatch size.
-  with tf.Session() as sess:
+  with tf.compat.v1.Session() as sess:
     pool3 = sess.graph.get_tensor_by_name('pool_3:0')
     ops = pool3.graph.get_operations()
     for op_idx, op in enumerate(ops):
