@@ -389,6 +389,9 @@ class condGANTrainer(object):
 
             cnt = 0
 
+            ## List of images
+            validation_imgs = []
+
             for _ in range(1):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
                 for step, data in enumerate(self.data_loader, 0):
                     cnt += batch_size
@@ -427,13 +430,24 @@ class condGANTrainer(object):
                         im = (im + 1.0) * 127.5
                         im = im.astype(np.uint8)
                         im = np.transpose(im, (1, 2, 0))
+
+                        ## Add np array to list
+                        if cfg.B_VALIDATION_IMG_ARRAY:
+                            validation_imgs.append(im)
+
                         im = Image.fromarray(im)
                         fullpath = '%s_s%d.png' % (s_tmp, k)
                         im.save(fullpath)
 
+            # Create a dictionary to store the training losses
+            if cfg.B_VALIDATION_IMG_ARRAY:
+                eval = {}
+                eval['validation_imgs'] = validation_imgs
+                np.save(B_VALIDATION_IMG_ARRAY, eval)
+
     def gen_example(self, data_dic):
         if cfg.TRAIN.NET_G == '':
-            print('Error: the path for morels is not found!')
+            print('Error: the path for models is not found!')
         else:
             # Build and load the generator
             text_encoder = \
