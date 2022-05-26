@@ -443,7 +443,7 @@ class condGANTrainer(object):
             if cfg.B_VALIDATION_IMG_ARRAY:
                 eval = {}
                 eval['validation_imgs'] = validation_imgs
-                np.save(B_VALIDATION_IMG_ARRAY, eval)
+                np.save(cfg.B_VALIDATION_IMG_ARRAY, eval)
 
     def gen_example(self, data_dic):
         if cfg.TRAIN.NET_G == '':
