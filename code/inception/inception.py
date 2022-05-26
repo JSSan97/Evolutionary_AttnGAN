@@ -68,7 +68,7 @@ def _init_inception():
     statinfo = os.stat(filepath)
     print('Succesfully downloaded', filename, statinfo.st_size, 'bytes.')
   tarfile.open(filepath, 'r:gz').extractall(MODEL_DIR)
-  with tf.gfile.FastGFile(os.path.join(
+  with tf.gfile.GFile(os.path.join(
       MODEL_DIR, 'classify_image_graph_def.pb'), 'rb') as f:
     graph_def = tf.compat.v1.GraphDef()
     graph_def.ParseFromString(f.read())
