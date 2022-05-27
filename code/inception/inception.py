@@ -34,7 +34,7 @@ def get_inception_score(images, splits=10):
     img = img.astype(np.float32)
     inps.append(np.expand_dims(img, 0))
   bs = 1
-  with tf.Session() as sess:
+  with tf.compat.v1.Session() as sess:
     preds = []
     n_batches = int(math.ceil(float(len(inps)) / float(bs)))
     for i in range(n_batches):
