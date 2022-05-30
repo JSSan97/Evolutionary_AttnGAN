@@ -1,4 +1,9 @@
 ## Turn sentence embeddings into conditional embedding
+import torch.nn as nn
+import torch
+from models.utils import GLU
+from miscc.config import cfg
+from torch.autograd import Variable
 
 class CA_NET(nn.Module):
     # some code is modified from vae examples
