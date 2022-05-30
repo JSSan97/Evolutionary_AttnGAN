@@ -11,16 +11,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from miscc.config import cfg
 from models.GlobalAttention import GlobalAttentionGeneral as ATT_NET
 from models.ca_net import CA_NET
-
-class GLU(nn.Module):
-    def __init__(self):
-        super(GLU, self).__init__()
-
-    def forward(self, x):
-        nc = x.size(1)
-        assert nc % 2 == 0, 'channels dont divide 2!'
-        nc = int(nc/2)
-        return x[:, :nc] * torch.sigmoid(x[:, nc:])
+from models.utils import GLU
 
 class Interpolate(nn.Module):
     def __init__(self, scale_factor, mode, size=None):
