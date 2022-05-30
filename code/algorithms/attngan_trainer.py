@@ -76,16 +76,16 @@ class condGANTrainer(object):
         netsD = []
         if cfg.GAN.B_DCGAN:
             if cfg.TREE.BRANCH_NUM ==1:
-                from models.attngan_mode import D_NET64 as D_NET
+                from models.attngan_model import D_NET64 as D_NET
             elif cfg.TREE.BRANCH_NUM == 2:
-                from models.attngan_mode import D_NET128 as D_NET
+                from models.attngan_model import D_NET128 as D_NET
             else:  # cfg.TREE.BRANCH_NUM == 3:
-                from models.attngan_mode import D_NET256 as D_NET
+                from models.attngan_model import D_NET256 as D_NET
             # TODO: elif cfg.TREE.BRANCH_NUM > 3:
             netG = G_DCGAN()
             netsD = [D_NET(b_jcu=False)]
         else:
-            from models.attngan_mode import D_NET64, D_NET128, D_NET256
+            from models.attngan_model import D_NET64, D_NET128, D_NET256
             netG = G_NET()
             if cfg.TREE.BRANCH_NUM > 0:
                 netsD.append(D_NET64())
