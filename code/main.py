@@ -2,7 +2,7 @@ from __future__ import print_function
 
 from miscc.config import cfg, cfg_from_file
 from datasets import TextDataset
-from trainer import condGANTrainer as trainer
+from algorithms.trainer import condGANTrainer as trainer
 
 import os
 import sys
