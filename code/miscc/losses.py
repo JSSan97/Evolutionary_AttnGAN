@@ -4,7 +4,7 @@ import torch.nn as nn
 import numpy as np
 from miscc.config import cfg
 
-from GlobalAttention import func_attention
+from models.GlobalAttention import func_attention
 
 
 # ##################Loss for matching text-image###################
