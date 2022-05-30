@@ -13,9 +13,9 @@ from miscc.config import cfg
 from miscc.utils import mkdir_p
 from miscc.utils import build_super_images, build_super_images2
 from miscc.utils import weights_init, load_params, copy_G_params
-from model import G_DCGAN, G_NET
+from models.attngan_model import G_DCGAN, G_NET
 from datasets import prepare_data
-from model import RNN_ENCODER, CNN_ENCODER
+from models.attngan_model import RNN_ENCODER, CNN_ENCODER
 
 from miscc.losses import words_loss
 from miscc.losses import discriminator_loss, generator_loss, KL_loss
@@ -76,16 +76,16 @@ class condGANTrainer(object):
         netsD = []
         if cfg.GAN.B_DCGAN:
             if cfg.TREE.BRANCH_NUM ==1:
-                from model import D_NET64 as D_NET
+                from models.attngan_mode import D_NET64 as D_NET
             elif cfg.TREE.BRANCH_NUM == 2:
-                from model import D_NET128 as D_NET
+                from models.attngan_mode import D_NET128 as D_NET
             else:  # cfg.TREE.BRANCH_NUM == 3:
-                from model import D_NET256 as D_NET
+                from models.attngan_mode import D_NET256 as D_NET
             # TODO: elif cfg.TREE.BRANCH_NUM > 3:
             netG = G_DCGAN()
             netsD = [D_NET(b_jcu=False)]
         else:
-            from model import D_NET64, D_NET128, D_NET256
+            from models.attngan_mode import D_NET64, D_NET128, D_NET256
             netG = G_NET()
             if cfg.TREE.BRANCH_NUM > 0:
                 netsD.append(D_NET64())

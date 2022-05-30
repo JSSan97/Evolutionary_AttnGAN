@@ -8,7 +8,7 @@ from miscc.config import cfg, cfg_from_file
 from datasets import TextDataset
 from datasets import prepare_data
 
-from model import RNN_ENCODER, CNN_ENCODER
+from models.attngan_model import RNN_ENCODER, CNN_ENCODER
 
 import os
 import sys

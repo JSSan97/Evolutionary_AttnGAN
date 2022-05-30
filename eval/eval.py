@@ -12,7 +12,7 @@ from datetime import datetime
 from torch.autograd import Variable
 from miscc.config import cfg
 from miscc.utils import build_super_images2
-from model import RNN_ENCODER, G_NET
+from models.attngan_model import RNN_ENCODER, G_NET
 from azure.storage.blob import BlockBlobService
 
 if sys.version_info[0] == 2:
