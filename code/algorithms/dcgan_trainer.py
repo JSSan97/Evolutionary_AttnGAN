@@ -210,7 +210,6 @@ class DCGANTrainer(object):
 
                 # do not need to compute gradient for Ds
                 # self.set_requires_grad_value(netD, False)
-                print(gen_iterations)
                 fake_imgs, c_code, mu, logvar = netG(z_code=noise, text_embedding=sent_emb)
                 netG.zero_grad()
                 errG, G_logs = self.generator_loss(netD, fake_imgs, c_code, real_labels)
