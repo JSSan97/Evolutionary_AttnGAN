@@ -19,7 +19,7 @@ from torch.autograd import Variable
 
 class DCGANTrainer(object):
     def __init__(self, output_dir, data_loader, n_words):
-        self.criterion = nn.BCEWithLogitsLoss()
+        self.criterion = nn.BCELoss()
         self.n_words = n_words
         if cfg.TRAIN.FLAG:
             self.model_dir = os.path.join(output_dir, 'Model')
@@ -103,15 +103,16 @@ class DCGANTrainer(object):
         return optimizerG, optimizerD
 
     def discriminator_loss(self, netD, real_imgs, fake_imgs, c_code, real_labels, fake_labels):
-        real_out = netD(real_imgs, c_code=c_code).view(-1)
-        fake_out = netD(fake_imgs, c_code=c_code).view(-1)
+        real_out = netD(inp=real_imgs, c_code=c_code).view(-1)
+        fake_out = netD(inp=fake_imgs, c_code=c_code).view(-1)
+
         errD_real = self.criterion(real_out, real_labels)
         errD_fake = self.criterion(fake_out, fake_labels)
         errD = errD_real + errD_fake
         return errD
 
-    def generator_loss(self, netD, fake_imgs, real_labels):
-        output = netD(fake_imgs).view(-1)
+    def generator_loss(self, netD, fake_imgs, c_code, real_labels):
+        output = netD(inp=fake_imgs.detach(), c_code=c_code).view(-1)
         errG = self.criterion(output, real_labels)
 
         logs = 'g_loss: %.2f ' % (errG.item())
@@ -132,10 +133,15 @@ class DCGANTrainer(object):
     def save_img_results(self, netG, noise, sent_emb,
                          epoch, name='current'):
         # Save images
-        fake_imgs, _, _, _ = netG(noise=noise, text_embedding=sent_emb)
+        fake_imgs, _, _, _ = netG(z_code=noise, text_embedding=sent_emb)
         fullpath = '%s/G_%s_%d_%d.png'\
             % (self.image_dir, name, epoch)
         load_image_from_tensor(torchvision.utils.make_grid(fake_imgs.cpu()), show=False, save=True, output=fullpath)
+
+    def set_requires_grad_value(self, model, brequires):
+        for p in model.parameters():
+            p.requires_grad = brequires
+
 
     def train(self):
         text_encoder, netG, netD, start_epoch = self.build_models()
@@ -161,7 +167,7 @@ class DCGANTrainer(object):
             step = 0
             while step < self.num_batches:
                 # reset requires_grad to be trainable for all Ds
-
+                # self.set_requires_grad_value(netD, True)
                 ######################################################
                 # (1) Prepare training data and Compute text embeddings
                 ######################################################
@@ -171,14 +177,14 @@ class DCGANTrainer(object):
                 hidden = text_encoder.init_hidden(batch_size)
                 # words_embs: batch_size x nef x seq_len
                 # sent_emb: batch_size x nef
-                sent_emb = text_encoder(captions, cap_lens, hidden)
+                _, sent_emb = text_encoder(captions, cap_lens, hidden)
                 sent_emb = sent_emb.detach()
 
                 #######################################################
                 # (2) Generate fake images
                 ######################################################
                 noise.data.normal_(0, 1)
-                fake_imgs, c_code, mu, logvar = netG(noise=noise, text_embedding=sent_emb)
+                fake_imgs, c_code, mu, logvar = netG(z_code=noise, text_embedding=sent_emb)
 
                 #######################################################
                 # (3) Update D network
@@ -186,7 +192,8 @@ class DCGANTrainer(object):
                 errD_total = 0
                 D_logs = ''
                 netD.zero_grad()
-                errD = self.discriminator_loss(netD, imgs, fake_imgs,
+                real_imgs = imgs[1] # torch.Size([64, 3, 128, 128])
+                errD = self.discriminator_loss(netD, real_imgs, fake_imgs,
                                           c_code, real_labels, fake_labels)
                 # backward and update parameters
                 errD.backward()
@@ -202,8 +209,11 @@ class DCGANTrainer(object):
                 gen_iterations += 1
 
                 # do not need to compute gradient for Ds
+                # self.set_requires_grad_value(netD, False)
+                print(gen_iterations)
+                fake_imgs, c_code, mu, logvar = netG(z_code=noise, text_embedding=sent_emb)
                 netG.zero_grad()
-                errG, G_logs = self.generator_loss(netD, fake_imgs, real_labels)
+                errG, G_logs = self.generator_loss(netD, fake_imgs, c_code, real_labels)
                 kl_loss = KL_loss(mu, logvar)
                 errG += kl_loss
                 G_logs += 'kl_loss: %.2f ' % kl_loss.item()
@@ -290,7 +300,7 @@ class DCGANTrainer(object):
                     # (2) Generate fake images
                     ######################################################
                     noise.data.normal_(0, 1)
-                    fake_imgs, attention_maps, _, _ = netG(noise=noise, text_encoder=sent_emb)
+                    fake_imgs, _, _, _ = netG(z_code=noise, text_encoder=sent_emb)
                     # G attention
                     cap_lens_np = cap_lens.cpu().data.numpy()
                     for j in range(batch_size):

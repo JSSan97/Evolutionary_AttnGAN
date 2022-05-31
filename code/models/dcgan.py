@@ -5,14 +5,15 @@ from models.ca_net import CA_NET
 
 # Used for text to image generation
 class Generator(nn.Module):
-    def __init__(self, ngf=128, output_nc=3, z_dim=100, img_size=64):
+    def __init__(self, ngf=128, output_nc=3, img_size=128):
         super(Generator, self).__init__()
 
         self.z_dim = cfg.GAN.Z_DIM
         self.ngf = ngf
         self.output_nc = output_nc
 
-        self.embed_dim = 256 ##  cfg.TEXT.EMBEDDING_DIM
+        self.embed_dim = 100 ##  cfg.GAN.Z_DIM
+        self.ca_net = CA_NET()
 
         self.latent_dim = self.z_dim + self.embed_dim
 
@@ -66,22 +67,9 @@ class Generator(nn.Module):
 
         self.model = nn.Sequential(*seq)
 
-    def forward(self, z_code, text_embedding, should_print=False):
-        # Form batch size by 128 vector
-        # projected_embed = self.projection(embed_vector)
-        # if (should_print == True):
-        #     print("embed_vector")
-        #     print(embed_vector)
-        #     print("projected_embed")
-        #     print(projected_embed.shape)
-        #     print(projected_embed)
-        #
-
+    def forward(self, z_code, text_embedding):
         c_code, mu, logvar = self.ca_net(text_embedding)
 
-        ## squeezed_projected_embed = projected_embed.unsqueeze(2).unsqueeze(3)
-
-        # Concatenate noise and text encoding
         latent_vector = torch.cat([c_code, z_code], 1)
 
         output = self.model(latent_vector.view(-1, self.latent_dim, 1, 1))
@@ -137,17 +125,30 @@ class Discriminator(nn.Module):
                    ]
 
         self.cnn_model = nn.Sequential(*seq)
-        fc = [nn.Linear(4 * 4 * self.ndf, 1)]
-        self.fc = nn.Sequential(*fc)
+
+        self.projected_embed_dim = 100
+        self.netD_2 = nn.Sequential(
+            # state size. (ndf*8) x 4 x 4
+            nn.Conv2d(self.ndf * 16 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+            nn.Sigmoid()
+        )
 
     def forward(self, inp, c_code):
         x_intermediate = self.cnn_model(inp)
         # Concatenate intermediate value with embedding
+        # print("====x_intermediate===")
+        # print(x_intermediate.shape)
 
-        c_code = c_code.view(-1, self.ef_dim, 1, 1)
-        c_code = c_code.repeat(1, 1, 4, 4)
-        x = torch.cat((c_code, x_intermediate), 1)
+        replicated_embed = c_code.repeat(4, 4, 1, 1).permute(2, 3, 0, 1)
+        # print("====replicated_embed===")
+        # print(replicated_embed.shape)
 
-        x = x.view(-1, 4 * 4 * self.ndf)
-        x = self.fc(x)
+        x = torch.cat([replicated_embed, x_intermediate], 1)
+        # print("=== concat ====")
+        # print(x.shape)
+
+
+        x = self.netD_2(x)
+        # print("=== fully connected ====")
+        # print(x.shape)
         return x
