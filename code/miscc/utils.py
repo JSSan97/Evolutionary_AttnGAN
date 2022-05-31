@@ -320,3 +320,20 @@ def mkdir_p(path):
             pass
         else:
             raise
+
+def load_image_from_tensor(image, show=False, save=True, output_path=None):
+  '''
+  image: 3-dimensional tensor of shape e.g (3, 256, 256) or 4 for multiple e.g. (16, 3, 256, 256)
+
+  :return: None
+  '''
+  image = image / 2 + 0.5     # unnormalize
+  np_image = np.transpose(image.numpy(), (1, 2, 0))
+
+  if show:
+    plt.imshow(np_image)
+    plt.pause(1)
+    plt.close()
+
+  if save:
+    plt.imsave(output_path, np_image)

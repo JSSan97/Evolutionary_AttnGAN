@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+from miscc.config import cfg
 from models.ca_net import CA_NET
 
 # Used for text to image generation
@@ -8,7 +8,7 @@ class Generator(nn.Module):
     def __init__(self, ngf=128, output_nc=3, z_dim=100, img_size=64):
         super(Generator, self).__init__()
 
-        self.z_dim = z_dim ## cfg.GAN.Z_DIM
+        self.z_dim = cfg.GAN.Z_DIM
         self.ngf = ngf
         self.output_nc = output_nc
 
@@ -79,36 +79,19 @@ class Generator(nn.Module):
 
         c_code, mu, logvar = self.ca_net(text_embedding)
 
+        ## squeezed_projected_embed = projected_embed.unsqueeze(2).unsqueeze(3)
+
         # Concatenate noise and text encoding
         latent_vector = torch.cat([c_code, z_code], 1)
 
         output = self.model(latent_vector.view(-1, self.latent_dim, 1, 1))
 
-        return output, projected_embed
-
-
-# Used in text to image generation
-class Concat_embed(nn.Module):
-    def __init__(self, embed_dim, projected_embed_dim):
-        super(Concat_embed, self).__init__()
-        self.projection = nn.Sequential(
-            nn.Linear(in_features=embed_dim, out_features=projected_embed_dim),
-            nn.BatchNorm1d(num_features=projected_embed_dim),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
-
-    def forward(self, inp, embed):
-        projected_embed = self.projection(embed)
-        replicated_embed = projected_embed.repeat(4, 4, 1, 1).permute(2, 3, 0, 1)
-        hidden_concat = torch.cat([inp, replicated_embed], 1)
-
-        return hidden_concat
-
+        return output, c_code, mu, logvar
 
 # Use for text to image generation
 class Discriminator(nn.Module):
     def __init__(self, ndf=128, input_nc=3, img_size=128):
-        super(DiscriminatorT2I, self).__init__()
+        super(Discriminator, self).__init__()
 
         self.ndf = ndf
         self.input_nc = input_nc

@@ -2,7 +2,6 @@ from __future__ import print_function
 
 from miscc.config import cfg, cfg_from_file
 from datasets import TextDataset
-from algorithms.attngan_trainer import condGANTrainer as trainer
 
 import os
 import sys
@@ -133,7 +132,12 @@ if __name__ == "__main__":
         drop_last=True, shuffle=bshuffle, num_workers=int(cfg.WORKERS))
 
     # Define models and go to train/evaluate
-    algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+    if cfg.GAN.DCGAN:
+        from algorithms.dcgan_trainer import DCGANTrainer as trainer
+        algo = trainer(output_dir, dataloader, dataset.n_words)
+    else:
+        from algorithms.attngan_trainer import condGANTrainer as trainer
+        algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
 
     start_t = time.time()
     if cfg.TRAIN.FLAG:
