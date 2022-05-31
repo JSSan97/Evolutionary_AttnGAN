@@ -88,6 +88,7 @@ class DCGANTrainer(object):
         if cfg.CUDA:
             netG.cuda()
             netD.cuda()
+            text_encoder = text_encoder.cuda()
         return [text_encoder, netG, netD, epoch]
 
     def define_optimizers(self, netG, netD):
