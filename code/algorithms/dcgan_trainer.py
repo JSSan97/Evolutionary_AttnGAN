@@ -127,7 +127,7 @@ class DCGANTrainer(object):
 
 
         torch.save(netD.state_dict(),
-            '%s/netD%d.pth' % (self.model_dir, i))
+            '%s/netD.pth' % (self.model_dir))
         print('Save G/Ds models.')
 
     def save_img_results(self, netG, noise, sent_emb,
