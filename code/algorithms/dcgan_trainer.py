@@ -136,7 +136,7 @@ class DCGANTrainer(object):
         fake_imgs, _, _, _ = netG(z_code=noise, text_embedding=sent_emb)
         fullpath = '%s/G_%s_%d.png' \
                    % (self.image_dir, name, epoch)
-        load_image_from_tensor(torchvision.utils.make_grid(fake_imgs.cpu()), show=False, save=True, output=fullpath)
+        load_image_from_tensor(torchvision.utils.make_grid(fake_imgs.cpu()), show=False, save=True, output_path=fullpath)
 
     def set_requires_grad_value(self, model, brequires):
         for p in model.parameters():
