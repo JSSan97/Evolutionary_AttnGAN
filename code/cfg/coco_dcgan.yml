@@ -15,8 +15,8 @@ TRAIN:
     NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_dcgan.pth'
     B_NET_D: False
     BATCH_SIZE: 64  # 32
-    MAX_EPOCH: 1000
-    SNAPSHOT_INTERVAL: 100
+    MAX_EPOCH: 120
+    SNAPSHOT_INTERVAL: 5
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
     #
