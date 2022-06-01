@@ -5,7 +5,7 @@ from models.ca_net import CA_NET
 
 # Used for text to image generation
 class Generator(nn.Module):
-    def __init__(self, ngf=128, output_nc=3, img_size=128):
+    def __init__(self, ngf=128, output_nc=3, img_size=64):
         super(Generator, self).__init__()
 
         self.z_dim = cfg.GAN.Z_DIM
@@ -76,7 +76,7 @@ class Generator(nn.Module):
 
 # Use for text to image generation
 class Discriminator(nn.Module):
-    def __init__(self, ndf=128, input_nc=3, img_size=128):
+    def __init__(self, ndf=128, input_nc=3, img_size=64):
         super(Discriminator, self).__init__()
 
         self.ndf = ndf
