@@ -92,12 +92,12 @@ class DCGANTrainer(object):
         return [text_encoder, netG, netD, epoch]
 
     def define_optimizers(self, netG, netD):
-        optimizerD = optim.Adam(netD.parameters(),
-                                lr=cfg.TRAIN.DISCRIMINATOR_LR,
-                                betas=(0.5, 0.999))
-
         optimizerG = optim.Adam(netG.parameters(),
                                 lr=cfg.TRAIN.GENERATOR_LR,
+                                betas=(0.5, 0.999))
+
+        optimizerD = optim.Adam(netD.parameters(),
+                                lr=cfg.TRAIN.DISCRIMINATOR_LR,
                                 betas=(0.5, 0.999))
 
         return optimizerG, optimizerD
@@ -152,9 +152,9 @@ class DCGANTrainer(object):
 
         batch_size = self.batch_size
         nz = cfg.GAN.Z_DIM
+
         noise = Variable(torch.FloatTensor(batch_size, nz))
         fixed_noise = Variable(torch.FloatTensor(batch_size, nz).normal_(0, 1))
-
         if cfg.CUDA:
             noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
 

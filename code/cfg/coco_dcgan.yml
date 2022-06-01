@@ -5,11 +5,6 @@ DATA_DIR: '/content/coco'
 GPU_ID: 0
 WORKERS: 4
 
-
-TREE:
-    BRANCH_NUM: 3
-
-
 TRAIN:
     FLAG: True
     NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_dcgan.pth'

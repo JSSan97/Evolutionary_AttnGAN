@@ -69,9 +69,7 @@ class Generator(nn.Module):
 
     def forward(self, z_code, text_embedding):
         c_code, mu, logvar = self.ca_net(text_embedding)
-
         latent_vector = torch.cat([c_code, z_code], 1)
-
         output = self.model(latent_vector.view(-1, self.latent_dim, 1, 1))
 
         return output, c_code, mu, logvar
@@ -124,7 +122,7 @@ class Discriminator(nn.Module):
                    nn.LeakyReLU(0.2)
                    ]
 
-        self.cnn_model = nn.Sequential(*seq)
+        self.netD_1 = nn.Sequential(*seq)
 
         self.projected_embed_dim = 100
         self.netD_2 = nn.Sequential(
@@ -134,21 +132,9 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, inp, c_code):
-        x_intermediate = self.cnn_model(inp)
-        # Concatenate intermediate value with embedding
-        # print("====x_intermediate===")
-        # print(x_intermediate.shape)
-
+        x_intermediate = self.netD_1(inp)
         replicated_embed = c_code.repeat(4, 4, 1, 1).permute(2, 3, 0, 1)
-        # print("====replicated_embed===")
-        # print(replicated_embed.shape)
-
         x = torch.cat([replicated_embed, x_intermediate], 1)
-        # print("=== concat ====")
-        # print(x.shape)
-
-
         x = self.netD_2(x)
-        # print("=== fully connected ====")
-        # print(x.shape)
+
         return x
