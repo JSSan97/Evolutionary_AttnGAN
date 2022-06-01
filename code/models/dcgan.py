@@ -76,13 +76,15 @@ class Generator(nn.Module):
 
 # Use for text to image generation
 class Discriminator(nn.Module):
-    def __init__(self, ndf=128, input_nc=3, img_size=64):
+    def __init__(self, ndf=64, input_nc=3, img_size=64):
         super(Discriminator, self).__init__()
 
-        self.ndf = ndf
         self.input_nc = input_nc
 
+        self.projected_embed_dim = 100
+
         if img_size == 32:
+            self.ndf = 32
             seq = [nn.Conv2d(self.input_nc, self.ndf, 4, stride=2, padding=(1, 1), bias=True),
                    nn.LeakyReLU(0.2),
                    nn.Conv2d(self.ndf, self.ndf * 2, 4, stride=2, padding=(1, 1), bias=True),
@@ -92,7 +94,13 @@ class Discriminator(nn.Module):
                    nn.BatchNorm2d(self.ndf * 4),
                    nn.LeakyReLU(0.2)]
 
+            seq_2 = nn.Sequential(
+                nn.Conv2d(self.ndf * 4 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+                nn.Sigmoid()
+            )
+
         if img_size == 64:
+            self.ndf = 64
             seq = [nn.Conv2d(self.input_nc, self.ndf, 4, stride=2, padding=(1, 1), bias=True),
                    nn.LeakyReLU(0.2),
                    nn.Conv2d(self.ndf, self.ndf * 2, 4, stride=2, padding=(1, 1), bias=True),
@@ -105,7 +113,13 @@ class Discriminator(nn.Module):
                    nn.BatchNorm2d(self.ndf * 8),
                    nn.LeakyReLU(0.2)]
 
+            seq_2 = nn.Sequential(
+                nn.Conv2d(self.ndf * 8 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+                nn.Sigmoid()
+            )
+
         if img_size == 128:
+            self.ndf = 128
             seq = [nn.Conv2d(self.input_nc, self.ndf, 4, stride=2, padding=(1, 1), bias=True),
                    nn.LeakyReLU(0.2),
                    nn.Conv2d(self.ndf, self.ndf * 2, 4, stride=2, padding=(1, 1), bias=True),
@@ -122,14 +136,14 @@ class Discriminator(nn.Module):
                    nn.LeakyReLU(0.2)
                    ]
 
+            seq_2 = nn.Sequential(
+                nn.Conv2d(self.ndf * 16 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
+                nn.Sigmoid()
+            )
+
         self.netD_1 = nn.Sequential(*seq)
 
-        self.projected_embed_dim = 100
-        self.netD_2 = nn.Sequential(
-            # state size. (ndf*8) x 4 x 4
-            nn.Conv2d(self.ndf * 16 + self.projected_embed_dim, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
-        )
+        self.netD_2 = nn.Sequential(*seq_2)
 
     def forward(self, inp, c_code):
         x_intermediate = self.netD_1(inp)

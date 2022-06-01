@@ -192,7 +192,8 @@ class DCGANTrainer(object):
                 errD_total = 0
                 D_logs = ''
                 netD.zero_grad()
-                real_imgs = imgs[1] # torch.Size([64, 3, 128, 128])
+                real_imgs = imgs[0] # imgs[1] torch.Size([64, 3, 128, 128])
+                print(real_imgs.shape)
                 errD = self.discriminator_loss(netD, real_imgs, fake_imgs,
                                           c_code, real_labels, fake_labels)
                 # backward and update parameters
@@ -213,9 +214,9 @@ class DCGANTrainer(object):
                 fake_imgs, c_code, mu, logvar = netG(z_code=noise, text_embedding=sent_emb)
                 netG.zero_grad()
                 errG, G_logs = self.generator_loss(netD, fake_imgs, c_code, real_labels)
-                kl_loss = KL_loss(mu, logvar)
-                errG += kl_loss
-                G_logs += 'kl_loss: %.2f ' % kl_loss.item()
+                # kl_loss = KL_loss(mu, logvar)
+                # errG += kl_loss
+                # G_logs += 'kl_loss: %.2f ' % kl_loss.item()
                 # backward and update parameters
                 errG.backward()
                 optimizerG.step()
