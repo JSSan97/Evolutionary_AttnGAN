@@ -8,7 +8,7 @@ def parse_args():
     parser.add_argument('--file_path', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/fixed_noise.npy')
     parser.add_argument('--batch_size', type=int,
-                        default=9)
+                        default=5)
     parser.add_argument('--z_vector_size', type=int,
                         default=100)
 
