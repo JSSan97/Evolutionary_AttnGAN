@@ -24,4 +24,4 @@ def generate_noise(bs, nz, path):
 
 if __name__ == "__main__":
     args = parse_args()
-    generate_noise(args.batch_size, args.z_vector_size, args.path)
+    generate_noise(args.batch_size, args.z_vector_size, args.file_path)
