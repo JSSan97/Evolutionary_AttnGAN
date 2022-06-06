@@ -472,6 +472,14 @@ class condGANTrainer(object):
             print('Load G from: ', model_dir)
             netG.cuda()
             netG.eval()
+
+            fixed_noise = None
+            if cfg.FIXED_NOISE:
+                print("Using fixed noise from : {}".format(cfg.FIXED_NOISE))
+                fixed_noise = np.load(cfg.FIXED_NOISE, allow_pickle=True)
+                fixed_noise = np.ndarray.tolist(fixed_noise)
+                fixed_noise = fixed_noise['fixed_noise']
+
             for key in data_dic:
                 save_dir = '%s/%s' % (s_tmp, key)
                 mkdir_p(save_dir)
@@ -489,10 +497,8 @@ class condGANTrainer(object):
 
                 for i in range(1):  # 16
                     with torch.no_grad():
-                        if cfg.FIXED_NOISE:
-                            fixed_noise = np.load(cfg.FIXED_NOISE, allow_pickle=True)
-                            fixed_noise = np.ndarray.tolist(fixed_noise)
-                            noise = fixed_noise['fixed_noise']
+                        if fixed_noise:
+                            noise = fixed_noise
                         else:
                             noise = Variable(torch.FloatTensor(batch_size, nz))
                         noise = noise.cuda()
