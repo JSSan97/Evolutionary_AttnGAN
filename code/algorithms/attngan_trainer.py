@@ -497,7 +497,7 @@ class condGANTrainer(object):
 
                 for i in range(1):  # 16
                     with torch.no_grad():
-                        if fixed_noise is not None:
+                        if fixed_noise is not None and cfg.TEXT.CAPTIONS_PER_IMAGE == batch_size:
                             noise = fixed_noise
                         else:
                             noise = Variable(torch.FloatTensor(batch_size, nz))
