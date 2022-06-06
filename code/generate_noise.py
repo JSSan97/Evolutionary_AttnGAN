@@ -1,6 +1,6 @@
 import torch
 import argparse
-from numpy import np
+import numpy as np
 from torch.autograd import Variable
 
 def parse_args():
