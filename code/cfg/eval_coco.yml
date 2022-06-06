@@ -7,6 +7,7 @@ WORKERS: 1
 
 B_VALIDATION: False
 B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/eval_coco_img_array.npy'
+FIXED_NOISE: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/fixed_noise.npy' # ''
 
 TREE:
     BRANCH_NUM: 3

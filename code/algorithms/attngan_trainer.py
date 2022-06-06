@@ -489,7 +489,12 @@ class condGANTrainer(object):
 
                 for i in range(1):  # 16
                     with torch.no_grad():
-                        noise = Variable(torch.FloatTensor(batch_size, nz))
+                        if cfg.FIXED_NOISE:
+                            fixed_noise = np.load(cfg.FIXED_NOISE, allow_pickle=True)
+                            fixed_noise = np.ndarray.tolist(fixed_noise)
+                            noise = fixed_noise['fixed_noise']
+                        else:
+                            noise = Variable(torch.FloatTensor(batch_size, nz))
                         noise = noise.cuda()
                     #######################################################
                     # (1) Extract text embeddings
