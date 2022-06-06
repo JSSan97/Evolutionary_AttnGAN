@@ -9,6 +9,8 @@ def parse_args():
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/fixed_noise.npy')
     parser.add_argument('--batch_size', type=int,
                         default=5)
+    parser.add_argument('--z_vector_size', type=int,
+                        default=100)
 
     args = parser.parse_args()
     return args
@@ -22,4 +24,4 @@ def generate_noise(bs, nz, path):
 
 if __name__ == "__main__":
     args = parse_args()
-    generate_noise(args.batch_size, args.nz, args.path)
+    generate_noise(args.batch_size, args.z_vector_size, args.path)
