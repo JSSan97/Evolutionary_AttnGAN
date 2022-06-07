@@ -254,7 +254,7 @@ class EvoTraining(GenericTrainer):
         gen_logits = netsD[i](eval_fake_imgs[i])
         eval_fake = netsD[i].UNCOND_DNET(gen_logits)
 
-        real_logits = self.netsD[i](real_imgs[i])
+        real_logits = netsD[i](real_imgs[i])
         eval_real = netsD[i].UNCOND_DNET(real_logits)
 
         # Quality fitness score
