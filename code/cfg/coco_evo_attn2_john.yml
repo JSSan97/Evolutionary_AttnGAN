@@ -1,4 +1,4 @@
-CONFIG_NAME: 'glu-gan2'
+CONFIG_NAME: 'evo_attn'
 
 DATASET_NAME: 'coco'
 DATA_DIR: 'C:/Users/jsan/PycharmProjects/Evolutionary_AttnGAN/data/coco/'
@@ -41,7 +41,7 @@ EVO:
     DIVERSITY_LAMBDA: 0.01
     QUALITY_CONDITIONAL_LAMBDA: 1
     QUALITY_UNCONDITIONAL_LAMBDA: 1
-    DISCRIMINATOR_UPDATES: 3
+    DISCRIMINATOR_UPDATES: 1
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/CocoEvoAttn_Mutations.npy'
 
 TEXT:
