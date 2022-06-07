@@ -40,6 +40,7 @@ EVO:
     MUTATIONS: 3
     DIVERSITY_LAMBDA: 0.1
     DISCRIMINATOR_UPDATES: 3
+    RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/CocoEvoAttn_Mutations.npy'
 
 TEXT:
     EMBEDDING_DIM: 256

@@ -12,6 +12,7 @@ from miscc.utils import weights_init, load_params, copy_G_params
 from datasets import prepare_data
 from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss
 import time
+import os
 
 from algorithms.trainer import GenericTrainer
 
@@ -21,6 +22,33 @@ class EvoTraining(GenericTrainer):
         super().__init__(output_dir, data_loader, n_words, ixtoword)
 
         self.criterionD = nn.BCELoss()
+
+        # List of mutation counts per epoch
+        self.minimax_list, self.least_squares_list, self.heuristic_list = self.load_mutation_count()
+
+    def load_mutation_count(self):
+        if cfg.EVO.RECORD_MUTATION and os.path.isfile(cfg.EVO.RECORD_MUTATION):
+            mutations = np.load(cfg.EVO.RECORD_MUTATION, allow_pickle=True)
+            mutations = np.ndarray.tolist(mutations)
+            minimax = mutations['minimax']
+            least_squares = mutations['least_squares']
+            heuristic = mutations['heuristic']
+            return minimax, least_squares, heuristic
+        else:
+            return [], [], []
+
+    def save_mutation_count(self, mutation_dict):
+        if cfg.EVO.RECORD_MUTATION:
+            self.minimax_list.append(mutation_dict['minimax'])
+            self.least_squares_list.append(mutation_dict['least_squares'])
+            self.heuristic_list.append(mutation_dict['heuristic'])
+
+            mutations = {}
+            mutations['minimax'] = self.minimax_list
+            mutations['least_squares'] = self.least_squares_list
+            mutations['heuristic'] = self.heuristic_list
+            np.save(cfg.EVO.RECORD_MUTATION, mutations)
+
 
     def train(self):
         text_encoder, image_encoder, netG, netsD, start_epoch = self.build_models()
@@ -38,6 +66,12 @@ class EvoTraining(GenericTrainer):
         gen_iterations = 0
         # gen_iterations = start_epoch * self.num_batches
         for epoch in range(start_epoch, self.max_epoch):
+            mutation_dict = {
+                'minimax': 0,
+                'least_squares': 0,
+                'heuristic': 0,
+            }
+
             start_t = time.time()
 
             data_iter = iter(self.data_loader)
@@ -67,6 +101,8 @@ class EvoTraining(GenericTrainer):
                     real_labels, fake_labels,
                     words_embs, sent_emb, match_labels,
                     cap_lens, class_ids, mask, noise, imgs)
+
+                mutation_dict[mutation] = mutation_dict[mutation] + 1
 
                 #######################################################
                 # (3) Update D network
@@ -114,10 +150,16 @@ class EvoTraining(GenericTrainer):
                      errD_total.item(), errG_total.item(),
                      end_t - start_t))
 
+            print('''Mutations in epoch [%d/%d][%d]'''
+                  % (epoch, self.max_epoch, self.num_batches))
+            print(mutation_dict)
+
             if epoch % cfg.TRAIN.SNAPSHOT_INTERVAL == 0:  # and epoch != 0:
                 self.save_model(netG, avg_param_G, netsD, epoch)
+                self.save_mutation_count()
 
         self.save_model(netG, avg_param_G, netsD, self.max_epoch)
+        self.save_mutation_count()
 
     def forward(self, noise, netG, sent_emb, words_embs, mask):
         noise.data.normal_(0, 1)
@@ -131,7 +173,7 @@ class EvoTraining(GenericTrainer):
                    cap_lens, class_ids, mask, noise, real_imgs):
 
         # 3 types of mutations
-        mutations = ['Minimax', 'Least Squares', 'Heuristic']
+        mutations = ['minimax', 'heuristic', 'least squares']
 
         F_list = np.zeros(1)
         Fit_list = []
