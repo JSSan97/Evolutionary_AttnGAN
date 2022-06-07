@@ -251,7 +251,7 @@ class EvoTraining(GenericTrainer):
         # Get fitness scores of the last stage
         i = len(netsD) - 1
 
-        features = self.netDs[i](eval_fake_imgs[i])
+        features = self.netsD[i](eval_fake_imgs[i])
         eval_fake = netsD[i].UNCOND_DNET(features)
         eval_real = self.netD(real_imgs[i])
 
