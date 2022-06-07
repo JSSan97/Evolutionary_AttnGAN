@@ -248,13 +248,13 @@ class EvoTraining(GenericTrainer):
     def fitness_score(self, netsD, eval_fake_imgs, real_imgs):
         self.set_requires_grad_value(netsD, True)
 
-        # Get fitness scores of the last stage
+        # Get fitness scores of the last stage, i.e. assess 256x256
         i = len(netsD) - 1
 
         gen_logits = netsD[i](eval_fake_imgs[i])
         eval_fake = netsD[i].UNCOND_DNET(gen_logits)
 
-        real_logits = self.netDs[i](real_imgs[i])
+        real_logits = self.netsD[i](real_imgs[i])
         eval_real = netsD[i].UNCOND_DNET(real_logits)
 
         # Quality fitness score
