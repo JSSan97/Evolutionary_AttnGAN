@@ -235,7 +235,7 @@ class EvoTraining(GenericTrainer):
             count += 1
 
         netG.load_state_dict(G_list[0])
-        optimizerG.load_state_dict(G_list[0])
+        optimizerG.load_state_dict(optG_list[0])
         mutation_chosen = selected_mutation[0]
         eval_imgs = evalimg_list[0]
         logs = g_logs_list[0]
