@@ -39,6 +39,8 @@ EVO:
     EVOLUTION_TRAINING: True
     MUTATIONS: 3
     DIVERSITY_LAMBDA: 0.1
+    QUALITY_CONDITIONAL_LAMBDA: 1
+    QUALITY_UNCONDITIONAL_LAMBDA: 1
     DISCRIMINATOR_UPDATES: 3
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/CocoEvoAttn_Mutations.npy'
 

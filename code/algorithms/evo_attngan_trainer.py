@@ -10,7 +10,7 @@ from torch.autograd import Variable
 from miscc.config import cfg
 from miscc.utils import weights_init, load_params, copy_G_params
 from datasets import prepare_data
-from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss
+from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits
 import time
 import os
 
@@ -20,8 +20,6 @@ from algorithms.trainer import GenericTrainer
 class EvoTraining(GenericTrainer):
     def __init__(self, output_dir, data_loader, n_words, ixtoword):
         super().__init__(output_dir, data_loader, n_words, ixtoword)
-
-        self.criterionD = nn.BCELoss()
 
         # List of mutation counts per epoch
         self.minimax_list, self.least_squares_list, self.heuristic_list = self.load_mutation_count()
@@ -48,7 +46,6 @@ class EvoTraining(GenericTrainer):
             mutations['least_squares'] = self.least_squares_list
             mutations['heuristic'] = self.heuristic_list
             np.save(cfg.EVO.RECORD_MUTATION, mutations)
-
 
     def train(self):
         text_encoder, image_encoder, netG, netsD, start_epoch = self.build_models()
@@ -168,9 +165,9 @@ class EvoTraining(GenericTrainer):
         return fake_imgs, att_maps, mu, logvar
 
     def evolution_phase(self, netG, netsD, optimizerG, image_encoder,
-                   real_labels, fake_labels,
-                   words_embs, sent_emb, match_labels,
-                   cap_lens, class_ids, mask, noise, real_imgs):
+                        real_labels, fake_labels,
+                        words_embs, sent_emb, match_labels,
+                        cap_lens, class_ids, mask, noise, real_imgs):
 
         # 3 types of mutations
         mutations = ['minimax', 'heuristic', 'least squares']
@@ -198,9 +195,9 @@ class EvoTraining(GenericTrainer):
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
             self.set_requires_grad_value(netsD, False)
             errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
-                       real_labels, fake_labels,
-                       words_embs, sent_emb, match_labels,
-                       cap_lens, class_ids, mutations[m])
+                                                    real_labels, fake_labels,
+                                                    words_embs, sent_emb, match_labels,
+                                                    cap_lens, class_ids, mutations[m])
 
             kl_loss = KL_loss(mu, logvar)
             errG_total += kl_loss
@@ -212,7 +209,7 @@ class EvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
-            Fq, Fd = self.fitness_score(netsD, eval_fake_imgs, real_imgs)
+            Fq, Fd = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb)
             F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
 
             # Perform selection
@@ -245,33 +242,33 @@ class EvoTraining(GenericTrainer):
 
         return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total
 
-    def fitness_score(self, netsD, eval_fake_imgs, real_imgs):
+    def fitness_score(self, netsD, fake_imgs, real_imgs, fake_labels, real_labels, sent_emb):
         self.set_requires_grad_value(netsD, True)
 
         # Get fitness scores of the last stage, i.e. assess 256x256
         i = len(netsD) - 1
 
-        gen_logits = netsD[i](eval_fake_imgs[i])
-        eval_fake = netsD[i].UNCOND_DNET(gen_logits)
-
-        real_logits = netsD[i](real_imgs[i])
-        eval_real = netsD[i].UNCOND_DNET(real_logits)
+        eval_D, cond_eval_fake, uncond_eval_fake = \
+            discriminator_loss_with_logits(netsD[i], real_imgs, fake_imgs, sent_emb,
+                                           real_labels, fake_labels)
 
         # Quality fitness score
-        Fq = eval_fake.data.mean().cpu().numpy()
+        # The unconditional evaluation determines whether the image is real or fake
+        uncond_eval_fake = uncond_eval_fake.data.mean().cpu().numpy()
+        # The conditional evaluation determines whether the image and the sentence match or not
+        cond_eval_fake = cond_eval_fake.data.mean().cpu().numpy()
+        # Quality fitness score
+        Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
+             (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
         # Diversity fitness score
-        eval_D_fake, eval_D_real = self.criterionD(eval_fake, eval_real)
-        eval_D = eval_D_fake + eval_D_real
         gradients = torch.autograd.grad(outputs=eval_D, inputs=self.netD.parameters(),
                                         grad_outputs=torch.ones(eval_D.size()).to(self.device),
                                         create_graph=True, retain_graph=True, only_inputs=True)
         with torch.no_grad():
             for i, grad in enumerate(gradients):
                 grad = grad.view(-1)
-                allgrad = grad if i == 0 else torch.cat([allgrad,grad])
+                allgrad = grad if i == 0 else torch.cat([allgrad, grad])
         Fd = -torch.log(torch.norm(allgrad)).data.cpu().numpy()
 
         return Fq, Fd
-
-
