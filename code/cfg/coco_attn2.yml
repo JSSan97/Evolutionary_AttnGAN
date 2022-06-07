@@ -12,7 +12,7 @@ TREE:
 
 TRAIN:
     FLAG: True
-    NET_G: '/content/drive/MyDrive/Github/output/coco_glu-gan2_2022_06_06_12_48_58/Model/netG_epoch_130.pth'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2.pth'
+    NET_G: '/content/drive/MyDrive/Github/output/coco_glu-gan2_2022_06_07_11_28_46/Model/netG_epoch_135.pth'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 14  # 32
     MAX_EPOCH: 150
