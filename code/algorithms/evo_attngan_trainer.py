@@ -206,7 +206,7 @@ class EvoTraining(GenericTrainer):
             errG_total += kl_loss
             G_logs += 'kl_loss: %.2f ' % kl_loss.item()
 
-            errG_total.backwards()
+            errG_total.backward()
             optimizerG.step()
 
             # Perform Evaluation
