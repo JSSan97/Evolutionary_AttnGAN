@@ -261,9 +261,14 @@ class EvoTraining(GenericTrainer):
         Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
              (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
+        grad_outputs = torch.ones(eval_D.size()).cuda()
+
+        if cfg.CUDA:
+            grad_outputs = grad_outputs.cuda()
+
         # Diversity fitness score
         gradients = torch.autograd.grad(outputs=eval_D, inputs=netsD[i].parameters(),
-                                        grad_outputs=torch.ones(eval_D.size()).cuda(),
+                                        grad_outputs=grad_outputs,
                                         create_graph=True, retain_graph=True, only_inputs=True)
         with torch.no_grad():
             for i, grad in enumerate(gradients):
