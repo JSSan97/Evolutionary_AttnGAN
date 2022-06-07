@@ -263,7 +263,7 @@ class EvoTraining(GenericTrainer):
 
         # Diversity fitness score
         gradients = torch.autograd.grad(outputs=eval_D, inputs=netsD[i].parameters(),
-                                        grad_outputs=torch.ones(eval_D.size()).to(self.device),
+                                        grad_outputs=torch.ones(eval_D.size()).cuda(),
                                         create_graph=True, retain_graph=True, only_inputs=True)
         with torch.no_grad():
             for i, grad in enumerate(gradients):
