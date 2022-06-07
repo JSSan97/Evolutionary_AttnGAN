@@ -262,7 +262,7 @@ class EvoTraining(GenericTrainer):
              (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
         # Diversity fitness score
-        gradients = torch.autograd.grad(outputs=eval_D, inputs=self.netD.parameters(),
+        gradients = torch.autograd.grad(outputs=eval_D, inputs=netsD[i].parameters(),
                                         grad_outputs=torch.ones(eval_D.size()).to(self.device),
                                         create_graph=True, retain_graph=True, only_inputs=True)
         with torch.no_grad():
