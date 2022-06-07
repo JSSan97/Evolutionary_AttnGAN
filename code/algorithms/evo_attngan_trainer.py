@@ -249,7 +249,7 @@ class EvoTraining(GenericTrainer):
         i = len(netsD) - 1
 
         eval_D, cond_eval_fake, uncond_eval_fake = \
-            discriminator_loss_with_logits(netsD[i], real_imgs, fake_imgs, sent_emb,
+            discriminator_loss_with_logits(netsD[i], real_imgs[i], fake_imgs[i], sent_emb,
                                            real_labels, fake_labels)
 
         # Quality fitness score
