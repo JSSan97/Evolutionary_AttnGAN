@@ -246,7 +246,7 @@ class EvoTraining(GenericTrainer):
         return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total
 
     def fitness_score(self, netsD, eval_fake_imgs, real_imgs):
-        self.set_requires_grad(netsD, True)
+        self.set_requires_grad_value(netsD, True)
 
         # Get fitness scores of the last stage
         i = len(netsD) - 1
