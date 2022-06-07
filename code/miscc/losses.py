@@ -225,7 +225,7 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
             if mutation == "minimax":
                 criterion = nn.BCELoss()
                 errG = -criterion(fake_prediction, fake_labels)
-            elif mutation == "least squares":
+            elif mutation == "least_squares":
                 criterion = nn.MSELoss()
                 errG = criterion(fake_prediction, fake_labels)
             elif mutation == "heuristic":

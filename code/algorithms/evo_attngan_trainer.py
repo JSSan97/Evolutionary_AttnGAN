@@ -170,7 +170,7 @@ class EvoTraining(GenericTrainer):
                         cap_lens, class_ids, mask, noise, real_imgs):
 
         # 3 types of mutations
-        mutations = ['minimax', 'heuristic', 'least squares']
+        mutations = ['minimax', 'heuristic', 'least_squares']
 
         F_list = np.zeros(1)
         Fit_list = []
