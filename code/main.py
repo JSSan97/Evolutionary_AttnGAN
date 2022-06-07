@@ -136,8 +136,12 @@ if __name__ == "__main__":
         from algorithms.dcgan_trainer import DCGANTrainer as trainer
         algo = trainer(output_dir, dataloader, dataset.n_words)
     else:
-        from algorithms.attngan_trainer import condGANTrainer as trainer
-        algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+        if cfg.EVO.EVOLUTION_TRAINING:
+            from algorithms.evo_attngan_trainer import EvoTraining as trainer
+            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+        else:
+            from algorithms.attngan_trainer import condGANTrainer as trainer
+            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
 
     start_t = time.time()
     if cfg.TRAIN.FLAG:
