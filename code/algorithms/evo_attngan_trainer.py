@@ -251,9 +251,11 @@ class EvoTraining(GenericTrainer):
         # Get fitness scores of the last stage
         i = len(netsD) - 1
 
-        features = self.netsD[i](eval_fake_imgs[i])
-        eval_fake = netsD[i].UNCOND_DNET(features)
-        eval_real = self.netD(real_imgs[i])
+        gen_logits = netsD[i](eval_fake_imgs[i])
+        eval_fake = netsD[i].UNCOND_DNET(gen_logits)
+
+        real_logits = self.netDs[i](real_imgs[i])
+        eval_real = netsD[i].UNCOND_DNET(real_logits)
 
         # Quality fitness score
         Fq = eval_fake.data.mean().cpu().numpy()
