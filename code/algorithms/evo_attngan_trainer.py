@@ -154,10 +154,10 @@ class EvoTraining(GenericTrainer):
 
             if epoch % cfg.TRAIN.SNAPSHOT_INTERVAL == 0:  # and epoch != 0:
                 self.save_model(netG, avg_param_G, netsD, epoch)
-                self.save_mutation_count()
+                self.save_mutation_count(mutation_dict)
 
         self.save_model(netG, avg_param_G, netsD, self.max_epoch)
-        self.save_mutation_count()
+        self.save_mutation_count(mutation_dict)
 
     def forward(self, noise, netG, sent_emb, words_embs, mask):
         noise.data.normal_(0, 1)
