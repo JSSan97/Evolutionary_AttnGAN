@@ -128,7 +128,8 @@ class EvoTraining(GenericTrainer):
                     avg_p.mul_(0.999).add_(0.001, p.data)
 
                 if gen_iterations % 100 == 0:
-                    print(D_logs + '\n' + G_logs)
+                    print(D_logs + '\n' + G_logs + '\n')
+                    print(mutation_dict)
 
                 # save images
                 if gen_iterations % 1000 == 0:
