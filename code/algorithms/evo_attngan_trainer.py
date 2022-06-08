@@ -52,6 +52,7 @@ class EvoTraining(GenericTrainer):
         avg_param_G = copy_G_params(netG)
         optimizerG, optimizersD = self.define_optimizers(netG, netsD)
         real_labels, fake_labels, match_labels = self.prepare_labels()
+        fake_imgs = None
 
         batch_size = self.batch_size
         nz = cfg.GAN.Z_DIM
