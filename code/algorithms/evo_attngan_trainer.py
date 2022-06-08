@@ -91,16 +91,10 @@ class EvoTraining(GenericTrainer):
                     mask = mask[:, :num_words]
 
                 #######################################################
-                # (2) Update Generator
+                # (2) Generate fake images
                 ######################################################
                 noise.data.normal_(0, 1)
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
-                    netG, netsD, optimizerG, image_encoder,
-                    real_labels, fake_labels,
-                    words_embs, sent_emb, match_labels,
-                    cap_lens, class_ids, mask, noise, imgs)
-
-                mutation_dict[mutation] = mutation_dict[mutation] + 1
+                self.forward(noise, netG, sent_emb, words_embs, mask)
 
                 #######################################################
                 # (3) Update D network
@@ -123,6 +117,15 @@ class EvoTraining(GenericTrainer):
                 ######################################################
                 step += 1
                 gen_iterations += 1
+
+                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                    netG, netsD, optimizerG, image_encoder,
+                    real_labels, fake_labels,
+                    words_embs, sent_emb, match_labels,
+                    cap_lens, class_ids, mask, noise, imgs)
+
+                mutation_dict[mutation] = mutation_dict[mutation] + 1
+
 
                 # update parameters
                 for p, avg_p in zip(netG.parameters(), avg_param_G):
