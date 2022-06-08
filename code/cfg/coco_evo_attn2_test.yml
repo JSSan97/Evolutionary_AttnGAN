@@ -1,4 +1,4 @@
-CONFIG_NAME: 'evo_attn'
+CONFIG_NAME: 'evo_attn_test'
 
 DATASET_NAME: 'coco'
 DATA_DIR: '/content/coco'
