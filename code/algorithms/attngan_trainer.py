@@ -301,7 +301,7 @@ class condGANTrainer(object):
                 if gen_iterations % 100 == 0:
                     print(D_logs + '\n' + G_logs)
                 # save images
-                if gen_iterations % 1000 == 0:
+                if gen_iterations % 100 == 0:
                     backup_para = copy_G_params(netG)
                     load_params(netG, avg_param_G)
                     self.save_img_results(netG, fixed_noise, sent_emb,
