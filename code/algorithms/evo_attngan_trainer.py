@@ -93,6 +93,7 @@ class EvoTraining(GenericTrainer):
                 #######################################################
                 # (2) Update Generator
                 ######################################################
+                noise.data.normal_(0, 1)
                 fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
                     netG, netsD, optimizerG, image_encoder,
                     real_labels, fake_labels,
@@ -160,7 +161,6 @@ class EvoTraining(GenericTrainer):
         self.save_mutation_count(mutation_dict)
 
     def forward(self, noise, netG, sent_emb, words_embs, mask):
-        noise.data.normal_(0, 1)
         fake_imgs, att_maps, mu, logvar = netG(noise, sent_emb, words_embs, mask)
 
         return fake_imgs, att_maps, mu, logvar
