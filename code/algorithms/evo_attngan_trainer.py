@@ -123,7 +123,7 @@ class EvoTraining(GenericTrainer):
                 step += 1
                 gen_iterations += 1
 
-                # backward and update parameters
+                # update parameters
                 for p, avg_p in zip(netG.parameters(), avg_param_G):
                     avg_p.mul_(0.999).add_(0.001, p.data)
 
