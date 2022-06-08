@@ -199,8 +199,10 @@ class EvoTraining(GenericTrainer):
             # Perform Variation
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
+            optimizerG.zero_grad()
 
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
+
             self.set_requires_grad_value(netsD, False)
             errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
                                                     real_labels, fake_labels,
