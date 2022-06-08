@@ -94,7 +94,7 @@ class EvoTraining(GenericTrainer):
                 # (2) Generate fake images
                 ######################################################
                 noise.data.normal_(0, 1)
-                self.forward(noise, netG, sent_emb, words_embs, mask)
+                fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
 
                 #######################################################
                 # (3) Update D network
