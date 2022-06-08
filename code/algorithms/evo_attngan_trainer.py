@@ -94,7 +94,9 @@ class EvoTraining(GenericTrainer):
                 # (2) Generate fake images
                 ######################################################
                 noise.data.normal_(0, 1)
-                fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+                # On the first go, otherwise use images generated from best candidate from evolution phase
+                if fake_imgs is None:
+                    fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
 
                 #######################################################
                 # (3) Update D network
