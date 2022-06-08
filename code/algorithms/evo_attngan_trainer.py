@@ -126,13 +126,13 @@ class EvoTraining(GenericTrainer):
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
 
-
                 # update parameters
                 for p, avg_p in zip(netG.parameters(), avg_param_G):
                     avg_p.mul_(0.999).add_(0.001, p.data)
 
                 if gen_iterations % 100 == 0:
                     print(D_logs + '\n' + G_logs)
+                    print("Most recent mutation : {}".format(mutation))
                     print(mutation_dict)
 
                 # save images
