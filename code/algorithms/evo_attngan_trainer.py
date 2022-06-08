@@ -180,6 +180,7 @@ class EvoTraining(GenericTrainer):
         evalimg_list = []
         selected_mutation = []
         g_logs_list = []
+        errG_list = []
 
         # Parent of evolution cycle
         G_candidate_dict = copy.deepcopy(netG.state_dict())
@@ -222,6 +223,7 @@ class EvoTraining(GenericTrainer):
                 evalimg_list.append(eval_fake_imgs)
                 selected_mutation.append(mutations[m])
                 g_logs_list.append(G_logs)
+                errG_list.append(errG_total)
             else:
                 fit_com = F - F_list
                 if max(fit_com) > 0:
@@ -233,6 +235,7 @@ class EvoTraining(GenericTrainer):
                     evalimg_list[ids_replace] = eval_fake_imgs
                     selected_mutation[ids_replace] = mutations[m]
                     g_logs_list[ids_replace] = G_logs
+                    errG_list[ids_replace] = errG_total
             count += 1
 
         netG.load_state_dict(G_list[0])
@@ -240,6 +243,7 @@ class EvoTraining(GenericTrainer):
         mutation_chosen = selected_mutation[0]
         eval_imgs = evalimg_list[0]
         logs = g_logs_list[0]
+        errG_total = errG_list[0]
 
         return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total
 
