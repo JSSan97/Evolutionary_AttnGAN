@@ -97,7 +97,7 @@ class EvoTraining(GenericTrainer):
                 noise.data.normal_(0, 1)
                 # On the first go, otherwise use images generated from best candidate from evolution phase
                 if fake_imgs is None:
-                    fake_imgs = self.forward(noise, netG, sent_emb, words_embs, mask)
+                    fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
 
                 #######################################################
                 # (3) Update D network
@@ -197,13 +197,14 @@ class EvoTraining(GenericTrainer):
 
         count = 0
 
+        fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
+
         # Go through every mutation
         for m in range(cfg.EVO.MUTATIONS):
             # Perform Variation
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
-            fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
             errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
