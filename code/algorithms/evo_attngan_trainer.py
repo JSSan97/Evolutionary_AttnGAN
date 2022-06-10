@@ -96,11 +96,8 @@ class EvoTraining(GenericTrainer):
                 ###########################################################
                 noise.data.normal_(0, 1)
                 # On the first go, otherwise use images generated from best candidate from evolution phase
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
-                    netG, netsD, optimizerG, image_encoder,
-                    real_labels, fake_labels,
-                    words_embs, sent_emb, match_labels,
-                    cap_lens, class_ids, mask, noise, imgs)
+                if fake_imgs is None:
+                    fake_imgs = self.forward(noise, netG, sent_emb, words_embs, mask)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
                 #######################################################
@@ -122,6 +119,12 @@ class EvoTraining(GenericTrainer):
                 #######################################################
                 # (4) Update Params
                 ######################################################
+                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                    netG, netsD, optimizerG, image_encoder,
+                    real_labels, fake_labels,
+                    words_embs, sent_emb, match_labels,
+                    cap_lens, class_ids, mask, noise, imgs)
+
                 step += 1
                 gen_iterations += 1
 
