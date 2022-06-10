@@ -99,7 +99,6 @@ class EvoTraining(GenericTrainer):
                 if fake_imgs is None:
                     fake_imgs = self.forward(noise, netG, sent_emb, words_embs, mask)
 
-                mutation_dict[mutation] = mutation_dict[mutation] + 1
                 #######################################################
                 # (3) Update D network
                 ######################################################
@@ -124,6 +123,8 @@ class EvoTraining(GenericTrainer):
                     real_labels, fake_labels,
                     words_embs, sent_emb, match_labels,
                     cap_lens, class_ids, mask, noise, imgs)
+
+                mutation_dict[mutation] = mutation_dict[mutation] + 1
 
                 step += 1
                 gen_iterations += 1
