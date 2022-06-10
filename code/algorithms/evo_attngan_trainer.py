@@ -91,14 +91,18 @@ class EvoTraining(GenericTrainer):
                 if mask.size(1) > num_words:
                     mask = mask[:, :num_words]
 
-                #######################################################
-                # (2) Generate fake images
-                ######################################################
+                ###########################################################
+                # (2) Evolutionary Phase: Update G Networks and Select Best
+                ###########################################################
                 noise.data.normal_(0, 1)
                 # On the first go, otherwise use images generated from best candidate from evolution phase
-                if fake_imgs is None:
-                    fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                    netG, netsD, optimizerG, image_encoder,
+                    real_labels, fake_labels,
+                    words_embs, sent_emb, match_labels,
+                    cap_lens, class_ids, mask, noise, imgs)
 
+                mutation_dict[mutation] = mutation_dict[mutation] + 1
                 #######################################################
                 # (3) Update D network
                 ######################################################
@@ -116,18 +120,10 @@ class EvoTraining(GenericTrainer):
                         D_logs += 'errD%d: %.2f ' % (i, errD.item())
 
                 #######################################################
-                # (4) Update G network: maximize log(D(G(z)))
+                # (4) Update Params
                 ######################################################
                 step += 1
                 gen_iterations += 1
-
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
-                    netG, netsD, optimizerG, image_encoder,
-                    real_labels, fake_labels,
-                    words_embs, sent_emb, match_labels,
-                    cap_lens, class_ids, mask, noise, imgs)
-
-                mutation_dict[mutation] = mutation_dict[mutation] + 1
 
                 # update parameters
                 for p, avg_p in zip(netG.parameters(), avg_param_G):
@@ -197,14 +193,14 @@ class EvoTraining(GenericTrainer):
 
         count = 0
 
+        fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
+
         # Go through every mutation
         for m in range(cfg.EVO.MUTATIONS):
             # Perform Variation
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
-
-            fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
             errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
