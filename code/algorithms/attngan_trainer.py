@@ -441,6 +441,7 @@ class condGANTrainer(object):
 
             # Create a dictionary to store the training losses
             if cfg.B_VALIDATION_IMG_ARRAY:
+                print("Creating .npy file")
                 eval = {}
                 eval['validation_imgs'] = validation_imgs
                 np.save(cfg.B_VALIDATION_IMG_ARRAY, eval)
