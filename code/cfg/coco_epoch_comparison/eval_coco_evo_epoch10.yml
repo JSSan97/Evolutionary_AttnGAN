@@ -15,7 +15,7 @@ TREE:
 
 TRAIN:
     FLAG: False
-    NET_G: '/content/drive/MyDrive/Github/output/AttnGAN/coco_evo_attn_2022_06_11_13_16_50/Model/netG_epoch_10.pth' # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2_epoch120.pth'
+    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_evo_AttnGAN2_epoch10.pth' # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2_epoch120.pth'
     B_NET_D: False
     BATCH_SIZE: 16
     NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/coco/text_encoder100.pth'
