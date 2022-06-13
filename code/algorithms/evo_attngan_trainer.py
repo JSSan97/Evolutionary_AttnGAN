@@ -95,20 +95,32 @@ class EvoTraining(GenericTrainer):
                 # (2) Evolutionary Phase: Update G Networks and Select Best
                 ###########################################################
                 noise.data.normal_(0, 1)
-                # On the first go, otherwise use images generated from best candidate from evolution phase
-                if fake_imgs is None:
-                    fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                    netG, netsD, optimizerG, image_encoder,
+                    real_labels, fake_labels,
+                    words_embs, sent_emb, match_labels,
+                    cap_lens, class_ids, mask, noise, imgs)
+
+                mutation_dict[mutation] = mutation_dict[mutation] + 1
 
                 #######################################################
                 # (3) Update D network
                 ######################################################
                 errD_total = 0
                 D_logs = ''
+                eval_size = cfg.TRAIN.BATCH_SIZE / cfg.EVO.DISCRIMINATOR_UPDATES
+
                 for d in range(cfg.EVO.DISCRIMINATOR_UPDATES):
                     for i in range(len(netsD)):
+                        eval_gen_imgs = fake_imgs[i][d * eval_size: (d+1)*eval_size]
+                        eval_real_imgs = imgs[i][d * eval_size: (d+1)*eval_size]
+                        eval_sent_emb = sent_emb[d * eval_size: (d+1)*eval_size]
+                        eval_real_labels = real_labels[d * eval_size: (d+1)*eval_size]
+                        eval_fake_labels = fake_labels[d * eval_size: (d+1)*eval_size]
+
                         netsD[i].zero_grad()
-                        errD = discriminator_loss(netsD[i], imgs[i], fake_imgs[i],
-                                                  sent_emb, real_labels, fake_labels)
+                        errD = discriminator_loss(netsD[i], eval_real_imgs, eval_gen_imgs,
+                                                  eval_sent_emb, eval_real_labels, eval_fake_labels)
                         # backward and update parameters
                         errD.backward()
                         optimizersD[i].step()
@@ -118,14 +130,6 @@ class EvoTraining(GenericTrainer):
                 #######################################################
                 # (4) Update Params
                 ######################################################
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
-                    netG, netsD, optimizerG, image_encoder,
-                    real_labels, fake_labels,
-                    words_embs, sent_emb, match_labels,
-                    cap_lens, class_ids, mask, noise, imgs)
-
-                mutation_dict[mutation] = mutation_dict[mutation] + 1
-
                 step += 1
                 gen_iterations += 1
 
