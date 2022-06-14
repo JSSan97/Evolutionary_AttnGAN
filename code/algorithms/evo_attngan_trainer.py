@@ -182,7 +182,7 @@ class EvoTraining(GenericTrainer):
 
         # 3 types of mutations
         if cfg.EVO.MUTATIONS == 1:
-            mutations = ['least_squares']
+            mutations = ['heuristic']
         else:
             mutations = ['minimax', 'heuristic', 'least_squares']
 
