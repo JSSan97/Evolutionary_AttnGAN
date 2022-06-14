@@ -292,16 +292,15 @@ class EvoTraining(GenericTrainer):
                 allgrad = grad if i == 0 else torch.cat([allgrad, grad])
         Fd = -torch.log(torch.norm(allgrad)).data.cpu().numpy()
 
-        Fw = cfg.EVO.WORD_LOSS_LAMBDA * w_loss
-        Fs = cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
+        Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
+        Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
 
-        F = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) - Fw - Fs
+        F = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
 
-        print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
-                                                                 (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
-                                                                 (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
-                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
+        # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
+        #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
+        #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
+        #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
 
-        ## F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
 
         return F
