@@ -94,12 +94,11 @@ class EvoTraining(GenericTrainer):
                 ###########################################################
                 # (2) Evolutionary Phase: Update G Networks and Select Best
                 ###########################################################
-                noise.data.normal_(0, 1)
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total, noise = self.evolution_phase(
                     netG, netsD, optimizerG, image_encoder,
                     real_labels, fake_labels,
                     words_embs, sent_emb, match_labels,
-                    cap_lens, class_ids, mask, noise, imgs)
+                    cap_lens, class_ids, mask, noise.data.normal_(0, 1), imgs)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
                 print(mutation_dict)
@@ -207,6 +206,7 @@ class EvoTraining(GenericTrainer):
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
+            noise.data.normal_(0, 1)
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
@@ -221,7 +221,7 @@ class EvoTraining(GenericTrainer):
 
             errG_total.backward()
             optimizerG.step()
-
+            noise.data.normal_(0, 1)
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
@@ -256,7 +256,7 @@ class EvoTraining(GenericTrainer):
         logs = g_logs_list[0]
         errG_total = errG_list[0]
 
-        return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total
+        return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total, noise
 
     def fitness_score(self, netsD, fake_imgs, real_imgs, fake_labels, real_labels, sent_emb):
         self.set_requires_grad_value(netsD, True)
