@@ -243,6 +243,8 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
                 cond_errG = criterion(cond_logits, real_labels)
 
             g_loss = errG + cond_errG
+            print('g_loss%d: %.2f ' % (i, errG.item()))
+            print('cond_errG%d: %.2f ' % (i, cond_errG.item()))
         else:
             g_loss = cond_errG
         errG_total += g_loss
