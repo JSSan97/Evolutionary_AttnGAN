@@ -188,7 +188,6 @@ class EvoTraining(GenericTrainer):
             mutations = ['minimax', 'heuristic', 'least_squares']
 
         F_list = np.zeros(1)
-        Fit_list = []
         G_list = []
         optG_list = []
         evalimg_list = []
@@ -226,15 +225,11 @@ class EvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
-            Fq, Fd = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb)
-            F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
-
-            print("F: {}, Fq: {}, Fd: {}".format(F, Fq, Fd))
+            F = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb)
 
             # Perform selection
             if count < 1:
                 F_list[count] = F
-                Fit_list.append([Fq, Fd, F])
                 G_list.append(copy.deepcopy(netG.state_dict()))
                 optG_list.append(copy.deepcopy(optimizerG.state_dict()))
                 evalimg_list.append(eval_fake_imgs)
@@ -246,7 +241,6 @@ class EvoTraining(GenericTrainer):
                 if max(fit_com) > 0:
                     ids_replace = np.where(fit_com == max(fit_com))[0][0]
                     F_list[ids_replace] = F
-                    Fit_list[ids_replace] = [Fq, Fd, F]
                     G_list[ids_replace] = copy.deepcopy(netG.state_dict())
                     optG_list[ids_replace] = copy.deepcopy(optimizerG.state_dict())
                     evalimg_list[ids_replace] = eval_fake_imgs
@@ -298,4 +292,13 @@ class EvoTraining(GenericTrainer):
                 allgrad = grad if i == 0 else torch.cat([allgrad, grad])
         Fd = -torch.log(torch.norm(allgrad)).data.cpu().numpy()
 
-        return Fq, Fd
+        F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
+
+        print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}".format(F,
+                                                                 (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
+                                                                 (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
+                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd))
+
+        ## F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
+
+        return F
