@@ -102,6 +102,7 @@ class EvoTraining(GenericTrainer):
                     cap_lens, class_ids, mask, noise, imgs)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
+                print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
@@ -227,6 +228,8 @@ class EvoTraining(GenericTrainer):
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
             Fq, Fd = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb)
             F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
+
+            print("F: {}, Fq: {}, Fd: {}".format(F, Fq, Fd))
 
             # Perform selection
             if count < 1:
