@@ -37,7 +37,7 @@ GAN:
 
 EVO:
     EVOLUTION_TRAINING: True
-    MUTATIONS: 3
+    MUTATIONS: 1
     DIVERSITY_LAMBDA: 0.01
     DISCRIMINATOR_UPDATES: 3
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/evo_attngan2_mutation_count_3.npy'
