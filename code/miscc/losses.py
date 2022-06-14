@@ -269,7 +269,7 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
 
             errG_total += w_loss + s_loss
             logs += 'w_loss: %.2f s_loss: %.2f ' % (w_loss.item(), s_loss.item())
-    return errG_total, logs
+    return errG_total, logs, w_loss, s_loss
 
 # Used in fitness function
 def discriminator_loss_with_logits(netD, real_imgs, fake_imgs, conditions,

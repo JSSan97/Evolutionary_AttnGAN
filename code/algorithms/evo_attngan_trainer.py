@@ -210,7 +210,7 @@ class EvoTraining(GenericTrainer):
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
-            errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
+            errG_total, G_logs, w_loss, s_loss = evo_generator_loss(netsD, image_encoder, fake_imgs,
                                                     real_labels, fake_labels,
                                                     words_embs, sent_emb, match_labels,
                                                     cap_lens, class_ids, mutations[m])
@@ -225,7 +225,7 @@ class EvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
-            F = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb)
+            F = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb, w_loss, s_loss)
 
             # Perform selection
             if count < 1:
@@ -258,7 +258,7 @@ class EvoTraining(GenericTrainer):
 
         return eval_imgs, mutation_chosen, netG, optimizerG, logs, errG_total, noise
 
-    def fitness_score(self, netsD, fake_imgs, real_imgs, fake_labels, real_labels, sent_emb):
+    def fitness_score(self, netsD, fake_imgs, real_imgs, fake_labels, real_labels, sent_emb, w_loss, s_loss):
         self.set_requires_grad_value(netsD, True)
 
         # Get fitness scores of the last stage, i.e. assess 256x256
@@ -292,7 +292,10 @@ class EvoTraining(GenericTrainer):
                 allgrad = grad if i == 0 else torch.cat([allgrad, grad])
         Fd = -torch.log(torch.norm(allgrad)).data.cpu().numpy()
 
-        F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
+        Fw = cfg.EVO.WORD_LOSS_LAMBDA * w_loss
+        Fs = cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
+
+        F = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) - Fw - Fs
 
         print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}".format(F,
                                                                  (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
