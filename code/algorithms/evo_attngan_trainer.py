@@ -300,7 +300,7 @@ class EvoTraining(GenericTrainer):
         print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
                                                                  (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
                                                                  (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
-                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd), Fw, Fs)
+                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
 
         ## F = Fq + cfg.EVO.DIVERSITY_LAMBDA * Fd
 
