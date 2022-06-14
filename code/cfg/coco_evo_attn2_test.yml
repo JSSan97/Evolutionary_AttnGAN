@@ -1,4 +1,4 @@
-CONFIG_NAME: 'evo_attn_disc3'
+CONFIG_NAME: 'evo_attn_uncond_05'
 
 DATASET_NAME: 'coco'
 DATA_DIR: '/content/coco'
@@ -41,7 +41,7 @@ EVO:
     DIVERSITY_LAMBDA: 0.01
     DISCRIMINATOR_UPDATES: 3
     QUALITY_CONDITIONAL_LAMBDA: 1
-    QUALITY_UNCONDITIONAL_LAMBDA: 1
+    QUALITY_UNCONDITIONAL_LAMBDA: 0.5
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/evo_attngan2_mutation_count_3.npy'
 
 TEXT:
