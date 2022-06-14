@@ -146,6 +146,7 @@ def discriminator_loss(netD, real_imgs, fake_imgs, conditions,
     cond_fake_errD = nn.BCELoss()(cond_fake_logits, fake_labels)
     #
     batch_size = real_features.size(0)
+    # Wrong images of dataset, right
     cond_wrong_logits = netD.COND_DNET(real_features[:(batch_size - 1)], conditions[1:batch_size])
     cond_wrong_errD = nn.BCELoss()(cond_wrong_logits, fake_labels[1:batch_size])
 
@@ -210,6 +211,7 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
                    real_labels, fake_labels,
                    words_embs, sent_emb, match_labels,
                    cap_lens, class_ids, mutation):
+
     numDs = len(netsD)
     batch_size = real_labels.size(0)
     logs = ''
@@ -217,22 +219,27 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
     errG_total = 0
     for i in range(numDs):
         features = netsD[i](fake_imgs[i])
-        cond_logits = netsD[i].COND_DNET(features, sent_emb)
+        # cond_logits = netsD[i].COND_DNET(features, sent_emb, lsgan=False)
         # cond_errG = nn.BCELoss()(cond_logits, real_labels)
         if netsD[i].UNCOND_DNET is not None:
-            fake_prediction = netsD[i].UNCOND_DNET(features)
 
             if mutation == "minimax":
                 criterion = nn.BCELoss()
+                fake_prediction = netsD[i].UNCOND_DNET(features, lsgan=False)
                 errG = -criterion(fake_prediction, fake_labels)
+                cond_logits = netsD[i].COND_DNET(features, sent_emb, lsgan=False)
                 cond_errG = -criterion(cond_logits, fake_labels)
             elif mutation == "least_squares":
                 criterion = nn.MSELoss()
+                fake_prediction = netsD[i].UNCOND_DNET(features, lsgan=True)
                 errG = criterion(fake_prediction, real_labels)
+                cond_logits = netsD[i].COND_DNET(features, sent_emb, lsgan=True)
                 cond_errG = criterion(cond_logits, real_labels)
             elif mutation == "heuristic":
                 criterion = nn.BCELoss()
+                fake_prediction = netsD[i].UNCOND_DNET(features, lsgan=False)
                 errG = criterion(fake_prediction, real_labels)
+                cond_logits = netsD[i].COND_DNET(features, sent_emb, lsgan=False)
                 cond_errG = criterion(cond_logits, real_labels)
 
             g_loss = errG + cond_errG
