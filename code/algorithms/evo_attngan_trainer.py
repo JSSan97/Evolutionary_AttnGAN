@@ -23,6 +23,7 @@ class EvoTraining(GenericTrainer):
 
         # List of mutation counts per epoch
         self.minimax_list, self.least_squares_list, self.heuristic_list = self.load_mutation_count()
+        print(self.minimax_list, self.least_squares_list, self.heuristic_list)
 
     def load_mutation_count(self):
         if cfg.EVO.RECORD_MUTATION and os.path.isfile(cfg.EVO.RECORD_MUTATION):
