@@ -101,7 +101,7 @@ class EvoTraining(GenericTrainer):
                     cap_lens, class_ids, mask, noise.data.normal_(0, 1), imgs)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
-                print(mutation_dict)
+                # print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
@@ -297,10 +297,10 @@ class EvoTraining(GenericTrainer):
 
         F = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
 
-        print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
-                                                                 (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
-                                                                 (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
-                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
+        # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
+        #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
+        #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
+        #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
 
 
         return F
