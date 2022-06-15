@@ -101,7 +101,7 @@ class EvoTraining(GenericTrainer):
                     cap_lens, class_ids, mask, noise.data.normal_(0, 1), imgs)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
-                # print(mutation_dict)
+                print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
