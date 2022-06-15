@@ -12,7 +12,7 @@ TREE:
 
 TRAIN:
     FLAG: True
-    NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2.pth'
+    NET_G: '/content/drive/MyDrive/Github/output/coco_evo_attn_v2_2022_06_14_22_00_54'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/coco_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 24  # 32
     MAX_EPOCH: 150
@@ -38,10 +38,10 @@ GAN:
 EVO:
     EVOLUTION_TRAINING: True
     MUTATIONS: 3
-    DIVERSITY_LAMBDA: 0.02
+    DIVERSITY_LAMBDA: 0.01
     DISCRIMINATOR_UPDATES: 3
-    QUALITY_CONDITIONAL_LAMBDA: 1.0
-    QUALITY_UNCONDITIONAL_LAMBDA: 1.0
+    QUALITY_CONDITIONAL_LAMBDA: 0.5
+    QUALITY_UNCONDITIONAL_LAMBDA: 0.5
     WORD_LOSS_LAMBDA: 0.003
     SENTENCE_LOSS_LAMBDA: 0.003
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/evo_attngan2_mutation_count_3.npy'
