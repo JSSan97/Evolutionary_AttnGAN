@@ -232,9 +232,9 @@ def evo_generator_loss(netsD, image_encoder, fake_imgs,
             elif mutation == "least_squares":
                 criterion = nn.MSELoss()
                 fake_prediction = netsD[i].UNCOND_DNET(features, lsgan=True)
-                errG = criterion(fake_prediction, real_labels)
+                errG = 0.5 * criterion(fake_prediction, real_labels)
                 cond_logits = netsD[i].COND_DNET(features, sent_emb, lsgan=True)
-                cond_errG = criterion(cond_logits, real_labels)
+                cond_errG = 0.5 * criterion(cond_logits, real_labels)
             elif mutation == "heuristic":
                 criterion = nn.BCELoss()
                 fake_prediction = netsD[i].UNCOND_DNET(features, lsgan=False)
