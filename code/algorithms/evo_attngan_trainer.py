@@ -35,12 +35,8 @@ class EvoTraining(GenericTrainer):
         else:
             return [], [], []
 
-    def save_mutation_count(self, mutation_dict):
+    def save_mutation_count(self):
         if cfg.EVO.RECORD_MUTATION:
-            self.minimax_list.append(mutation_dict['minimax'])
-            self.least_squares_list.append(mutation_dict['least_squares'])
-            self.heuristic_list.append(mutation_dict['heuristic'])
-
             mutations = {}
             mutations['minimax'] = self.minimax_list
             mutations['least_squares'] = self.least_squares_list
@@ -163,12 +159,16 @@ class EvoTraining(GenericTrainer):
                   % (epoch, self.max_epoch, self.num_batches))
             print(mutation_dict)
 
+            self.minimax_list.append(mutation_dict['minimax'])
+            self.least_squares_list.append(mutation_dict['least_squares'])
+            self.heuristic_list.append(mutation_dict['heuristic'])
+
             if epoch % cfg.TRAIN.SNAPSHOT_INTERVAL == 0:  # and epoch != 0:
                 self.save_model(netG, avg_param_G, netsD, epoch)
-                self.save_mutation_count(mutation_dict)
+                self.save_mutation_count()
 
         self.save_model(netG, avg_param_G, netsD, self.max_epoch)
-        self.save_mutation_count(mutation_dict)
+        self.save_mutation_count()
 
     def forward(self, noise, netG, sent_emb, words_embs, mask):
         fake_imgs, att_maps, mu, logvar = netG(noise, sent_emb, words_embs, mask)
