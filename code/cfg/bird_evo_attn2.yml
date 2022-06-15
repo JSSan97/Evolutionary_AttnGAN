@@ -1,4 +1,4 @@
-CONFIG_NAME: 'attn2'
+CONFIG_NAME: 'evo_attn2'
 
 DATASET_NAME: 'birds'
 DATA_DIR: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds'
@@ -39,8 +39,8 @@ EVO:
     MUTATIONS: 3
     DIVERSITY_LAMBDA: 0.01
     DISCRIMINATOR_UPDATES: 3
-    QUALITY_CONDITIONAL_LAMBDA: 0.7
-    QUALITY_UNCONDITIONAL_LAMBDA: 0.3
+    QUALITY_CONDITIONAL_LAMBDA: 0.6
+    QUALITY_UNCONDITIONAL_LAMBDA: 0.4
     WORD_LOSS_LAMBDA: 0.003
     SENTENCE_LOSS_LAMBDA: 0.003
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_evo_attngan2_mutation_count.npy'
