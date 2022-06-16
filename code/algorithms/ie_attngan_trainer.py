@@ -38,7 +38,7 @@ class ImprovedEvoTraining(GenericTrainer):
             crossover = mutations['crossover']
             return minimax, least_squares, heuristic, crossover
         else:
-            return [], [], []
+            return [], [], [], []
 
     def save_mutation_count(self):
         if cfg.EVO.RECORD_MUTATION:
