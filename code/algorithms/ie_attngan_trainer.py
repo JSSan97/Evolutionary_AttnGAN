@@ -367,6 +367,10 @@ class ImprovedEvoTraining(GenericTrainer):
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
 
+        print(Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd)).detach().cpu().numpy())
+        print(Fw)
+        print(Fs)
+
         F_critic = (Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd)).detach().cpu().numpy() + Fw + Fs
         #
         # F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
