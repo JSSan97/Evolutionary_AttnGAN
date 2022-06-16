@@ -23,7 +23,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
         # List of mutation counts per epoch
         self.minimax_list, self.least_squares_list, self.heuristic_list, self.crossover_list = self.load_mutation_count()
-        print(self.minimax_list, self.least_squares_list, self.heuristic_list)
+        print(self.minimax_list, self.least_squares_list, self.heuristic_list, self.crossover_list)
 
         self.MSE_loss = torch.nn.MSELoss()
         self.crossover_size = 1
