@@ -10,7 +10,8 @@ from torch.autograd import Variable
 from miscc.config import cfg
 from miscc.utils import weights_init, load_params, copy_G_params
 from datasets import prepare_data
-from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits, get_word_and_sentence_loss
+from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits, \
+    get_word_and_sentence_loss
 import time
 import os
 
@@ -212,7 +213,6 @@ class ImprovedEvoTraining(GenericTrainer):
 
         # Go through every mutation
         for m in range(cfg.EVO.MUTATIONS):
-
             # Perform Variation
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
@@ -235,8 +235,11 @@ class ImprovedEvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 mutation_gen_images, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
-            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images[-1], sent_emb, w_loss.item(), s_loss.item())
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs,
+                                                            sent_emb, match_labels, cap_lens, class_ids,
+                                                            real_labels.size(0))
+            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images[-1], sent_emb, w_loss.item(),
+                                               s_loss.item())
 
             mutate_pop.append(copy.deepcopy(netG.state_dict()))
             mutate_optim.append(copy.deepcopy(optimizerG.state_dict()))
@@ -253,9 +256,11 @@ class ImprovedEvoTraining(GenericTrainer):
 
         for i in range(self.crossover_size):
             first, second, _ = sorted_groups[i % len(sorted_groups)]
-            netG, optimizerG = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first], mutate_optim[first], mutate_critics[first],
-                                       gen_imgs_list[first][-1], mutate_critics[second], gen_imgs_list[second][-1],
-                                       crossover_pop, crossover_optim, sent_emb, words_embs, mask)
+            netG, optimizerG = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first],
+                                                          mutate_optim[first], mutate_critics[first],
+                                                          gen_imgs_list[first][-1], mutate_critics[second],
+                                                          gen_imgs_list[second][-1],
+                                                          crossover_pop, crossover_optim, sent_emb, words_embs, mask)
 
         for i in range(self.crossover_size):
             netG.load_state_dict(crossover_pop[i])
@@ -289,8 +294,8 @@ class ImprovedEvoTraining(GenericTrainer):
 
         return eval_imgs, selected, netG, optimizerG, G_logs, errG_total
 
-
-    def distilation_crossover(self, netG, optimizerG, netsD, noise, gene1, gene1_optim, gene1_critic, gene1_sample, gene2_critic, gene2_sample,
+    def distilation_crossover(self, netG, optimizerG, netsD, noise, gene1, gene1_optim, gene1_critic, gene1_sample,
+                              gene2_critic, gene2_sample,
                               offspring, offspring_optim, sent_emb, words_embs, mask):
         self.set_requires_grad_value(netsD, False)
 
@@ -302,14 +307,22 @@ class ImprovedEvoTraining(GenericTrainer):
         eps = 0.0
 
         # Take the best of samples in gene1 and best of samples in gene2 and put together a list of images
-        print([gene1_critic - gene2_critic > eps])
-
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         # Also take the best input noise
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
 
-        offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
+        # Ensure sent, word and mask are the same
+        new_sent_emb = torch.cat((sent_emb[gene1_critic - gene2_critic > eps],
+                                  sent_emb[gene2_critic - gene1_critic >= eps])).detach()
+
+        new_word_emb = torch.cat((words_embs[gene1_critic - gene2_critic > eps],
+                                  words_embs[gene2_critic - gene1_critic >= eps])).detach()
+
+        new_mask = torch.cat((mask[gene1_critic - gene2_critic > eps],
+                              mask[gene2_critic - gene1_critic >= eps])).detach()
+
+        offspring_batch, _, _, _ = self.forward(noise_batch, netG, new_sent_emb, new_word_emb, new_mask)
         offspring_batch = offspring_batch[-1]
 
         # Offspring Update
@@ -332,25 +345,13 @@ class ImprovedEvoTraining(GenericTrainer):
                     groups.append((first, second, fitness[first] + fitness[second]))
         return sorted(groups, key=lambda group: group[2], reverse=True)
 
-
     def fitness_score(self, netD, fake_imgs, sent_emb, w_loss, s_loss):
         # Get fitness scores of the last stage, i.e. assess 256x256
         fake_features = netD(fake_imgs)
         cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
         uncond_output = netD.UNCOND_DNET(fake_features, logits=False)
 
-        # # Quality fitness score
-        # # The unconditional evaluation determines whether the image is real or fake
-        # uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
-        # # The conditional evaluation determines whether the image and the sentence match or not
-        # cond_eval_fake = cond_output.data.mean().cpu().numpy()
-        #
-        # # Quality fitness score
-        # Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
-        #      (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
-
-
-        Fq = (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA  * cond_output) + \
+        Fq = (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_output) + \
              (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_output)
 
         Fd = torch.empty(0)
@@ -381,10 +382,8 @@ class ImprovedEvoTraining(GenericTrainer):
         # print(f)
         # print(F_critic)
 
-
         # print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                      Fq.mean().item(),
         #                                                      Fd.mean().item(), Fw, Fs))
-
 
         return f, F_critic
