@@ -237,7 +237,7 @@ class ImprovedEvoTraining(GenericTrainer):
                 mutation_gen_images, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
                 mutation_gen_images = mutation_gen_images[-1]
                 w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images, words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
-            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
+            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images, sent_emb, w_loss, s_loss)
 
             mutate_pop.append(copy.deepcopy(netG.state_dict()))
             mutate_optim.append(copy.deepcopy(optimizerG.state_dict()))
@@ -266,7 +266,7 @@ class ImprovedEvoTraining(GenericTrainer):
                 w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images, words_embs,
                                                             sent_emb, match_labels, cap_lens, class_ids,
                                                             real_labels.size(0))
-            crossover_f, _ = self.fitness_score(netsD[-1], crossover_gen_images, sent_emb, w_loss.item(), s_loss.item())
+            crossover_f, _ = self.fitness_score(netsD[-1], crossover_gen_images, sent_emb, w_loss, s_loss)
             fitness.append(crossover_f)
             gen_imgs_list.append(crossover_gen_images)
 
@@ -333,18 +333,21 @@ class ImprovedEvoTraining(GenericTrainer):
     def fitness_score(self, netD, fake_imgs, sent_emb, w_loss, s_loss):
         # Get fitness scores of the last stage, i.e. assess 256x256
         fake_features = netD(fake_imgs)
-        cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
-        uncond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
+        Fq_cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
+        Fq_uncond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
 
-        # Quality fitness score
-        # The unconditional evaluation determines whether the image is real or fake
-        uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
-        # The conditional evaluation determines whether the image and the sentence match or not
-        cond_eval_fake = cond_output.data.mean().cpu().numpy()
+        Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * Fq_uncond_output) + \
+            (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * Fq_cond_output)
 
-        # Quality fitness score
-        Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
-             (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
+        # # Quality fitness score
+        # # The unconditional evaluation determines whether the image is real or fake
+        # uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
+        # # The conditional evaluation determines whether the image and the sentence match or not
+        # cond_eval_fake = cond_output.data.mean().cpu().numpy()
+        #
+        # # Quality fitness score
+        # Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
+        #      (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
         Fd = torch.empty(0)
         if cfg.CUDA:
@@ -361,14 +364,15 @@ class ImprovedEvoTraining(GenericTrainer):
             F_diversity = torch.cat((F_diversity, loss_samples))
         Fd = Fd.mean(0)
 
-
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
 
-        F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
+        F_critic = (Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd)).detach().cpu().numpy() + Fw + Fs
+        #
+        # F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
 
         # Mean
-        f = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs / 4
+        f = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw.item() + Fs.item() / 4
 
         # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
