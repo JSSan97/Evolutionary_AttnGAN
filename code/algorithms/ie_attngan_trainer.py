@@ -300,11 +300,12 @@ class ImprovedEvoTraining(GenericTrainer):
         optimizerG.zero_grad()
 
         eps = 0.0
-        print(gene1_sample[gene1_critic - gene2_critic > eps])
-        print(gene1_sample[gene1_critic - gene2_critic > eps].shape)
 
+        # Take the best of samples in gene1 and best of samples in gene2 and put together a list of images
+        print([gene1_critic - gene2_critic > eps])
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
+        # Also take the best input noise
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
 
         offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
