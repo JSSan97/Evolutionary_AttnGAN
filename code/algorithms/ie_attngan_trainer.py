@@ -334,7 +334,10 @@ class ImprovedEvoTraining(GenericTrainer):
         # Get fitness scores of the last stage, i.e. assess 256x256
         fake_features = netD(fake_imgs)
         cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
-        uncond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
+        uncond_output = netD.UNCOND_DNET(fake_features, logits=False)
+
+        print(cond_output)
+        print(uncond_output)
 
         # Quality fitness score
         # The unconditional evaluation determines whether the image is real or fake
@@ -368,9 +371,6 @@ class ImprovedEvoTraining(GenericTrainer):
 
         # Mean
         f = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs / 4
-
-        print(f)
-        print(F_critic)
 
         # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
