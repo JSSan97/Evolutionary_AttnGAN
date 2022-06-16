@@ -273,7 +273,6 @@ class ImprovedEvoTraining(GenericTrainer):
         index = top_n[0]
 
         if index >= len(mutations):
-            print("Crossover")
             eval_imgs = gen_imgs_list[index]
             index = index - len(mutations)
             gene = copy.deepcopy(crossover_pop[index])
@@ -282,7 +281,6 @@ class ImprovedEvoTraining(GenericTrainer):
             print(crossover_optim[index])
             selected = 'crossover'
         else:
-            print("Mutation")
             eval_imgs = gen_imgs_list[index]
             gene = copy.deepcopy(mutate_pop[index])
             gene_optimizer = copy.deepcopy(mutate_optim[index])
@@ -317,7 +315,7 @@ class ImprovedEvoTraining(GenericTrainer):
         optimizerG.step()
 
         offspring.append(copy.deepcopy(netG.state_dict()))
-        offspring_optim.append(copy.deepcopy(netG.state_dict()))
+        offspring_optim.append(copy.deepcopy(optimizerG.state_dict()))
 
         return netG, optimizerG
 
