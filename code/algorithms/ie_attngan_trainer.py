@@ -331,11 +331,11 @@ class ImprovedEvoTraining(GenericTrainer):
         self.set_requires_grad_value(netsD, True)
 
         # Get fitness scores of the last stage, i.e. assess 256x256
-        i = len(netsD) - 1
+        index = len(netsD) - 1
 
-        fake_features = netsD[i](fake_imgs[i])
-        cond_output = netsD[i].COND_DNET(fake_features, sent_emb, logits=False)
-        uncond_output = netsD[i].COND_DNET(fake_features, sent_emb, logits=False)
+        fake_features = netsD[index](fake_imgs[index])
+        cond_output = netsD[index].COND_DNET(fake_features, sent_emb, logits=False)
+        uncond_output = netsD[index].COND_DNET(fake_features, sent_emb, logits=False)
 
         # Quality fitness score
         # The unconditional evaluation determines whether the image is real or fake
@@ -354,11 +354,11 @@ class ImprovedEvoTraining(GenericTrainer):
         # Diversity fitness score
         comp_size = 5  # 1/3/5/30
         for i in range(comp_size):
-            shuffle_ids = torch.randperm(fake_imgs[i].size(0))
-            disorder_samples = fake_imgs[i][shuffle_ids]
-            loss = self.criterion_MAE(fake_imgs[i], disorder_samples)
+            shuffle_ids = torch.randperm(fake_imgs[index].size(0))
+            disorder_samples = fake_imgs[index][shuffle_ids]
+            loss = self.criterion_MAE(fake_imgs[index], disorder_samples)
             # loss = self.criterion_MSE(gen_samples, disorder_samples).sqrt_()
-            loss_samples = loss.reshape(fake_imgs[i].size(0), -1).mean(1).unsqueeze(0)
+            loss_samples = loss.reshape(fake_imgs[index].size(0), -1).mean(1).unsqueeze(0)
             F_diversity = torch.cat((F_diversity, loss_samples))
         Fd = Fd.mean(0)
 
