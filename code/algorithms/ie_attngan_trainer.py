@@ -99,14 +99,14 @@ class ImprovedEvoTraining(GenericTrainer):
                 # (2) Evolutionary Phase: Update G Networks and Select Best
                 ###########################################################
                 noise.data.normal_(0, 1)
-                fake_imgs, mutation, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
+                fake_imgs, selection, netG, optimizerG, G_logs, errG_total = self.evolution_phase(
                     netG, netsD, optimizerG, image_encoder,
                     real_labels, fake_labels,
                     words_embs, sent_emb, match_labels,
                     cap_lens, class_ids, mask, noise)
 
-                mutation_dict[mutation] = mutation_dict[mutation] + 1
-                # print(mutation_dict)
+                mutation_dict[selection] = mutation_dict[selection] + 1
+                print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
@@ -145,7 +145,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
                 if gen_iterations % 100 == 0:
                     print(D_logs + '\n' + G_logs)
-                    print("Most recent mutation : {}".format(mutation))
+                    print("Most recent mutation : {}".format(selection))
                     print(mutation_dict)
 
                 # save images

@@ -42,8 +42,8 @@ EVO:
     DISCRIMINATOR_UPDATES: 3
     QUALITY_CONDITIONAL_LAMBDA: 0.6
     QUALITY_UNCONDITIONAL_LAMBDA: 0.4
-    WORD_LOSS_LAMBDA: 0.005
-    SENTENCE_LOSS_LAMBDA: 0.005
+    WORD_LOSS_LAMBDA: 0.5
+    SENTENCE_LOSS_LAMBDA: 0.5
     RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_ie_attngan2_mutation_count.npy'
 
 TEXT:
