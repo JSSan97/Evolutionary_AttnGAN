@@ -99,7 +99,7 @@ class EvoTraining(GenericTrainer):
                     cap_lens, class_ids, mask, noise.data.normal_(0, 1), imgs)
 
                 mutation_dict[mutation] = mutation_dict[mutation] + 1
-                print(mutation_dict)
+                # print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
@@ -200,6 +200,8 @@ class EvoTraining(GenericTrainer):
         G_candidate_dict = copy.deepcopy(netG.state_dict())
         optG_candidate_dict = copy.deepcopy(optimizerG.state_dict())
 
+        noise_mutate = noise.data.normal_(0, 1)
+
         count = 0
 
         # Go through every mutation
@@ -208,7 +210,6 @@ class EvoTraining(GenericTrainer):
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
-            noise.data.normal_(0, 1)
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
@@ -226,7 +227,7 @@ class EvoTraining(GenericTrainer):
             noise.data.normal_(0, 1)
             # Perform Evaluation
             with torch.no_grad():
-                eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+                eval_fake_imgs, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
                 w_loss, s_loss = get_word_and_sentence_loss(image_encoder, eval_fake_imgs[-1], words_embs, sent_emb,
                                                             match_labels, cap_lens, class_ids, real_labels.size(0))
 
@@ -302,10 +303,10 @@ class EvoTraining(GenericTrainer):
 
         F = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
 
-        print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
-                                                                 (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
-                                                                 (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
-                                                                 cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
+        # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
+        #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
+        #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
+        #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
 
 
         return F
