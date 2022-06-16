@@ -301,6 +301,8 @@ class ImprovedEvoTraining(GenericTrainer):
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
 
+        print(noise_batch.shape)
+
         offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
 
         # Offspring Update
