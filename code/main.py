@@ -137,8 +137,12 @@ if __name__ == "__main__":
         algo = trainer(output_dir, dataloader, dataset.n_words)
     else:
         if cfg.EVO.EVOLUTION_TRAINING:
-            from algorithms.evo_attngan_trainer import EvoTraining as trainer
-            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+            if cfg.EVO.IE_GAN_TRAINING:
+                from algorithms.ie_attngan_trainer import ImprovedEvoTraining as trainer
+                algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+            else:
+                from algorithms.evo_attngan_trainer import EvoTraining as trainer
+                algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
         else:
             from algorithms.attngan_trainer import condGANTrainer as trainer
             algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
