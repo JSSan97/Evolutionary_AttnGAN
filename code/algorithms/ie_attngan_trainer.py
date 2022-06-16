@@ -363,7 +363,7 @@ class ImprovedEvoTraining(GenericTrainer):
             # loss = self.criterion_MSE(gen_samples, disorder_samples).sqrt_()
             loss_samples = loss.reshape(fake_imgs.size(0), -1).mean(1).unsqueeze(0)
             Fd = torch.cat((Fd, loss_samples))
-        Fd = Fd.mean(0).mean()
+        Fd = Fd.mean(0)
 
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
