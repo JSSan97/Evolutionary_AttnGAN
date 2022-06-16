@@ -106,7 +106,7 @@ class ImprovedEvoTraining(GenericTrainer):
                     cap_lens, class_ids, mask, noise)
 
                 mutation_dict[selection] = mutation_dict[selection] + 1
-                print(mutation_dict)
+                # print(mutation_dict)
 
                 #######################################################
                 # (3) Update D network
@@ -300,6 +300,8 @@ class ImprovedEvoTraining(GenericTrainer):
         optimizerG.zero_grad()
 
         eps = 0.0
+        print(gene1_sample[gene1_critic - gene2_critic > eps])
+
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
@@ -377,9 +379,9 @@ class ImprovedEvoTraining(GenericTrainer):
         # print(F_critic)
 
 
-        print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
-                                                             Fq.mean().item(),
-                                                             Fd.mean().item(), Fw, Fs))
+        # print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
+        #                                                      Fq.mean().item(),
+        #                                                      Fd.mean().item(), Fw, Fs))
 
 
         return f, F_critic
