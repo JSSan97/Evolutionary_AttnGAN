@@ -16,6 +16,8 @@ import os
 
 from algorithms.trainer import GenericTrainer
 
+from code.miscc.losses import get_word_and_sentence_loss
+
 
 class EvoTraining(GenericTrainer):
     def __init__(self, output_dir, data_loader, n_words, ixtoword):
@@ -211,7 +213,7 @@ class EvoTraining(GenericTrainer):
             fake_imgs, _, mu, logvar = self.forward(noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
-            errG_total, G_logs, w_loss, s_loss = evo_generator_loss(netsD, image_encoder, fake_imgs,
+            errG_total, G_logs = evo_generator_loss(netsD, image_encoder, fake_imgs,
                                                     real_labels, fake_labels,
                                                     words_embs, sent_emb, match_labels,
                                                     cap_lens, class_ids, mutations[m])
@@ -226,6 +228,8 @@ class EvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, eval_fake_imgs[len(netsD) - 1], words_embs, sent_emb,
+                                                            match_labels, cap_lens, class_ids, real_labels.size(0))
             F = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb, w_loss, s_loss)
 
             # Perform selection
