@@ -274,7 +274,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
         if index >= len(mutations):
             eval_imgs = gen_imgs_list[index]
-            index = index - mutations
+            index = index - len(mutations)
             gene = copy.deepcopy(crossover_pop[index])
             gene_optimizer = copy.deepcopy(crossover_optim[index])
             selected = 'crossover'
