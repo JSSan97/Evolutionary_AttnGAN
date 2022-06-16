@@ -227,7 +227,7 @@ class EvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 eval_fake_imgs, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, eval_fake_imgs[len(netsD) - 1], words_embs, sent_emb,
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, eval_fake_imgs[-1], words_embs, sent_emb,
                                                             match_labels, cap_lens, class_ids, real_labels.size(0))
 
             F = self.fitness_score(netsD, eval_fake_imgs, real_imgs, fake_labels, real_labels, sent_emb, w_loss.item(), s_loss.item())
