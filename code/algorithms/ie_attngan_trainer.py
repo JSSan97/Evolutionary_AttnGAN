@@ -336,15 +336,19 @@ class ImprovedEvoTraining(GenericTrainer):
         cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
         uncond_output = netD.UNCOND_DNET(fake_features, logits=False)
 
-        # Quality fitness score
-        # The unconditional evaluation determines whether the image is real or fake
-        uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
-        # The conditional evaluation determines whether the image and the sentence match or not
-        cond_eval_fake = cond_output.data.mean().cpu().numpy()
+        # # Quality fitness score
+        # # The unconditional evaluation determines whether the image is real or fake
+        # uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
+        # # The conditional evaluation determines whether the image and the sentence match or not
+        # cond_eval_fake = cond_output.data.mean().cpu().numpy()
+        #
+        # # Quality fitness score
+        # Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
+        #      (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
-        # Quality fitness score
-        Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
-             (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
+
+        Fq = (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA  * cond_output) + \
+             (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_output)
 
         Fd = torch.empty(0)
         if cfg.CUDA:
@@ -359,20 +363,18 @@ class ImprovedEvoTraining(GenericTrainer):
             # loss = self.criterion_MSE(gen_samples, disorder_samples).sqrt_()
             loss_samples = loss.reshape(fake_imgs.size(0), -1).mean(1).unsqueeze(0)
             Fd = torch.cat((Fd, loss_samples))
-        Fd = Fd.mean(0).mean().item()
+        Fd = Fd.mean(0).mean()
 
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
+
+        F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
+        f = (Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs).mean()
 
         print(Fq)
         print(Fd)
         print(Fw)
         print(Fs)
-
-        F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
-
-        # Mean
-        f = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs / 4
 
         # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
