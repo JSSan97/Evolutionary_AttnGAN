@@ -114,6 +114,7 @@ class ImprovedEvoTraining(GenericTrainer):
                 errD_total = 0
                 D_logs = ''
                 eval_size = int(cfg.TRAIN.BATCH_SIZE // cfg.EVO.DISCRIMINATOR_UPDATES)
+                self.set_requires_grad_value(netsD, False)
 
                 for d in range(cfg.EVO.DISCRIMINATOR_UPDATES):
                     for i in range(len(netsD)):
