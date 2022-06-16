@@ -235,8 +235,9 @@ class ImprovedEvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 mutation_gen_images, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
-            f, gen_critic = self.fitness_score(netsD, mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
+                mutation_gen_images = mutation_gen_images[-1]
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images, words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
+            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
 
             mutate_pop.append(copy.deepcopy(netG.state_dict()))
             mutate_optim.append(copy.deepcopy(optimizerG.state_dict()))
@@ -261,10 +262,11 @@ class ImprovedEvoTraining(GenericTrainer):
             netG.load_state_dict(crossover_pop[i])
             with torch.no_grad():
                 crossover_gen_images, _, _, _ = self.forward(noise_crossover, netG, sent_emb, words_embs, mask)
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images[-1], words_embs,
+                crossover_gen_images = crossover_gen_images[-1]
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images, words_embs,
                                                             sent_emb, match_labels, cap_lens, class_ids,
                                                             real_labels.size(0))
-            crossover_f, _ = self.fitness_score(netsD, crossover_gen_images, sent_emb, w_loss.item(), s_loss.item())
+            crossover_f, _ = self.fitness_score(netsD[-1], crossover_gen_images, sent_emb, w_loss.item(), s_loss.item())
             fitness.append(crossover_f)
             gen_imgs_list.append(crossover_gen_images)
 
@@ -328,15 +330,11 @@ class ImprovedEvoTraining(GenericTrainer):
         return sorted(groups, key=lambda group: group[2], reverse=True)
 
 
-    def fitness_score(self, netsD, fake_imgs, sent_emb, w_loss, s_loss):
-        self.set_requires_grad_value(netsD, False)
-
+    def fitness_score(self, netD, fake_imgs, sent_emb, w_loss, s_loss):
         # Get fitness scores of the last stage, i.e. assess 256x256
-        index = len(netsD) - 1
-
-        fake_features = netsD[index](fake_imgs[index])
-        cond_output = netsD[index].COND_DNET(fake_features, sent_emb, logits=False)
-        uncond_output = netsD[index].COND_DNET(fake_features, sent_emb, logits=False)
+        fake_features = netD(fake_imgs)
+        cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
+        uncond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
 
         # Quality fitness score
         # The unconditional evaluation determines whether the image is real or fake
@@ -355,11 +353,11 @@ class ImprovedEvoTraining(GenericTrainer):
         # Diversity fitness score
         comp_size = 5  # 1/3/5/30
         for i in range(comp_size):
-            shuffle_ids = torch.randperm(fake_imgs[index].size(0))
-            disorder_samples = fake_imgs[index][shuffle_ids]
-            loss = self.criterion_MAE(fake_imgs[index], disorder_samples)
+            shuffle_ids = torch.randperm(fake_imgs.size(0))
+            disorder_samples = fake_imgs[shuffle_ids]
+            loss = self.criterion_MAE(fake_imgs, disorder_samples)
             # loss = self.criterion_MSE(gen_samples, disorder_samples).sqrt_()
-            loss_samples = loss.reshape(fake_imgs[index].size(0), -1).mean(1).unsqueeze(0)
+            loss_samples = loss.reshape(fake_imgs.size(0), -1).mean(1).unsqueeze(0)
             F_diversity = torch.cat((F_diversity, loss_samples))
         Fd = Fd.mean(0)
 
