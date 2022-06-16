@@ -367,6 +367,8 @@ class ImprovedEvoTraining(GenericTrainer):
             F_diversity = torch.cat((F_diversity, loss_samples))
         Fd = Fd.mean(0)
 
+        print(Fd)
+
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
 
