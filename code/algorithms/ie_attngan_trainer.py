@@ -303,6 +303,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
         # Take the best of samples in gene1 and best of samples in gene2 and put together a list of images
         print([gene1_critic - gene2_critic > eps])
+
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         # Also take the best input noise
