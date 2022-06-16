@@ -345,9 +345,6 @@ class ImprovedEvoTraining(GenericTrainer):
         # The conditional evaluation determines whether the image and the sentence match or not
         cond_eval_fake = cond_output.data.mean().cpu().numpy()
 
-        print(uncond_eval_fake)
-        print(cond_eval_fake)
-
         # Quality fitness score
         Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
              (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
@@ -367,8 +364,6 @@ class ImprovedEvoTraining(GenericTrainer):
             Fd = torch.cat((Fd, loss_samples))
         Fd = Fd.mean(0)
 
-        print(Fd)
-
         Fw = -cfg.EVO.WORD_LOSS_LAMBDA * w_loss
         Fs = -cfg.EVO.SENTENCE_LOSS_LAMBDA * s_loss
 
@@ -381,5 +376,8 @@ class ImprovedEvoTraining(GenericTrainer):
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
         #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
         #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
+
+        print(f)
+        print(F_critic)
 
         return f, F_critic
