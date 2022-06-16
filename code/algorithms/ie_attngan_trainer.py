@@ -372,17 +372,18 @@ class ImprovedEvoTraining(GenericTrainer):
         F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
         f = (Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs).mean().item()
 
-        # print(Fq)
-        # print(Fd)
-        # print(Fw)
-        # print(Fs)
+        print(Fq)
+        print(Fd)
+        print(Fw)
+        print(Fs)
+        print(f)
+        print(F_critic)
+
 
         # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
         #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
         #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
         #
-        # print(f)
-        # print(F_critic)
 
         return f, F_critic
