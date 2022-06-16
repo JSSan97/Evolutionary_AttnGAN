@@ -232,7 +232,7 @@ class ImprovedEvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 mutation_gen_images, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images, words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
             f, gen_critic = self.fitness_score(netsD, mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
 
             mutate_pop.append(copy.deepcopy(self.individual.state_dict()))
@@ -258,7 +258,10 @@ class ImprovedEvoTraining(GenericTrainer):
             netG.load_state_dict(crossover_pop[i])
             with torch.no_grad():
                 crossover_gen_images, _, _, _ = self.forward(noise_crossover, netG, sent_emb, words_embs, mask)
-            crossover_f, _ = self.fitness_score(netsD, crossover_gen_images, sent_emb, w_loss, s_loss)
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images[-1], words_embs,
+                                                            sent_emb, match_labels, cap_lens, class_ids,
+                                                            real_labels.size(0))
+            crossover_f, _ = self.fitness_score(netsD, crossover_gen_images, sent_emb, w_loss.item(), s_loss.item())
             fitness.append(crossover_f)
             gen_imgs_list.append(crossover_gen_images)
 
@@ -367,7 +370,7 @@ class ImprovedEvoTraining(GenericTrainer):
         # Mean
         f = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs / 4
 
-        # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(F,
+        # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
         #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
         #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
