@@ -216,6 +216,8 @@ class ImprovedEvoTraining(GenericTrainer):
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
+            print(current_noise.shape)
+
             fake_imgs, _, mu, logvar = self.forward(current_noise, netG, sent_emb, words_embs, mask)
 
             self.set_requires_grad_value(netsD, False)
