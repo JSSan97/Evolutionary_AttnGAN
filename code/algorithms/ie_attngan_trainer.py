@@ -301,6 +301,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
         eps = 0.0
         print(gene1_sample[gene1_critic - gene2_critic > eps])
+        print(gene1_sample[gene1_critic - gene2_critic > eps].shape)
 
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
