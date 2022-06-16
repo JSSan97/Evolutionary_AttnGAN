@@ -521,7 +521,7 @@ class D_GET_LOGITS(nn.Module):
 
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self, h_code, c_code=None, lsgan=False):
+    def forward(self, h_code, c_code=None, logits=True):
         if self.bcondition and c_code is not None:
             # conditioning output
             c_code = c_code.view(-1, self.ef_dim, 1, 1)
@@ -534,7 +534,7 @@ class D_GET_LOGITS(nn.Module):
             h_c_code = h_code
 
         output = self.last_layer(h_c_code)
-        if not lsgan:
+        if logits:
             output = self.sigmoid(output)
         return output.view(-1)
 
