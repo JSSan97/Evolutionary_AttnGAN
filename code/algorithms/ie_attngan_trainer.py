@@ -26,6 +26,7 @@ class ImprovedEvoTraining(GenericTrainer):
         print(self.minimax_list, self.least_squares_list, self.heuristic_list, self.crossover_list)
 
         self.MSE_loss = torch.nn.MSELoss()
+        self.criterion_MAE = nn.L1Loss(reduction='none')
         self.crossover_size = 1
 
     def load_mutation_count(self):
