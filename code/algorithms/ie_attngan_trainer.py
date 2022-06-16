@@ -308,6 +308,7 @@ class ImprovedEvoTraining(GenericTrainer):
         print(noise_batch.shape)
 
         offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
+        offspring_batch = offspring_batch[-1]
 
         # Offspring Update
         policy_loss = self.MSE_loss(offspring_batch, fake_batch)
@@ -371,17 +372,17 @@ class ImprovedEvoTraining(GenericTrainer):
         F_critic = Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs
         f = (Fq + (cfg.EVO.DIVERSITY_LAMBDA * Fd) + Fw + Fs).mean()
 
-        print(Fq)
-        print(Fd)
-        print(Fw)
-        print(Fs)
+        # print(Fq)
+        # print(Fd)
+        # print(Fw)
+        # print(Fs)
 
         # print("F: {}, Fq_uncond: {}, Fq_cond: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
         #                                                          (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake),
         #                                                          (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake),
         #                                                          cfg.EVO.DIVERSITY_LAMBDA * Fd, Fw, Fs))
-
-        print(f)
-        print(F_critic)
+        #
+        # print(f)
+        # print(F_critic)
 
         return f, F_critic
