@@ -216,7 +216,6 @@ class ImprovedEvoTraining(GenericTrainer):
             netG.load_state_dict(G_candidate_dict)
             optimizerG.load_state_dict(optG_candidate_dict)
             optimizerG.zero_grad()
-            print(current_noise.shape)
 
             fake_imgs, _, mu, logvar = self.forward(current_noise, netG, sent_emb, words_embs, mask)
 
@@ -235,9 +234,8 @@ class ImprovedEvoTraining(GenericTrainer):
             # Perform Evaluation
             with torch.no_grad():
                 mutation_gen_images, _, _, _ = self.forward(noise_mutate, netG, sent_emb, words_embs, mask)
-                mutation_gen_images = mutation_gen_images[-1]
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images, words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
-            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
+            f, gen_critic = self.fitness_score(netsD[-1], mutation_gen_images[-1], sent_emb, w_loss.item(), s_loss.item())
 
             mutate_pop.append(copy.deepcopy(netG.state_dict()))
             mutate_optim.append(copy.deepcopy(optimizerG.state_dict()))
@@ -255,18 +253,17 @@ class ImprovedEvoTraining(GenericTrainer):
         for i in range(self.crossover_size):
             first, second, _ = sorted_groups[i % len(sorted_groups)]
             netG, optimizerG = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first], mutate_optim[first], mutate_critics[first],
-                                       gen_imgs_list[first], mutate_critics[second], gen_imgs_list[second],
+                                       gen_imgs_list[first][-1], mutate_critics[second], gen_imgs_list[second][-1],
                                        crossover_pop, crossover_optim, sent_emb, words_embs, mask)
 
         for i in range(self.crossover_size):
             netG.load_state_dict(crossover_pop[i])
             with torch.no_grad():
                 crossover_gen_images, _, _, _ = self.forward(noise_crossover, netG, sent_emb, words_embs, mask)
-                crossover_gen_images = crossover_gen_images[-1]
-                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images, words_embs,
+                w_loss, s_loss = get_word_and_sentence_loss(image_encoder, crossover_gen_images[-1], words_embs,
                                                             sent_emb, match_labels, cap_lens, class_ids,
                                                             real_labels.size(0))
-            crossover_f, _ = self.fitness_score(netsD[-1], crossover_gen_images, sent_emb, w_loss, s_loss)
+            crossover_f, _ = self.fitness_score(netsD[-1], crossover_gen_images[-1], sent_emb, w_loss, s_loss)
             fitness.append(crossover_f)
             gen_imgs_list.append(crossover_gen_images)
 
