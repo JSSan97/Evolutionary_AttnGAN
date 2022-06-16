@@ -273,12 +273,14 @@ class ImprovedEvoTraining(GenericTrainer):
         index = top_n[0]
 
         if index >= len(mutations):
+            print("Crossover")
             eval_imgs = gen_imgs_list[index]
             index = index - len(mutations)
             gene = copy.deepcopy(crossover_pop[index])
             gene_optimizer = copy.deepcopy(crossover_optim[index])
             selected = 'crossover'
         else:
+            print("Mutation")
             eval_imgs = gen_imgs_list[index]
             gene = copy.deepcopy(mutate_pop[index])
             gene_optimizer = copy.deepcopy(mutate_optim[index])
@@ -303,8 +305,6 @@ class ImprovedEvoTraining(GenericTrainer):
         fake_batch = torch.cat((gene1_sample[gene1_critic - gene2_critic > eps],
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
-
-        print(noise_batch.shape)
 
         offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
         offspring_batch = offspring_batch[-1]
