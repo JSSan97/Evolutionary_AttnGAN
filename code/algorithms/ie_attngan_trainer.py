@@ -274,19 +274,20 @@ class ImprovedEvoTraining(GenericTrainer):
         top_n = np.argsort(fitness)[-1:]
         index = top_n[0]
 
-        if index >= self.mutate_size:
+        if index >= len(mutations):
             eval_imgs = gen_imgs_list[index]
-            index = index - self.mutate_size
-            self.genes[i] = copy.deepcopy(crossover_pop[index])
-            self.genes_optimizer[i] = copy.deepcopy(crossover_optim[index])
-
+            index = index - mutations
+            gene = copy.deepcopy(crossover_pop[index])
+            gene_optimizer = copy.deepcopy(crossover_optim[index])
             selected = 'crossover'
         else:
             eval_imgs = gen_imgs_list[index]
-            self.genes[i] = copy.deepcopy(mutate_pop[index])
-            self.genes_optimizer[i] = copy.deepcopy(mutate_optim[index])
-
+            gene = copy.deepcopy(mutate_pop[index])
+            gene_optimizer = copy.deepcopy(mutate_optim[index])
             selected = mutations[index % len(mutations)]
+
+        netG.load_state_dict(gene)
+        optimizerG.load_state_dict(gene_optimizer)
 
         return eval_imgs, selected, netG, optimizerG, G_logs, errG_total
 
