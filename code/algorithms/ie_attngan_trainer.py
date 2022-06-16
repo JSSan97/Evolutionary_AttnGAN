@@ -353,11 +353,11 @@ class ImprovedEvoTraining(GenericTrainer):
         # Diversity fitness score
         comp_size = 5  # 1/3/5/30
         for i in range(comp_size):
-            shuffle_ids = torch.randperm(fake_imgs.size(0))
-            disorder_samples = fake_imgs[shuffle_ids]
-            loss = self.criterion_MAE(fake_imgs, disorder_samples)
+            shuffle_ids = torch.randperm(fake_imgs[i].size(0))
+            disorder_samples = fake_imgs[i][shuffle_ids]
+            loss = self.criterion_MAE(fake_imgs[i], disorder_samples)
             # loss = self.criterion_MSE(gen_samples, disorder_samples).sqrt_()
-            loss_samples = loss.reshape(fake_imgs.size(0), -1).mean(1).unsqueeze(0)
+            loss_samples = loss.reshape(fake_imgs[i].size(0), -1).mean(1).unsqueeze(0)
             F_diversity = torch.cat((F_diversity, loss_samples))
         Fd = Fd.mean(0)
 
