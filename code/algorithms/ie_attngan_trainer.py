@@ -251,7 +251,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
         for i in range(self.crossover_size):
             first, second, _ = sorted_groups[i % len(sorted_groups)]
-            netG, optimizerG = self.distilation_crossover(netG, optimizerG, noise_mutate, mutate_pop[first], mutate_optim[first], mutate_critics[first],
+            netG, optimizerG = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first], mutate_optim[first], mutate_critics[first],
                                        gen_imgs_list[first], mutate_critics[second], gen_imgs_list[second],
                                        crossover_pop, crossover_optim, sent_emb, words_embs, mask)
 
@@ -287,10 +287,9 @@ class ImprovedEvoTraining(GenericTrainer):
         return eval_imgs, selected, netG, optimizerG, G_logs, errG_total
 
 
-    def distilation_crossover(self, netG, optimizerG, noise, gene1, gene1_optim, gene1_critic, gene1_sample, gene2_critic, gene2_sample,
+    def distilation_crossover(self, netG, optimizerG, netsD, noise, gene1, gene1_optim, gene1_critic, gene1_sample, gene2_critic, gene2_sample,
                               offspring, offspring_optim, sent_emb, words_embs, mask):
-        for p in self.critic.parameters():
-            p.requires_grad = False  # to avoid computation
+        self.set_requires_grad_value(netsD, False)
 
         netG.load_state_dict(gene1)
         optimizerG.load_state_dict(gene1_optim)
@@ -326,7 +325,7 @@ class ImprovedEvoTraining(GenericTrainer):
 
 
     def fitness_score(self, netsD, fake_imgs, sent_emb, w_loss, s_loss):
-        self.set_requires_grad_value(netsD, True)
+        self.set_requires_grad_value(netsD, False)
 
         # Get fitness scores of the last stage, i.e. assess 256x256
         index = len(netsD) - 1
