@@ -336,9 +336,6 @@ class ImprovedEvoTraining(GenericTrainer):
         cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
         uncond_output = netD.UNCOND_DNET(fake_features, logits=False)
 
-        print(cond_output)
-        print(uncond_output)
-
         # Quality fitness score
         # The unconditional evaluation determines whether the image is real or fake
         uncond_eval_fake = uncond_output.data.mean().cpu().numpy()
