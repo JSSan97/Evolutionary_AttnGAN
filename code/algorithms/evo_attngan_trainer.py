@@ -10,13 +10,12 @@ from torch.autograd import Variable
 from miscc.config import cfg
 from miscc.utils import weights_init, load_params, copy_G_params
 from datasets import prepare_data
-from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits
+from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits, get_word_and_sentence_loss
 import time
 import os
 
 from algorithms.trainer import GenericTrainer
 
-from code.miscc.losses import get_word_and_sentence_loss
 
 
 class EvoTraining(GenericTrainer):
