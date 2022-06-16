@@ -345,6 +345,9 @@ class ImprovedEvoTraining(GenericTrainer):
         # The conditional evaluation determines whether the image and the sentence match or not
         cond_eval_fake = cond_output.data.mean().cpu().numpy()
 
+        print(uncond_eval_fake)
+        print(cond_eval_fake)
+
         # Quality fitness score
         Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
              (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
