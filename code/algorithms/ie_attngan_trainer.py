@@ -236,8 +236,8 @@ class ImprovedEvoTraining(GenericTrainer):
                 w_loss, s_loss = get_word_and_sentence_loss(image_encoder, mutation_gen_images[-1], words_embs, sent_emb, match_labels, cap_lens, class_ids, real_labels.size(0))
             f, gen_critic = self.fitness_score(netsD, mutation_gen_images, sent_emb, w_loss.item(), s_loss.item())
 
-            mutate_pop.append(copy.deepcopy(self.individual.state_dict()))
-            mutate_optim.append(copy.deepcopy(self.individual_optimizer.state_dict()))
+            mutate_pop.append(copy.deepcopy(netG.state_dict()))
+            mutate_optim.append(copy.deepcopy(optimizerG.state_dict()))
             mutate_critics.append(gen_critic)
             gen_imgs_list.append(mutation_gen_images)
             fitness.append(f)
@@ -302,9 +302,7 @@ class ImprovedEvoTraining(GenericTrainer):
                                 gene2_sample[gene2_critic - gene1_critic >= eps])).detach()
         noise_batch = torch.cat((noise[gene1_critic - gene2_critic > eps], noise[gene2_critic - gene1_critic >= eps]))
 
-        # offspring_batch = self.individual(noise_batch)
-
-        offspring_batch, _, _, _ = self.forward(noise, netG, sent_emb, words_embs, mask)
+        offspring_batch, _, _, _ = self.forward(noise_batch, netG, sent_emb, words_embs, mask)
 
         # Offspring Update
         policy_loss = self.MSE_loss(offspring_batch, fake_batch)
