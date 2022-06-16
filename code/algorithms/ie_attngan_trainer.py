@@ -346,7 +346,7 @@ class ImprovedEvoTraining(GenericTrainer):
         Fq = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_eval_fake) + \
              (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_eval_fake)
 
-        Fd = torch.empty(0, device=self.device)
+        Fd = torch.empty(0)
         if cfg.CUDA:
             F_diversity = Fd.cuda()
 
