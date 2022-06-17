@@ -204,6 +204,9 @@ class ImprovedEvoTraining(GenericTrainer):
         mutate_critics = []
         gen_imgs_list = []
 
+        g_logs_list = []
+        errG_list = []
+
         # Parent of evolution cycle
         G_candidate_dict = copy.deepcopy(netG.state_dict())
         optG_candidate_dict = copy.deepcopy(optimizerG.state_dict())
@@ -246,6 +249,8 @@ class ImprovedEvoTraining(GenericTrainer):
             mutate_critics.append(gen_critic)
             gen_imgs_list.append(mutation_gen_images)
             fitness.append(f)
+            errG_list.append(errG_total)
+            g_logs_list.append(G_logs)
 
         ########## CROSSOVER ############
         # Initialize crossover population
@@ -261,6 +266,9 @@ class ImprovedEvoTraining(GenericTrainer):
                                                           gen_imgs_list[first][-1], mutate_critics[second],
                                                           gen_imgs_list[second][-1],
                                                           crossover_pop, crossover_optim, sent_emb, words_embs, mask)
+
+        G_logs = g_logs_list[first]
+        errG_total = errG_list[first]
 
         for i in range(self.crossover_size):
             netG.load_state_dict(crossover_pop[i])
