@@ -261,12 +261,13 @@ class ImprovedEvoTraining(GenericTrainer):
 
         for i in range(self.crossover_size):
             first, second, _ = sorted_groups[i % len(sorted_groups)]
-            netG, optimizerG = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first],
+            netG, optimizerG, c_loss = self.distilation_crossover(netG, optimizerG, netsD, noise_mutate, mutate_pop[first],
                                                           mutate_optim[first], mutate_critics[first],
                                                           gen_imgs_list[first][-1], mutate_critics[second],
                                                           gen_imgs_list[second][-1],
                                                           crossover_pop, crossover_optim, sent_emb, words_embs, mask)
 
+        g_logs_list[first] += 'crossover_loss: %.2f ' % c_loss.item()
         G_logs = g_logs_list[first]
         errG_total = errG_list[first]
 
@@ -341,7 +342,7 @@ class ImprovedEvoTraining(GenericTrainer):
         offspring.append(copy.deepcopy(netG.state_dict()))
         offspring_optim.append(copy.deepcopy(optimizerG.state_dict()))
 
-        return netG, optimizerG
+        return netG, optimizerG, policy_loss
 
     def sort_groups_by_fitness(self, genomes, fitness):
         groups = []
