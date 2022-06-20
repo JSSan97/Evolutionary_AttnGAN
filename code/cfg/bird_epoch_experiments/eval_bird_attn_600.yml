@@ -6,9 +6,10 @@ GPU_ID: 3
 WORKERS: 1
 
 B_VALIDATION: True  # True  # False
+B_VALIDATION_IMG_ARRAY: '/content/eval_bird_img_array_600.npy'
+
 TREE:
     BRANCH_NUM: 3
-
 
 TRAIN:
     FLAG: False
