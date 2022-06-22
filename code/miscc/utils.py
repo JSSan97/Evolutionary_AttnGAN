@@ -228,13 +228,12 @@ def build_super_images2(real_imgs, captions, cap_lens, ixtoword,
         row_txt = []
         row_beforeNorm = []
         conf_score = []
+        ## Number of attentions (aka number of words)
         for j in range(num_attn):
+            ## One_map is a tensor with values between 0 to 1 (very minimal)
             one_map = attn[j]
+            ## Mask0 is a tensor of true or false
             mask0 = one_map > (2. * thresh)
-            print("one_map")
-            print(one_map)
-            print("mask shape")
-            print(mask0)
             conf_score.append(np.sum(one_map * mask0))
             mask = one_map > thresh
             one_map = one_map * mask
