@@ -231,6 +231,10 @@ def build_super_images2(real_imgs, captions, cap_lens, ixtoword,
         for j in range(num_attn):
             one_map = attn[j]
             mask0 = one_map > (2. * thresh)
+            print("one_map shape")
+            print(one_map.shape)
+            print("mask0 shape")
+            print(mask0.shape)
             conf_score.append(np.sum(one_map * mask0))
             mask = one_map > thresh
             one_map = one_map * mask
