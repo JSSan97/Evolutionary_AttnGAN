@@ -167,8 +167,10 @@ def build_super_images(real_imgs, captions, ixtoword,
                 increase = int(255/num_attn) * sorted_indices[j]
 
                 one_map *= 255
-                one_map[:,:,1] = increase
-                one_map[:,:,2] = increase
+
+                attn_map = one_map
+                attn_map[:,:,1] = increase
+                attn_map[:,:,2] = increase
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
@@ -186,7 +188,7 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = post_pad
                 merged = post_pad
 
-            row.append(one_map)
+            row.append(attn_map)
             row.append(middle_pad)
             #
             row_merge.append(merged)
