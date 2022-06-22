@@ -218,7 +218,7 @@ class GenericTrainer():
         return image_encoder
 
 
-    def save_img_results_2(self, fake_imgs, captions, words_embs, cap_lens, save_path):
+    def save_img_results_2(self, fake_imgs, captions, words_embs, cap_lens, save_path, batch_size):
 
         image_encoder = self.get_img_encoder()
 
@@ -229,7 +229,7 @@ class GenericTrainer():
         _, _, att_maps = words_loss(region_features.detach(),
                                     words_embs.detach(),
                                     None, cap_lens,
-                                    None, self.batch_size)
+                                    None, batch_size)
         img_set, _ = \
             build_super_images(fake_imgs[i].detach().cpu(),
                                captions, self.ixtoword, att_maps, att_sze)
@@ -435,7 +435,8 @@ class GenericTrainer():
                                             captions=captions,
                                             words_embs=words_embs,
                                             cap_lens=cap_lens,
-                                            save_path=save_path)
+                                            save_path=save_path,
+                                            batch_size=batch_size)
 
                     for j in range(batch_size):
                         save_name = '%s/%d_s_%d' % (save_dir, i, sorted_indices[j])
