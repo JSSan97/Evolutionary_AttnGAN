@@ -168,7 +168,7 @@ def build_super_images(real_imgs, captions, ixtoword,
 
                 one_map *= 255
 
-                attn_map = one_map
+                attn_map = deepcopy(one_map)
                 attn_map[:,:,1] = increase
                 attn_map[:,:,2] = increase
 
@@ -186,6 +186,7 @@ def build_super_images(real_imgs, captions, ixtoword,
             else:
                 # I.e black box because there are no words
                 one_map = post_pad
+                attn_map = post_pad
                 merged = post_pad
 
             row.append(attn_map)
