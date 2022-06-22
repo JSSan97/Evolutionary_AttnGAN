@@ -165,15 +165,11 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
 
                 one_map *= 255
-                one_map[:,:,1] = 0
-                one_map[:,:,2] = 0
+                one_map[:,:,1] = int(255/num_attn) * sorted_indices[j]
+                one_map[:,:,2] = int(255/num_attn) * sorted_indices[j]
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
-
-                # attn_map = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
-                # im = PIL_att.convert('RGBA')
-                # attn_map.paste(PIL_att)
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
                 merged = \
