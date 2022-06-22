@@ -71,6 +71,7 @@ def build_super_images(real_imgs, captions, ixtoword,
                 dtype=np.uint8)
 
     for i in range(max_word_num):
+        print(i)
         istart = (i + 2) * (vis_size + 2)
         iend = (i + 3) * (vis_size + 2)
         text_convas[:, istart:iend, :] = COLOR_DIC[i]
