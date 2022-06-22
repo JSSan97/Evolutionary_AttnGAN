@@ -168,7 +168,7 @@ def build_super_images(real_imgs, captions, ixtoword,
 
                 attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
                 mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, 0 * sorted_indices[j], 0 * sorted_indices[j], 0))
-                attn_img.paste(mask_attn)
+                attn_img.paste(PIL_att, (0, 0), mask_attn)
                 attn_img = np.array(attn_img)[:, :, :3]
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
@@ -182,6 +182,7 @@ def build_super_images(real_imgs, captions, ixtoword,
             else:
                 # I.e black box because there are no words
                 one_map = post_pad
+                attn_img = one_map
                 merged = post_pad
             ## row.append(one_map)
 
