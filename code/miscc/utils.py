@@ -166,7 +166,7 @@ def build_super_images(real_imgs, captions, ixtoword,
 
                 increment = int(255 / num_attn)
 
-                one_map *= increment * sorted_indices
+                one_map *= increment * sorted_indices[j]
 
                 # one_map *= 255
 
