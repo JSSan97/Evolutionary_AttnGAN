@@ -431,7 +431,7 @@ class GenericTrainer():
 
                     # Save long image list with attention maps
                     save_path = '%s/all_examples.png' % (save_dir)
-                    self.save_img_results_2(img_encoder=image_encoder,
+                    self.save_img_results_2(image_encoder=image_encoder,
                                             fake_imgs=fake_imgs,
                                             captions=captions,
                                             words_embs=words_embs,
