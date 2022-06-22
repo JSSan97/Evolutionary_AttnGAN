@@ -167,8 +167,8 @@ def build_super_images(real_imgs, captions, ixtoword,
                 increase = int(255/num_attn) * sorted_indices[j]
 
                 one_map *= 255
-                one_map[:,:,1] *= increase
-                one_map[:,:,2] *= increase
+                one_map[:,:,1] = increase
+                one_map[:,:,2] = increase
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
