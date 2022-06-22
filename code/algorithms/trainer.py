@@ -435,7 +435,7 @@ class GenericTrainer():
                                             captions=captions,
                                             words_embs=words_embs,
                                             cap_lens=cap_lens,
-                                            path=save_path)
+                                            save_path=save_path)
 
                     for j in range(batch_size):
                         save_name = '%s/%d_s_%d' % (save_dir, i, sorted_indices[j])
