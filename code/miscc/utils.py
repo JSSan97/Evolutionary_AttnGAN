@@ -110,6 +110,7 @@ def build_super_images(real_imgs, captions, ixtoword,
     text_map = np.asarray(text_map).astype(np.uint8)
 
     bUpdate = 1
+    ## Number of images shown
     for i in range(num):
         attn = attn_maps[i].cpu().view(1, -1, att_sze, att_sze)
         # --> 1 x 1 x 17 x 17
@@ -131,6 +132,9 @@ def build_super_images(real_imgs, captions, ixtoword,
         row_merge = [img, middle_pad]
         row_beforeNorm = []
         minVglobal, maxVglobal = 1, 0
+
+        thresh = 2. / float(num_attn)
+        conf_score = []
         for j in range(num_attn):
             one_map = attn[j]
             if (vis_size // att_sze) > 1:
@@ -145,24 +149,43 @@ def build_super_images(real_imgs, captions, ixtoword,
                 minVglobal = minV
             if maxVglobal < maxV:
                 maxVglobal = maxV
+
+            mask0 = one_map > (2. * thresh)
+            conf_score.append(np.sum(one_map * mask0))
+
+        sorted_indices = np.argsort(conf_score)[::-1]
+
         for j in range(seq_len + 1):
+            # Every attention image
             if j < num_attn:
+                # Place image
                 one_map = row_beforeNorm[j]
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
                 one_map *= 255
-                #
+
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
+
+                attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
+                mask_attn = Image.new('L', (vis_size, vis_size), (255, 0 * sorted_indices[j], 0 * sorted_indices[j]))
+                attn_img.paste(mask_attn)
+                attn_img = np.array(attn_img)[:, :, :3]
+
+                ## Aka image of mode RGBA, size: vis_size*vis_size, color black
                 merged = \
                     Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
+                ## Mask image
                 mask = Image.new('L', (vis_size, vis_size), (210))
                 merged.paste(PIL_im, (0, 0))
                 merged.paste(PIL_att, (0, 0), mask)
                 merged = np.array(merged)[:, :, :3]
             else:
+                # I.e black box because there are no words
                 one_map = post_pad
                 merged = post_pad
-            row.append(one_map)
+            ## row.append(one_map)
+
+            row.append(attn_img)
             row.append(middle_pad)
             #
             row_merge.append(merged)
