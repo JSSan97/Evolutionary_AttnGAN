@@ -165,19 +165,12 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
 
                 increment = int(255 / num_attn)
+                print(one_map.shape)
 
-                one_map *= increment * sorted_indices[j]
-
-                # one_map *= 255
+                one_map *= 255
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
-
-
-                # attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
-                # mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 200))
-                # attn_img.paste(PIL_att, (0, 0), mask_attn)
-                # attn_img = np.array(attn_img)[:, :, :3]
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
                 merged = \
@@ -190,11 +183,9 @@ def build_super_images(real_imgs, captions, ixtoword,
             else:
                 # I.e black box because there are no words
                 one_map = post_pad
-                attn_img = one_map
                 merged = post_pad
-            row.append(one_map)
 
-            # row.append(attn_img)
+            row.append(one_map)
             row.append(middle_pad)
             #
             row_merge.append(merged)
