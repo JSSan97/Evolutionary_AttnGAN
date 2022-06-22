@@ -171,7 +171,7 @@ def build_super_images(real_imgs, captions, ixtoword,
                 increment = int(255 / num_attn)
 
                 attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
-                mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 1))
+                mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 255))
                 attn_img.paste(PIL_att, (0, 0), mask_attn)
                 attn_img = np.array(attn_img)[:, :, :3]
 
