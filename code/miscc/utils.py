@@ -137,6 +137,9 @@ def build_super_images(real_imgs, captions, ixtoword,
         conf_score = []
         for j in range(num_attn):
             one_map = attn[j]
+            mask0 = one_map > (2. * thresh)
+            conf_score.append(np.sum(one_map * mask0))
+
             if (vis_size // att_sze) > 1:
                 one_map = \
                     skimage.transform.pyramid_expand(one_map, sigma=20,
@@ -149,9 +152,6 @@ def build_super_images(real_imgs, captions, ixtoword,
                 minVglobal = minV
             if maxVglobal < maxV:
                 maxVglobal = maxV
-
-            mask0 = one_map > (2. * thresh)
-            conf_score.append(np.sum(one_map * mask0))
 
         sorted_indices = np.argsort(conf_score)[::-1]
 
