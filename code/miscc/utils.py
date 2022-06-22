@@ -163,17 +163,21 @@ def build_super_images(real_imgs, captions, ixtoword,
                 # Place image
                 one_map = row_beforeNorm[j]
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
-                one_map *= 255
+
+                increment = int(255 / num_attn)
+
+                one_map = increment * sorted_indices
+
+                # one_map *= 255
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
 
-                increment = int(255 / num_attn)
 
-                attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
-                mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 200))
-                attn_img.paste(PIL_att, (0, 0), mask_attn)
-                attn_img = np.array(attn_img)[:, :, :3]
+                # attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
+                # mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 200))
+                # attn_img.paste(PIL_att, (0, 0), mask_attn)
+                # attn_img = np.array(attn_img)[:, :, :3]
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
                 merged = \
@@ -188,9 +192,9 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = post_pad
                 attn_img = one_map
                 merged = post_pad
-            ## row.append(one_map)
+            row.append(one_map)
 
-            row.append(attn_img)
+            # row.append(attn_img)
             row.append(middle_pad)
             #
             row_merge.append(merged)
