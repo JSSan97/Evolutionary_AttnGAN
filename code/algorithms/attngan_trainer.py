@@ -29,6 +29,7 @@ from algorithms.trainer import GenericTrainer
 # ################# Text to image task############################ #
 class condGANTrainer(GenericTrainer):
     def __init__(self, output_dir, data_loader, n_words, ixtoword):
+        super().__init__(output_dir, data_loader, n_words, ixtoword)
         if cfg.TRAIN.FLAG:
             self.model_dir = os.path.join(output_dir, 'Model')
             self.image_dir = os.path.join(output_dir, 'Image')
