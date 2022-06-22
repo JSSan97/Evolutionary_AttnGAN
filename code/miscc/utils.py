@@ -266,6 +266,7 @@ def build_super_images2(real_imgs, captions, cap_lens, ixtoword,
             one_map = (one_map - minV) / (maxV - minV)
             row_beforeNorm.append(one_map)
         sorted_indices = np.argsort(conf_score)[::-1]
+        print(sorted_indices)
 
         for j in range(num_attn):
             one_map = row_beforeNorm[j]
