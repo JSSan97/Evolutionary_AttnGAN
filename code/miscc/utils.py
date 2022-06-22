@@ -155,6 +155,8 @@ def build_super_images(real_imgs, captions, ixtoword,
 
         sorted_indices = np.argsort(conf_score)[::-1]
 
+        print(sorted_indices)
+
         for j in range(seq_len + 1):
             # Every attention image
             if j < num_attn:
@@ -163,30 +165,26 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
                 one_map *= 255
 
+                colour_increase = float(255 / num_attn)
+
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
-
-                attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
-                mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, 0 * sorted_indices[j], 0 * sorted_indices[j], 0))
-                attn_img.paste(PIL_att, (0, 0), mask_attn)
-                attn_img = np.array(attn_img)[:, :, :3]
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
                 merged = \
                     Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
                 ## Mask image
-                mask = Image.new('L', (vis_size, vis_size), (210))
+                mask = Image.new('RGBA', (vis_size, vis_size), (255, colour_increase * sorted_indices[j], colour_increase * sorted_indices[j], 0))
                 merged.paste(PIL_im, (0, 0))
                 merged.paste(PIL_att, (0, 0), mask)
                 merged = np.array(merged)[:, :, :3]
             else:
                 # I.e black box because there are no words
                 one_map = post_pad
-                attn_img = one_map
                 merged = post_pad
-            ## row.append(one_map)
+            row.append(one_map)
 
-            row.append(attn_img)
+            ## row.append(attn_img)
             row.append(middle_pad)
             #
             row_merge.append(merged)
