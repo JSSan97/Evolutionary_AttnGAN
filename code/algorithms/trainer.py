@@ -433,7 +433,7 @@ class GenericTrainer():
                     save_path = '%s/all_examples.png' % (s_tmp)
                     self.save_img_results_2(fake_imgs=fake_imgs,
                                             captions=captions,
-                                            word_embs=words_embs,
+                                            words_embs=words_embs,
                                             cap_lens=cap_lens,
                                             path=save_path)
 
