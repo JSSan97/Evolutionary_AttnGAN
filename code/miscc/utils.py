@@ -133,12 +133,12 @@ def build_super_images(real_imgs, captions, ixtoword,
         row_beforeNorm = []
         minVglobal, maxVglobal = 1, 0
 
-        thresh = 2. / float(num_attn)
-        conf_score = []
+        # thresh = 2./float(num_attn)
+        # conf_score = []
         for j in range(num_attn):
             one_map = attn[j]
-            mask0 = one_map > (2. * thresh)
-            conf_score.append(np.sum(one_map * mask0))
+            # mask0 = one_map > (2. * thresh)
+            # conf_score.append(np.sum(one_map * mask0))
 
             if (vis_size // att_sze) > 1:
                 one_map = \
@@ -152,10 +152,8 @@ def build_super_images(real_imgs, captions, ixtoword,
                 minVglobal = minV
             if maxVglobal < maxV:
                 maxVglobal = maxV
-
-        sorted_indices = np.argsort(conf_score)[::-1]
-
-        print(sorted_indices)
+        #
+        # sorted_indices = np.argsort(conf_score)[::-1]
 
         for j in range(seq_len + 1):
             # Every attention image
@@ -266,7 +264,6 @@ def build_super_images2(real_imgs, captions, cap_lens, ixtoword,
             one_map = (one_map - minV) / (maxV - minV)
             row_beforeNorm.append(one_map)
         sorted_indices = np.argsort(conf_score)[::-1]
-        print(sorted_indices)
 
         for j in range(num_attn):
             one_map = row_beforeNorm[j]
