@@ -163,15 +163,7 @@ def build_super_images(real_imgs, captions, ixtoword,
                 # Place image
                 one_map = row_beforeNorm[j]
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
-
-                decrease = int(255/num_attn) * sorted_indices[j]
-
                 one_map *= 255
-
-                attn_map = deepcopy(one_map)
-                attn_map -= decrease
-                attn_map[:,:,1] = 0
-                attn_map[:,:,2] = 0
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
@@ -187,10 +179,9 @@ def build_super_images(real_imgs, captions, ixtoword,
             else:
                 # I.e black box because there are no words
                 one_map = post_pad
-                attn_map = post_pad
                 merged = post_pad
 
-            row.append(attn_map)
+            row.append(one_map)
             row.append(middle_pad)
             #
             row_merge.append(merged)
