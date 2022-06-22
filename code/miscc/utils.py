@@ -172,7 +172,7 @@ def build_super_images(real_imgs, captions, ixtoword,
 
                 attn_img = Image.new('RGBA', (vis_size, vis_size), (0, 0, 0, 0))
                 mask_attn = Image.new('RGBA', (vis_size, vis_size), (255, increment * sorted_indices[j], increment * sorted_indices[j], 200))
-                attn_img.paste(one_map, (0, 0), mask_attn)
+                attn_img.paste(PIL_att, (0, 0), mask_attn)
                 attn_img = np.array(attn_img)[:, :, :3]
 
                 ## Aka image of mode RGBA, size: vis_size*vis_size, color black
