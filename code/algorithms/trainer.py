@@ -218,9 +218,7 @@ class GenericTrainer():
         return image_encoder
 
 
-    def save_img_results_2(self, fake_imgs, captions, words_embs, cap_lens, save_path, batch_size):
-
-        image_encoder = self.get_img_encoder()
+    def save_img_results_2(self, image_encoder, fake_imgs, captions, words_embs, cap_lens, save_path, batch_size):
 
         i = -1
         img = fake_imgs[i].detach()
@@ -370,6 +368,8 @@ class GenericTrainer():
             text_encoder = text_encoder.cuda()
             text_encoder.eval()
 
+            image_encoder = self.get_img_encoder()
+
             # the path to save generated images
             if cfg.GAN.B_DCGAN:
                 netG = G_DCGAN()
@@ -430,8 +430,9 @@ class GenericTrainer():
                     cap_lens_np = cap_lens.cpu().data.numpy()
 
                     # Save long image list with attention maps
-                    save_path = '%s/all_examples.png' % (s_tmp)
-                    self.save_img_results_2(fake_imgs=fake_imgs,
+                    save_path = '%s/all_examples.png' % (save_dir)
+                    self.save_img_results_2(img_encoder=image_encoder,
+                                            fake_imgs=fake_imgs,
                                             captions=captions,
                                             words_embs=words_embs,
                                             cap_lens=cap_lens,
