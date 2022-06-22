@@ -46,15 +46,7 @@ class GenericTrainer():
             print('Error: no pretrained text-image encoders')
             return
 
-        image_encoder = CNN_ENCODER(cfg.TEXT.EMBEDDING_DIM)
-        img_encoder_path = cfg.TRAIN.NET_E.replace('text_encoder', 'image_encoder')
-        state_dict = \
-            torch.load(img_encoder_path, map_location=lambda storage, loc: storage)
-        image_encoder.load_state_dict(state_dict)
-        for p in image_encoder.parameters():
-            p.requires_grad = False
-        print('Load image encoder from:', img_encoder_path)
-        image_encoder.eval()
+        image_encoder = self.get_img_encoder()
 
         text_encoder = \
             RNN_ENCODER(self.n_words, nhidden=cfg.TEXT.EMBEDDING_DIM)
@@ -118,7 +110,6 @@ class GenericTrainer():
         # ########################################################### #
         if cfg.CUDA:
             text_encoder = text_encoder.cuda()
-            image_encoder = image_encoder.cuda()
             netG.cuda()
             for i in range(len(netsD)):
                 netsD[i].cuda()
@@ -209,6 +200,42 @@ class GenericTrainer():
             fullpath = '%s/D_%s_%d.png'\
                 % (self.image_dir, name, gen_iterations)
             im.save(fullpath)
+
+    def get_img_encoder(self):
+        image_encoder = CNN_ENCODER(cfg.TEXT.EMBEDDING_DIM)
+        img_encoder_path = cfg.TRAIN.NET_E.replace('text_encoder', 'image_encoder')
+        state_dict = \
+            torch.load(img_encoder_path, map_location=lambda storage, loc: storage)
+        image_encoder.load_state_dict(state_dict)
+        for p in image_encoder.parameters():
+            p.requires_grad = False
+        print('Load image encoder from:', img_encoder_path)
+        image_encoder.eval()
+
+        if cfg.CUDA:
+            image_encoder = image_encoder.cuda()
+
+        return image_encoder
+
+
+    def save_img_results_2(self, fake_imgs, captions, words_embs, cap_lens, save_path):
+
+        image_encoder = self.get_img_encoder()
+
+        i = -1
+        img = fake_imgs[i].detach()
+        region_features, _ = image_encoder(img)
+        att_sze = region_features.size(2)
+        _, _, att_maps = words_loss(region_features.detach(),
+                                    words_embs.detach(),
+                                    None, cap_lens,
+                                    None, self.batch_size)
+        img_set, _ = \
+            build_super_images(fake_imgs[i].detach().cpu(),
+                               captions, self.ixtoword, att_maps, att_sze)
+        if img_set is not None:
+            im = Image.fromarray(img_set)
+            im.save(save_path)
 
     def save_singleimages(self, images, filenames, save_dir,
                           split_dir, sentenceID=0):
@@ -401,6 +428,15 @@ class GenericTrainer():
                     fake_imgs, attention_maps, _, _ = netG(noise, sent_emb, words_embs, mask)
                     # G attention
                     cap_lens_np = cap_lens.cpu().data.numpy()
+
+                    # Save long image list with attention maps
+                    save_path = '%s/all_examples.png' % (s_tmp)
+                    self.save_img_results_2(fake_imgs=fake_imgs,
+                                            att_maps=attention_maps,
+                                            word_embs=words_embs,
+                                            cap_lens=cap_lens,
+                                            path=save_path)
+
                     for j in range(batch_size):
                         save_name = '%s/%d_s_%d' % (save_dir, i, sorted_indices[j])
                         for k in range(len(fake_imgs)):
