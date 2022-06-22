@@ -164,13 +164,14 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map = row_beforeNorm[j]
                 one_map = (one_map - minVglobal) / (maxVglobal - minVglobal)
 
-                increase = int(255/num_attn) * sorted_indices[j]
+                decrease = int(255/num_attn) * sorted_indices[j]
 
                 one_map *= 255
 
                 attn_map = deepcopy(one_map)
-                attn_map[:,:,1] = increase
-                attn_map[:,:,2] = increase
+                one_map -= decrease
+                attn_map[:,:,1] = 0
+                attn_map[:,:,2] = 0
 
                 PIL_im = Image.fromarray(np.uint8(img))
                 PIL_att = Image.fromarray(np.uint8(one_map))
