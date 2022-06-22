@@ -169,7 +169,7 @@ def build_super_images(real_imgs, captions, ixtoword,
                 one_map *= 255
 
                 attn_map = deepcopy(one_map)
-                one_map -= decrease
+                attn_map -= decrease
                 attn_map[:,:,1] = 0
                 attn_map[:,:,2] = 0
 
