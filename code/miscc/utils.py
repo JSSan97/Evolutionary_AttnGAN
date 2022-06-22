@@ -24,7 +24,10 @@ COLOR_DIC = {0:[128,64,128],  1:[244, 35,232],
              12:[255, 0, 0],  13:[0, 0, 142],
              14:[119,11, 32], 15:[0, 60,100],
              16:[0, 80, 100], 17:[0, 0, 230],
-             18:[0,  0, 70],  19:[0, 0,  0]}
+             18:[0,  0, 70],  19:[0, 0,  0],
+             20:[128,64,128], 21:[244, 35,232],
+             22:[70, 70, 70], 23:[102,102,156],
+             24:[190,153,153], 25:[153,153,153]}
 FONT_MAX = 50
 
 
@@ -71,7 +74,6 @@ def build_super_images(real_imgs, captions, ixtoword,
                 dtype=np.uint8)
 
     for i in range(max_word_num):
-        print(i)
         istart = (i + 2) * (vis_size + 2)
         iend = (i + 3) * (vis_size + 2)
         text_convas[:, istart:iend, :] = COLOR_DIC[i]
