@@ -12,7 +12,7 @@ TREE:
 
 TRAIN:
     FLAG: False
-    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2_500.pth'
+    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_500.pth'
     B_NET_D: False
     BATCH_SIZE: 16
     NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'

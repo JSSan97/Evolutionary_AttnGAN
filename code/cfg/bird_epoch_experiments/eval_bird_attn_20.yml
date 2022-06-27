@@ -6,14 +6,14 @@ GPU_ID: 3
 WORKERS: 1
 
 B_VALIDATION: True  # True  # False
-B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/img_array/eval_bird_img_array_0.npy'
+B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/img_array/eval_bird_img_array_20.npy'
 
 TREE:
     BRANCH_NUM: 3
 
 TRAIN:
     FLAG: False
-    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2_0.pth'
+    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_20.pth'
     B_NET_D: False
     BATCH_SIZE: 16
     NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
