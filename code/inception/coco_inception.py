@@ -35,6 +35,7 @@ def save_imgs_as_numpy_array(path):
 def load_inception_scores(inception_path):
     if os.path.isfile(inception_path):
         inception = np.load(inception_path, allow_pickle=True)
+        inception = np.ndarray.tolist(inception)
         mean_list = inception['mean']
         std_list = inception['std']
         return mean_list, std_list
