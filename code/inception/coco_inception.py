@@ -17,6 +17,7 @@ def save_imgs_as_numpy_array(path):
     eval = np.load(path, allow_pickle=True)
     eval = np.ndarray.tolist(eval)
     images = eval['validation_imgs']
+    print(images.shape)
     mean, std = get_inception_score(images=images)
     print("==== Mean ====")
     print(mean)
