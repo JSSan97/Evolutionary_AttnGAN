@@ -16,7 +16,7 @@ import torch.utils.data as data
 import torchvision.transforms as transforms
 from PIL import Image
 from miscc.config import cfg, cfg_from_file
-from model import RNN_ENCODER, CNN_ENCODER
+from models.attngan_model import RNN_ENCODER, CNN_ENCODER
 from nltk.tokenize import RegexpTokenizer
 from torch.autograd import Variable
 from tqdm import tqdm
