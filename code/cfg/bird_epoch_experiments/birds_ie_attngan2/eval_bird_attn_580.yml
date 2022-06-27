@@ -1,0 +1,30 @@
+CONFIG_NAME: 'attn2'
+
+DATASET_NAME: 'birds'
+DATA_DIR: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds'
+GPU_ID: 3
+WORKERS: 1
+
+B_VALIDATION: True  # True  # False
+B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/img_array/eval_ie_bird_img_array_580.npy'
+TREE:
+    BRANCH_NUM: 3
+
+TRAIN:
+    FLAG: False
+    NET_G: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_580.pth'
+    B_NET_D: False
+    BATCH_SIZE: 16
+    NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
+
+
+GAN:
+    DF_DIM: 64
+    GF_DIM: 32
+    Z_DIM: 100
+    R_NUM: 2
+
+TEXT:
+    EMBEDDING_DIM: 256
+    CAPTIONS_PER_IMAGE: 10
+    WORDS_NUM: 25
