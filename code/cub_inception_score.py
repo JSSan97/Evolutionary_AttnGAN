@@ -31,7 +31,7 @@ def inception(args):
     eval = np.ndarray.tolist(eval)
     images = eval['validation_imgs']
 
-    mean, std = get_inception_score(images=images, model=args.inception_v3_model, splits=args.splits)
+    mean, std = get_inception_score(images=images, model_path=args.inception_v3_model, batch_size=args.batch_size, splits=args.splits)
     print("==== Mean ====")
     print(mean)
     print("==== Standard Deviation ====")
