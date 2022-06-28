@@ -72,6 +72,9 @@ def get_inception_score(images, model_path, batch_size, splits):
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
 
+    images = np.array(images)
+    print(images.shape)
+
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
         print(eval_imgs)
