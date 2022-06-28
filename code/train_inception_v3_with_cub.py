@@ -37,6 +37,8 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         data = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
+        print(data.shape)
+        print(len(targets))
         print(targets)
 
         predictions, aux_outputs = model(data)
