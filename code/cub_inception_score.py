@@ -80,10 +80,10 @@ def get_inception_score(images, model_path, batch_size, splits):
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
         # print(eval_imgs.shape)
-        # eval_imgs = eval_imgs.type(dtype)
-        # eval_imgsv = Variable(eval_imgs)
+        eval_imgs = eval_imgs.type(dtype)
+        eval_imgsv = Variable(eval_imgs)
         batch_size_i = eval_imgs.shape[0]
-        preds[i * batch_size:i * batch_size + batch_size_i] = get_pred(eval_imgs)
+        preds[i * batch_size:i * batch_size + batch_size_i] = get_pred(eval_imgsv)
 
     # Now compute the mean kl-div
     split_scores = []
