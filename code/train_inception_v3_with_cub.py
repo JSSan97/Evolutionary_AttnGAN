@@ -142,6 +142,6 @@ def main(args):
 if __name__ == "__main__":
     ## Convert all images to 256x256
     args = parse_args()
-    main()
+    main(args)
 
 
