@@ -338,7 +338,9 @@ class CubInceptionDataset(data.Dataset):
         train_names = self.load_filenames(data_dir, 'train')
         test_names = self.load_filenames(data_dir, 'test')
 
-        filenames = train_names + test_names
+        ## filenames = train_names + test_names
+
+        filenames = test_names
         return filenames
 
     def load_class_id(self, data_dir, total_num):
@@ -352,7 +354,9 @@ class CubInceptionDataset(data.Dataset):
             with open(test_path + '/class_info.pickle', 'rb') as f:
                 test_class_id = pickle.load(f, encoding="bytes")
 
-        class_id = train_class_id + test_class_id
+        # class_id = train_class_id + test_class_id
+
+        class_id = test_class_id
         return class_id
 
 
