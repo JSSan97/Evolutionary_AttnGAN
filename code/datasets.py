@@ -355,7 +355,7 @@ class CubInceptionDataset(data.Dataset):
         key = self.filenames[index]
         cls_id = self.class_id[index]
 
-        img_path = '%s/images/%s.jpg' % (self.data_dir, key)
+        img_path = '%s/CUB_200_2011/images/%s.jpg' % (self.data_dir, key)
         img = Image.open(img_path).convert('RGB')
         img = self.transform(img)
 
