@@ -28,7 +28,7 @@ def main(image_path, output_path):
             img = Image.open(img_path).convert('RGB')
             img = transform(img)
 
-            image_to_png = image_file.replace(".txt", ".png")
+            image_to_png = image_file.replace(".jpg", ".png")
             output_img_path = os.path.join(output_directory, image_to_png)
             print("Saving : {}".format(output_img_path))
 
