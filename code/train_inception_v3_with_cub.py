@@ -40,6 +40,10 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         print(targets)
 
         predictions, aux_outputs = model(data)
+        print(predictions)
+        print(aux_outputs)
+
+
         loss1 = criterion(predictions, targets)
         print(loss1.item())
 
