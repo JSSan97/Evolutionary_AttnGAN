@@ -66,7 +66,8 @@ def get_inception_score(images, model_path, batch_size, splits):
 
     def get_pred(x):
         # x = up(x)
-        pred, _ = model(x)
+        pred = model(x)
+        print(pred)
         return F.softmax(pred).data.cpu().numpy()
 
     num_batches = math.ceil(len(images) / batch_size)
