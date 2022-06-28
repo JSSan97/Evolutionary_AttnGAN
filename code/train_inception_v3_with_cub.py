@@ -32,7 +32,7 @@ def train_loop(dataloader, model, criterion, optimizer, device):
     step = 0
     while step < len(dataloader):
         data = data_iter.next()
-        imgs, captions, cap_lens, class_ids, keys = data
+        imgs, class_ids = data
         data = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
