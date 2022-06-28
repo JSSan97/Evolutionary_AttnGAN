@@ -33,6 +33,9 @@ def train_loop(dataloader, model, criterion, optimizer, device):
     while step < len(dataloader):
         data = data_iter.next()
         imgs, class_ids = data
+
+        print(imgs.shape)
+        print(class_ids)
         data = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
