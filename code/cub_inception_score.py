@@ -62,12 +62,12 @@ def get_inception_score(images, model_path, batch_size, splits):
     dtype = torch.cuda.FloatTensor
     # Get predictions
     preds = np.zeros((len(images), 200))
-    up = nn.Upsample(size=(299, 299), mode='bilinear').type(dtype)
+    # up = nn.Upsample(size=(299, 299), mode='bilinear').type(dtype)
 
     def get_pred(x):
         # x = up(x)
-        x = model(x)
-        return F.softmax(x).data.cpu().numpy()
+        pred, _ = model(x)
+        return F.softmax(pred).data.cpu().numpy()
 
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
@@ -75,11 +75,13 @@ def get_inception_score(images, model_path, batch_size, splits):
     # images = np.array(images)
     # images = tf.convert_to_tensor(images, dtype=dtype)
     # # print(images.shape)
-    images = torch.stack((images))
+    # images = torch.stack(images)
 
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
         # print(eval_imgs.shape)
+        eval_imgs = torch.stack(eval_imgs)
+
         eval_imgs = eval_imgs.type(dtype)
         eval_imgsv = Variable(eval_imgs)
         batch_size_i = eval_imgs.shape[0]
