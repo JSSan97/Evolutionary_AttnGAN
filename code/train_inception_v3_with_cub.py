@@ -79,23 +79,15 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         imgs = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
-        print(imgs.shape)
-        print(len(targets))
-
         predictions, aux_outputs = model(imgs)
-        print(predictions.shape)
-        print(aux_outputs.shape)
 
         loss1 = criterion(predictions, targets)
-        print(loss1.shape)
         print(loss1.item())
 
         loss2 = criterion(aux_outputs, targets)
-        print(loss2.shape)
         print(loss2.item())
 
         loss = loss1 + 0.4 * loss2
-        print(loss.shape)
         print(loss.item())
 
         ## Backpropagation
@@ -153,8 +145,8 @@ def main(args):
         # bshuffle = False
         split_dir = 'test'
 
-    ## Load Model
-    model = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=False, num_classes=200)
+    ## Load Model and modify classes
+    model = torch.hub.load('pytorch/vision:v1.11.0', 'inception_v3', pretrained=False, num_classes=200)
     model.fc = nn.Linear(2048, 200)
     model.AuxLogits = InceptionAux(768, 200)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
