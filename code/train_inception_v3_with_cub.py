@@ -37,6 +37,8 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         data = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
+        print(targets)
+
         predictions, aux_outputs = model(data)
         loss1 = criterion(predictions, targets)
         print(loss1.item())
@@ -73,8 +75,6 @@ def test_loop(dataloader, model, criterion, device, logger):
         for data, targets in dataloader:
             data = data.to(device=device)
             targets = targets.to(device=device)
-
-            print(targets)
 
             predictions = model(data)
             test_loss += criterion(predictions, targets).item()
