@@ -72,7 +72,7 @@ def get_inception_score(images, model_path, batch_size, splits):
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
 
-    images = np.array(images)
+    images = torch.Tensor(images)
     # print(images.shape)
 
     while i < num_batches:
