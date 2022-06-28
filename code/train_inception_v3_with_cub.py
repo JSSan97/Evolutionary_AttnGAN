@@ -142,8 +142,8 @@ def main(args):
 
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=200)
-    model.fc = nn.Linear(2048, 200)
-    model.AuxLogits = InceptionAux(768, 200)
+    model.fc = nn.Linear(2048, 50)
+    model.AuxLogits = InceptionAux(768, 50)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.train()
@@ -187,7 +187,7 @@ def main(args):
     print("Total Training Time: {}".format(total_train_time))
 
     # Save Model
-    model_filename = "inceptionV3_{}.pth".format(epoch + 1)
+    model_filename = "inceptionV3_Cl50_{}.pth".format(epoch + 1)
     torch.save(model.state_dict(), "{}/{}".format(args.results_path, model_filename))
 
 
