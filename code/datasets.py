@@ -316,11 +316,13 @@ class CubInceptionDataset(data.Dataset):
     def __init__(self, data_dir, split='train',
                  transform=None):
 
-        split_dir = os.path.join(data_dir, split)
         self.transform = transform
         self.data_dir = data_dir
         self.filenames = self.load_text_data(self.data_dir, split)
-        self.class_id = self.load_class_id(split_dir, len(self.filenames))
+        self.class_id = self.load_class_id(data_dir, len(self.filenames))
+
+        print("Filenames : {}".format(len(self.filenames)))
+        print("Class IDs : {}".format(len(self.class_id)))
 
     def load_filenames(self, data_dir, split):
         filepath = '%s/%s/filenames.pickle' % (data_dir, split)
@@ -336,18 +338,21 @@ class CubInceptionDataset(data.Dataset):
         train_names = self.load_filenames(data_dir, 'train')
         test_names = self.load_filenames(data_dir, 'test')
 
-        if split == 'train':
-            filenames = train_names
-        else:  # split=='test'
-            filenames = test_names
+        filenames = train_names + test_names
         return filenames
 
     def load_class_id(self, data_dir, total_num):
-        if os.path.isfile(data_dir + '/class_info.pickle'):
-            with open(data_dir + '/class_info.pickle', 'rb') as f:
-                class_id = pickle.load(f, encoding="bytes")
-        else:
-            class_id = np.arange(total_num)
+        train_path = os.path.join(data_dir, 'train')
+        test_path = os.path.join(data_dir, 'test')
+        if os.path.isfile(train_path + '/class_info.pickle'):
+            with open(train_path + '/class_info.pickle', 'rb') as f:
+                train_class_id = pickle.load(f, encoding="bytes")
+
+        if os.path.isfile(test_path + '/class_info.pickle'):
+            with open(test_path + '/class_info.pickle', 'rb') as f:
+                test_class_id = pickle.load(f, encoding="bytes")
+
+        class_id = train_class_id + test_class_id
         return class_id
 
 
