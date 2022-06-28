@@ -67,7 +67,6 @@ def get_inception_score(images, model_path, batch_size, splits):
     def get_pred(x):
         # x = up(x)
         pred = model(x)
-        print(pred)
         return F.softmax(pred).data.cpu().numpy()
 
     num_batches = math.ceil(len(images) / batch_size)
@@ -87,7 +86,9 @@ def get_inception_score(images, model_path, batch_size, splits):
         eval_imgsv = Variable(eval_imgs)
         batch_size_i = eval_imgs.shape[0]
         preds[i * batch_size:i * batch_size + batch_size_i] = get_pred(eval_imgsv)
+        i += 1
 
+    print("Finished passing through model")
     # Now compute the mean kl-div
     split_scores = []
 
