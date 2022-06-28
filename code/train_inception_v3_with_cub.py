@@ -100,7 +100,7 @@ def train_loop(dataloader, model, criterion, optimizer, device):
     accuracy = (correct / size) * 100
 
     print("Train Accuracy: {:>0.1f}%, Avg Loss: {:.3f}".format(accuracy, avg_loss))
-    return avg_loss,
+    return avg_loss, accuracy
 
 def test_loop(dataloader, model, criterion, device, logger):
     size = len(dataloader.dataset)
