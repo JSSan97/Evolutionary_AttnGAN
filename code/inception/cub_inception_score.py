@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('--inception_path', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inception_attngan2.npy')
     parser.add_argument('--inception_v3_model', type=str,
-                        default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_{}.pth')
+                        default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_101.pth')
     parser.add_argument('--batch_size', type=int,
                         default=24)
     parser.add_argument('--splits', type=int,
