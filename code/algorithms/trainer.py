@@ -351,7 +351,7 @@ class GenericTrainer():
 
                         ## Add np array to list
                         if cfg.B_VALIDATION_IMG_ARRAY:
-                            image = copy(im)
+                            image = copy.deepcopy(im)
                             image = image_transform(image)
                             validation_imgs.append(image)
 
