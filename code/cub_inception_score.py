@@ -27,7 +27,7 @@ def parse_args():
 
 
 def inception(args):
-    eval = np.load(args.path, allow_pickle=True)
+    eval = np.load(args.file_path, allow_pickle=True)
     eval = np.ndarray.tolist(eval)
     images = eval['validation_imgs']
 
