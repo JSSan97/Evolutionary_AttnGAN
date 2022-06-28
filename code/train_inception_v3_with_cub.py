@@ -82,8 +82,6 @@ def main(args):
     else:
         cfg.CUDA = False
 
-    if args.data_dir != '':
-        cfg.DATA_DIR = args.data_dir
     split_dir, bshuffle = 'train', True
 
     if not cfg.TRAIN.FLAG:
