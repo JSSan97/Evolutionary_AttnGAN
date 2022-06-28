@@ -5,7 +5,7 @@ import time
 import torch.optim as optim
 from torchvision import transforms
 
-from code.datasets import TextDataset
+from datasets import TextDataset
 from miscc.config import cfg, cfg_from_file
 
 
