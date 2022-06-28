@@ -74,6 +74,7 @@ def get_inception_score(images, model_path, batch_size, splits):
 
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
+        print(eval_imgs)
         eval_imgs = eval_imgs.type(dtype)
         eval_imgsv = Variable(eval_imgs)
         batch_size_i = eval_imgs.size()[0]
