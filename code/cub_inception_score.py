@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 import math
 from torch.autograd import Variable
-
+import tensorflow as tf
 from torch.nn import functional as F
 from train_inception_v3_with_cub import InceptionAux
 from scipy.stats import entropy
@@ -72,7 +72,8 @@ def get_inception_score(images, model_path, batch_size, splits):
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
 
-    images = torch.Tensor(images)
+    images = np.array(images)
+    images = tf.convert_to_tensor(images, dtype=dtype)
     # print(images.shape)
 
     while i < num_batches:
