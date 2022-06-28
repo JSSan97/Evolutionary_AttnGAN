@@ -8,6 +8,48 @@ from torchvision import transforms
 from datasets import CubInceptionDataset
 from miscc.config import cfg, cfg_from_file
 import torch.backends.cudnn as cudnn
+import torch.nn.functional as F
+
+
+class BasicConv2d(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, **kwargs: Any) -> None:
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, bias=False, **kwargs)
+        self.bn = nn.BatchNorm2d(out_channels, eps=0.001)
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.bn(x)
+        return F.relu(x, inplace=True)
+
+class InceptionAux(nn.Module):
+    def __init__(self, in_channels, num_classes):
+        super().__init__()
+
+        conv_block = BasicConv2d
+        self.conv0 = conv_block(in_channels, 128, kernel_size=1)
+        self.conv1 = conv_block(128, 768, kernel_size=5)
+        self.conv1.stddev = 0.01  # type: ignore[assignment]
+        self.fc = nn.Linear(768, num_classes)
+        self.fc.stddev = 0.001  # type: ignore[assignment]
+
+    def forward(self, x):
+        # N x 768 x 17 x 17
+        x = F.avg_pool2d(x, kernel_size=5, stride=3)
+        # N x 768 x 5 x 5
+        x = self.conv0(x)
+        # N x 128 x 5 x 5
+        x = self.conv1(x)
+        # N x 768 x 1 x 1
+        # Adaptive average pooling
+        x = F.adaptive_avg_pool2d(x, (1, 1))
+        # N x 768 x 1 x 1
+        x = torch.flatten(x, 1)
+        # N x 768
+        x = self.fc(x)
+        # N x 1000
+        return x
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train Inception Model on Cubs')
@@ -114,6 +156,7 @@ def main(args):
     ## Load Model
     model = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=False, num_classes=200)
     model.fc = nn.Linear(2048, 200)
+    model.AuxLogits = InceptionAux(768, 200)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.train()
