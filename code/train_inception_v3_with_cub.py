@@ -116,6 +116,7 @@ def main(args):
     model.fc = nn.Linear(2048, 200)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
+    model.train()
 
     ## Load Dataset
     image_transform = transforms.Compose([
