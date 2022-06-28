@@ -7,7 +7,7 @@ import math
 from torch.autograd import Variable
 
 from torch.nn import functional as F
-from code.train_inception_v3_with_cub import InceptionAux
+from train_inception_v3_with_cub import InceptionAux
 from scipy.stats import entropy
 
 def parse_args():
