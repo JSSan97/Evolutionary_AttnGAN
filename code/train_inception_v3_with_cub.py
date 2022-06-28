@@ -178,7 +178,7 @@ def main(args):
         current_time = time.time() - start_time
         print("Current Training Time: {}".format(current_time))
 
-        if epoch % 20:
+        if epoch % 20 == 0:
             model_filename = "inceptinv3_{}.pth".format(epoch + 1)
             torch.save(model.state_dict(), "{}/{}".format(args.results_path, model_filename))
 
