@@ -95,7 +95,7 @@ def main(args):
 
     ## Load Model
     model = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=False)
-    model.fc = nn.Linear(1024, 200)
+    model.fc = nn.Linear(2048, 200)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.cuda()
 
