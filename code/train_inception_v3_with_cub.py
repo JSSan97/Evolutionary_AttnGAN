@@ -7,7 +7,7 @@ from torchvision import transforms
 
 from datasets import CubInceptionDataset
 from miscc.config import cfg, cfg_from_file
-
+import torch.backends.cudnn as cudnn
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train Inception Model on Cubs')
@@ -85,6 +85,9 @@ def test_loop(dataloader, model, criterion, device, logger):
 
 
 def main(args):
+    torch.cuda.set_device(cfg.GPU_ID)
+    cudnn.benchmark = True
+
     if args.cfg_file is not None:
         cfg_from_file(args.cfg_file)
 
