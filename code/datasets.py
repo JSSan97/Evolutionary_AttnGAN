@@ -310,3 +310,56 @@ class TextDataset(data.Dataset):
 
     def __len__(self):
         return len(self.filenames)
+
+
+class CubInceptionDataset(data.Dataset):
+    def __init__(self, data_dir, split='train',
+                 transform=None):
+
+        split_dir = os.path.join(data_dir, split)
+        self.transform = transform
+        self.data_dir = data_dir
+        self.filenames = self.load_text_data(self.data_dir, split)
+        self.class_id = self.load_class_id(split_dir, len(self.filenames))
+
+    def load_filenames(self, data_dir, split):
+        filepath = '%s/%s/filenames.pickle' % (data_dir, split)
+        if os.path.isfile(filepath):
+            with open(filepath, 'rb') as f:
+                filenames = pickle.load(f)
+            print('Load filenames from: %s (%d)' % (filepath, len(filenames)))
+        else:
+            filenames = []
+        return filenames
+
+    def load_text_data(self, data_dir, split):
+        train_names = self.load_filenames(data_dir, 'train')
+        test_names = self.load_filenames(data_dir, 'test')
+
+        if split == 'train':
+            filenames = train_names
+        else:  # split=='test'
+            filenames = test_names
+        return filenames
+
+    def load_class_id(self, data_dir, total_num):
+        if os.path.isfile(data_dir + '/class_info.pickle'):
+            with open(data_dir + '/class_info.pickle', 'rb') as f:
+                class_id = pickle.load(f, encoding="bytes")
+        else:
+            class_id = np.arange(total_num)
+        return class_id
+
+
+    def __getitem__(self, index):
+        key = self.filenames[index]
+        cls_id = self.class_id[index]
+
+        img_path = '%s/images/%s.jpg' % (self.data_dir, key)
+        img = Image.open(img_path).convert('RGB')
+        img = self.transform(img)
+
+        return img, cls_id
+
+    def __len__(self):
+        return len(self.filenames)

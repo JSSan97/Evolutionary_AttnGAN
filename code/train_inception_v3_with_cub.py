@@ -5,7 +5,7 @@ import time
 import torch.optim as optim
 from torchvision import transforms
 
-from datasets import TextDataset
+from datasets import CubInceptionDataset
 from miscc.config import cfg, cfg_from_file
 
 
@@ -28,7 +28,11 @@ def train_loop(dataloader, model, criterion, optimizer, device):
     loss_ep = 0
     correct = 0
 
-    for batch, (imgs, captions, cap_lens, class_ids, keys) in enumerate(dataloader):
+    data_iter = iter(dataloader)
+    step = 0
+    while step < len(dataloader):
+        data = data_iter.next()
+        imgs, captions, cap_lens, class_ids, keys = data
         data = imgs.to(device=device)
         targets = class_ids.to(device=device)
 
@@ -46,6 +50,7 @@ def train_loop(dataloader, model, criterion, optimizer, device):
 
         # Add correct
         correct += (predictions.argmax(1) == targets).type(torch.float).sum().item()
+        step += 1
 
     avg_loss = loss_ep / len(dataloader)
     accuracy = (correct / size) * 100
@@ -100,9 +105,8 @@ def main(args):
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     ])
-    dataset = TextDataset(cfg.DATA_DIR, split_dir,
-                          base_size=cfg.TREE.BASE_SIZE,
-                          transform=image_transform)
+    dataset = CubInceptionDataset(cfg.DATA_DIR, split=split_dir, transform=image_transform)
+
     assert dataset
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
