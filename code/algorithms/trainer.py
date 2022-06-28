@@ -354,6 +354,7 @@ class GenericTrainer():
                             image = copy.deepcopy(im)
                             image = Image.fromarray(image)
                             image = image_transform(image)
+                            print(image)
                             validation_imgs.append(image)
 
                         im = Image.fromarray(im)
