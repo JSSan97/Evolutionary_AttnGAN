@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--cfg', dest='cfg_file',
                         help='optional config file',
                         default='code/cfg/bird_attn2.yml', type=str)
-    parser.add_argument('--gpu', dest='gpu_id', type=int, default=1)
+    parser.add_argument('--gpu', dest='gpu_id', type=int, default=0)
     parser.add_argument('--epochs', type=int, default=100, help='Training Epochs')
     parser.add_argument('--batch_size', type=int, default=24, help='Batch Training')
     parser.add_argument('--learning_rate', type=int, default=0.001, help='Learning Rate')
@@ -73,6 +73,8 @@ def test_loop(dataloader, model, criterion, device, logger):
         for data, targets in dataloader:
             data = data.to(device=device)
             targets = targets.to(device=device)
+
+            print(targets)
 
             predictions = model(data)
             test_loss += criterion(predictions, targets).item()
