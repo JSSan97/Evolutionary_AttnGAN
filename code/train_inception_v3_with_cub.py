@@ -12,9 +12,9 @@ import torch.nn.functional as F
 
 
 class BasicConv2d(nn.Module):
-    def __init__(self, in_channels, out_channels, kernal_size):
+    def __init__(self, in_channels, out_channels, kernel_size):
         super().__init__()
-        self.conv = nn.Conv2d(in_channels, out_channels, bias=False, kernal_size=kernal_size)
+        self.conv = nn.Conv2d(in_channels, out_channels, bias=False, kernel_size=kernel_size)
         self.bn = nn.BatchNorm2d(out_channels, eps=0.001)
 
     def forward(self, x):
