@@ -65,7 +65,7 @@ def get_inception_score(images, model_path, batch_size, splits):
     up = nn.Upsample(size=(299, 299), mode='bilinear').type(dtype)
 
     def get_pred(x):
-        x = up(x)
+        # x = up(x)
         x = model(x)
         return F.softmax(x).data.cpu().numpy()
 
@@ -73,11 +73,11 @@ def get_inception_score(images, model_path, batch_size, splits):
     i = 0
 
     images = np.array(images)
-    print(images.shape)
+    # print(images.shape)
 
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
-        print(eval_imgs.shape)
+        # print(eval_imgs.shape)
         # eval_imgs = eval_imgs.type(dtype)
         # eval_imgsv = Variable(eval_imgs)
         batch_size_i = eval_imgs.shape[0]
