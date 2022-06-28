@@ -7,6 +7,7 @@ from torch.autograd import Variable
 import torch.backends.cudnn as cudnn
 
 from PIL import Image
+import copy
 
 from miscc.config import cfg
 from miscc.utils import mkdir_p
@@ -19,6 +20,7 @@ from models.attngan_model import RNN_ENCODER, CNN_ENCODER
 from miscc.losses import words_loss
 import os
 import numpy as np
+import torchvision.transforms as transforms
 
 class GenericTrainer():
     def __init__(self, output_dir, data_loader, n_words, ixtoword):
@@ -301,6 +303,13 @@ class GenericTrainer():
             ## List of images
             validation_imgs = []
 
+            # For inception
+            image_transform = transforms.Compose([
+                transforms.Resize(299),
+                transforms.CenterCrop(299),
+                transforms.ToTensor(),
+            ])
+
             for _ in range(1):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
                 for step, data in enumerate(self.data_loader, 0):
                     cnt += batch_size
@@ -342,7 +351,9 @@ class GenericTrainer():
 
                         ## Add np array to list
                         if cfg.B_VALIDATION_IMG_ARRAY:
-                            validation_imgs.append(im)
+                            image = copy(im)
+                            image = image_transform(image)
+                            validation_imgs.append(image)
 
                         im = Image.fromarray(im)
                         fullpath = '%s_s%d.png' % (s_tmp, k)
@@ -463,7 +474,7 @@ class GenericTrainer():
                                 build_super_images2(im[j].unsqueeze(0),
                                                     captions[j].unsqueeze(0),
                                                     [cap_lens_np[j]], self.ixtoword,
-                                                    [attn_maps[j]], att_sze)
+                                                    [attn_maps[j]], att_sze, topK=cap_lens_np[j])
                             if img_set is not None:
                                 im = Image.fromarray(img_set)
                                 fullpath = '%s_a%d.png' % (save_name, k)
