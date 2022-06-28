@@ -353,7 +353,7 @@ class CubInceptionDataset(data.Dataset):
 
     def __getitem__(self, index):
         key = self.filenames[index]
-        cls_id = self.class_id[index]
+        cls_id = self.class_id[index] - 1
 
         img_path = '%s/CUB_200_2011/images/%s.jpg' % (self.data_dir, key)
         img = Image.open(img_path).convert('RGB')
