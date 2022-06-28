@@ -10,7 +10,7 @@ from miscc.config import cfg, cfg_from_file
 import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
 
-
+## 98.4%
 class BasicConv2d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size):
         super().__init__()
