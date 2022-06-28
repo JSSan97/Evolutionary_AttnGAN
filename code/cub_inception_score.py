@@ -72,9 +72,10 @@ def get_inception_score(images, model_path, batch_size, splits):
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
 
-    images = np.array(images)
-    images = tf.convert_to_tensor(images, dtype=dtype)
-    # print(images.shape)
+    # images = np.array(images)
+    # images = tf.convert_to_tensor(images, dtype=dtype)
+    # # print(images.shape)
+    images = torch.stack((images))
 
     while i < num_batches:
         eval_imgs = images[i * batch_size: (i+1) * batch_size]
