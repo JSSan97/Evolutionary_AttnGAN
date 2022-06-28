@@ -16,7 +16,7 @@ def parse_args():
                         default='code/cfg/bird_attn2.yml', type=str)
     parser.add_argument('--gpu', dest='gpu_id', type=int, default=1)
     parser.add_argument('--epochs', type=int, default=100, help='Training Epochs')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch Training')
+    parser.add_argument('--batch_size', type=int, default=24, help='Batch Training')
     parser.add_argument('--learning_rate', type=int, default=0.001, help='Learning Rate')
     parser.add_argument('--results_path', type=str, default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models')
 
