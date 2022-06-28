@@ -28,9 +28,11 @@ def main(image_path, output_path):
             img = Image.open(img_path).convert('RGB')
             img = transform(img)
 
-            output_path = os.path.join(output_directory, image_file)
-            print("Saving : {}".format(output_path))
-            img.save(output_path)
+            image_to_png = image_file.replace(".txt", ".png")
+            output_img_path = os.path.join(output_directory, image_to_png)
+            print("Saving : {}".format(output_img_path))
+
+            img.save(output_img_path)
 
 
 if __name__ == "__main__":
