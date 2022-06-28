@@ -35,15 +35,20 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         imgs, class_ids = data
 
         imgs = imgs.to(device=device)
-        class_ids = class_ids.to(device=device)
+        targets = class_ids.to(device=device)
+
+        print(imgs.shape)
+        print(len(targets))
 
         predictions, aux_outputs = model(imgs)
+        print(predictions.shape)
+        print(aux_outputs.shape)
 
-        loss1 = criterion(predictions, class_ids)
+        loss1 = criterion(predictions, targets)
         print(loss1.shape)
         print(loss1.item())
 
-        loss2 = criterion(aux_outputs, class_ids)
+        loss2 = criterion(aux_outputs, targets)
         print(loss2.shape)
         print(loss2.item())
 
