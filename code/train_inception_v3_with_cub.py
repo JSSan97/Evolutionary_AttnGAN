@@ -34,25 +34,21 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         data = data_iter.next()
         imgs, class_ids = data
 
-        data = imgs.to(device=device)
-        targets = class_ids.to(device=device)
+        imgs = imgs.to(device=device)
+        class_ids = class_ids.to(device=device)
 
-        print(data.shape)
-        print(len(targets))
-        print(targets)
+        predictions, aux_outputs = model(imgs)
 
-        predictions, aux_outputs = model(data)
-        print(predictions)
-        print(aux_outputs)
-
-
-        loss1 = criterion(predictions, targets)
+        loss1 = criterion(predictions, class_ids)
+        print(loss1.shape)
         print(loss1.item())
 
-        loss2 = criterion(aux_outputs, targets)
+        loss2 = criterion(aux_outputs, class_ids)
+        print(loss2.shape)
         print(loss2.item())
 
         loss = loss1 + 0.4 * loss2
+        print(loss.shape)
         print(loss.item())
 
         ## Backpropagation
