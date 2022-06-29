@@ -81,6 +81,8 @@ def train_loop(dataloader, model, criterion, optimizer, device):
         targets = class_ids.to(device=device)
         predictions, aux_outputs = model(imgs)
 
+        print(targets)
+
         loss1 = criterion(predictions, targets)
         loss2 = criterion(aux_outputs, targets)
 
@@ -172,7 +174,6 @@ def main(args):
     for epoch in range(args.epochs):
         print("---- Epoch {} ----".format(epoch + 1))
         train_avg_loss, train_accuracy = train_loop(dataloader, model, criterion, optimizer, device)
-
         # test_avg_loss, test_accuracy = test_loop(test_loader, model, criterion, device, logger)
 
         current_time = time.time() - start_time
