@@ -63,7 +63,7 @@ def get_inception_score(images, model_path, batch_size, splits, classes):
 
     dtype = torch.cuda.FloatTensor
     # Get predictions
-    preds = np.zeros((len(images), 200))
+    preds = np.zeros((len(images), args.classes))
     # up = nn.Upsample(size=(299, 299), mode='bilinear').type(dtype)
 
     def get_pred(x):
