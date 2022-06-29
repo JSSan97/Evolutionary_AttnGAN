@@ -310,7 +310,7 @@ class GenericTrainer():
                 transforms.ToTensor(),
             ])
 
-            for _ in range(1):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
+            for _ in range(cfg.TEXT.CAPTIONS_PER_IMAGE):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
                 for step, data in enumerate(self.data_loader, 0):
                     cnt += batch_size
                     if step % 100 == 0:
@@ -354,7 +354,6 @@ class GenericTrainer():
                             image = copy.deepcopy(im)
                             image = Image.fromarray(image)
                             image = image_transform(image)
-                            print(image)
                             validation_imgs.append(image)
 
                         im = Image.fromarray(im)
