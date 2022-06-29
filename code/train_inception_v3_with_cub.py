@@ -61,6 +61,7 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, default=24, help='Batch Training')
     parser.add_argument('--learning_rate', type=int, default=0.001, help='Learning Rate')
     parser.add_argument('--results_path', type=str, default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models')
+    parser.add_argument('--classes', type=int, default=50)
 
     args = parser.parse_args()
     return args
@@ -141,9 +142,9 @@ def main(args):
         split_dir = 'test'
 
     ## Load Model and modify classes
-    model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=200)
-    model.fc = nn.Linear(2048, 50)
-    model.AuxLogits = InceptionAux(768, 50)
+    model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=args.classes)
+    model.fc = nn.Linear(2048, args.classes)
+    model.AuxLogits = InceptionAux(768, args.classes)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.train()
@@ -178,7 +179,7 @@ def main(args):
         print("Current Training Time: {}".format(current_time))
 
         if epoch % 20 == 0:
-            model_filename = "inceptinv3_{}.pth".format(epoch + 1)
+            model_filename = "inceptionV3_Cl{}_{}.pth".format(args.classes, epoch)
             torch.save(model.state_dict(), "{}/{}".format(args.results_path, model_filename))
 
     end_time = time.time()
@@ -186,7 +187,7 @@ def main(args):
     print("Total Training Time: {}".format(total_train_time))
 
     # Save Model
-    model_filename = "inceptionV3_Cl50_{}.pth".format(epoch + 1)
+    model_filename = "inceptionV3_Cl{}_{}.pth".format(args.classes, args.epochs)
     torch.save(model.state_dict(), "{}/{}".format(args.results_path, model_filename))
 
 

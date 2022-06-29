@@ -18,6 +18,8 @@ def parse_args():
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inception_attngan2.npy')
     parser.add_argument('--inception_v3_model', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_100.pth')
+    parser.add_argument('--classes', type=int,
+                        default=50)
     parser.add_argument('--batch_size', type=int,
                         default=24)
     parser.add_argument('--splits', type=int,
@@ -31,7 +33,7 @@ def inception(args):
     eval = np.ndarray.tolist(eval)
     images = eval['validation_imgs']
 
-    mean, std = get_inception_score(images=images, model_path=args.inception_v3_model, batch_size=args.batch_size, splits=args.splits)
+    mean, std = get_inception_score(images=images, model_path=args.inception_v3_model, batch_size=args.batch_size, splits=args.splits, classes=args.classes)
     print("==== Mean ====")
     print(mean)
     print("==== Standard Deviation ====")
@@ -46,11 +48,11 @@ def inception(args):
     inception['std'] = std_list
     np.save(args.inception_path, inception)
 
-def get_inception_score(images, model_path, batch_size, splits):
+def get_inception_score(images, model_path, batch_size, splits, classes):
     ## Load Model and modify classes
-    model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=200)
-    model.fc = nn.Linear(2048, 200)
-    model.AuxLogits = InceptionAux(768, 200)
+    model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
+    model.fc = nn.Linear(2048, classes)
+    model.AuxLogits = InceptionAux(768, classes)
 
     state_dict = torch.load(model_path, map_location=lambda storage, loc: storage)
     model.load_state_dict(state_dict)
