@@ -323,6 +323,7 @@ class CubInceptionDataset(data.Dataset):
 
         print("Filenames : {}".format(len(self.filenames)))
         print("Class IDs : {}".format(len(self.class_id)))
+        print(self.class_id)
 
     def load_filenames(self, data_dir, split):
         filepath = '%s/%s/filenames.pickle' % (data_dir, split)
