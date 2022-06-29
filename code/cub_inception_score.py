@@ -67,7 +67,8 @@ def get_inception_score(images, model_path, batch_size, splits):
     def get_pred(x):
         # x = up(x)
         pred = model(x)
-        return F.softmax(pred).data.cpu().numpy()
+        return torch.nn.functional.softmax(pred[0], dim=0)
+        # return F.softmax(pred).data.cpu().numpy()
 
     num_batches = math.ceil(len(images) / batch_size)
     i = 0
