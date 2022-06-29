@@ -367,12 +367,9 @@ class CubInceptionDataset(data.Dataset):
                 index += 1
                 new_list.append(index)
 
-        print(new_list)
-
-
         # class_id = train_class_id + test_class_id
-
-        class_id = test_class_id
+        class_id = new_list
+        # class_id = test_class_id
         return class_id
 
 
