@@ -153,7 +153,6 @@ def main(args):
         transforms.Resize(299),
         transforms.CenterCrop(299),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     ])
     dataset = CubInceptionDataset(cfg.DATA_DIR, split=split_dir, transform=image_transform)
 
