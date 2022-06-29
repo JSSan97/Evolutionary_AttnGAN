@@ -355,6 +355,21 @@ class CubInceptionDataset(data.Dataset):
             with open(test_path + '/class_info.pickle', 'rb') as f:
                 test_class_id = pickle.load(f, encoding="bytes")
 
+
+        new_list = []
+        index = 1
+        temp = 1
+        for i in test_class_id:
+            if i == temp:
+                new_list.append(index)
+            else:
+                temp = i
+                index += 1
+                new_list.append(index)
+
+        print(new_list)
+
+
         # class_id = train_class_id + test_class_id
 
         class_id = test_class_id
