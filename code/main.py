@@ -158,8 +158,8 @@ if __name__ == "__main__":
         '''generate images from pre-extracted embeddings'''
         if cfg.B_VALIDATION:
             validation_images = []
-            if cfg.EVAL_EVERY_CAPTION:  # generate images for every caption in the dataset
-                for i in range(cfg.CAPTIONS_PER_IMAGE):
+            if cfg.TEXT.EVAL_EVERY_CAPTION:  # generate images for every caption in the dataset
+                for i in range(cfg.TEXT.CAPTIONS_PER_IMAGE):
                     dataset = TextDataset(cfg.DATA_DIR, split_dir,
                                           base_size=cfg.TREE.BASE_SIZE,
                                           transform=image_transform,
