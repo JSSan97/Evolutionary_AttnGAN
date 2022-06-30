@@ -32,7 +32,7 @@ def generateSample(dir, rand=False):
 
                 assert os.path.isfile(txt_file), txt_file
                 sentence_num = int(fname[-1])  # TODO: CHANGE THIS TO FIT YOUR NAMING
-                print(sentence_num)
+
                 with open(txt_file) as f:
                     all_texts = f.readlines()
                     text = all_texts[sentence_num]
