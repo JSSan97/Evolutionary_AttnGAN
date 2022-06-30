@@ -81,6 +81,19 @@ def gen_example(wordtoix, algo):
             data_dic[key] = [cap_array, cap_lens, sorted_indices]
     algo.gen_example(data_dic)
 
+def get_algo(output_dir, dataloader, dataset):
+    if cfg.EVO.EVOLUTION_TRAINING:
+        if cfg.EVO.IE_GAN_TRAINING:
+            from algorithms.ie_attngan_trainer import ImprovedEvoTraining as trainer
+            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+        else:
+            from algorithms.evo_attngan_trainer import EvoTraining as trainer
+            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+    else:
+        from algorithms.attngan_trainer import condGANTrainer as trainer
+        algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+
+    return algo
 
 if __name__ == "__main__":
     args = parse_args()
@@ -136,16 +149,7 @@ if __name__ == "__main__":
         from algorithms.dcgan_trainer import DCGANTrainer as trainer
         algo = trainer(output_dir, dataloader, dataset.n_words)
     else:
-        if cfg.EVO.EVOLUTION_TRAINING:
-            if cfg.EVO.IE_GAN_TRAINING:
-                from algorithms.ie_attngan_trainer import ImprovedEvoTraining as trainer
-                algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
-            else:
-                from algorithms.evo_attngan_trainer import EvoTraining as trainer
-                algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
-        else:
-            from algorithms.attngan_trainer import condGANTrainer as trainer
-            algo = trainer(output_dir, dataloader, dataset.n_words, dataset.ixtoword)
+        algo = get_algo(output_dir, dataloader, dataset)
 
     start_t = time.time()
     if cfg.TRAIN.FLAG:
@@ -154,6 +158,18 @@ if __name__ == "__main__":
         '''generate images from pre-extracted embeddings'''
         if cfg.B_VALIDATION:
             algo.sampling(split_dir)  # generate images for the whole valid dataset
+            if cfg.EVAL_EVERY_CAPTION:
+                for i in range(cfg.CAPTIONS_PER_IMAGE):
+                    dataset = TextDataset(cfg.DATA_DIR, split_dir,
+                                          base_size=cfg.TREE.BASE_SIZE,
+                                          transform=image_transform,
+                                          caption_index=i)
+                    dataloader = torch.utils.data.DataLoader(
+                        dataset, batch_size=cfg.TRAIN.BATCH_SIZE,
+                        drop_last=True, shuffle=bshuffle, num_workers=int(cfg.WORKERS))
+                    algo = get_algo(output_dir, dataloader, dataset)
+                    algo.sampling(split_dir)
+
         else:
             gen_example(dataset.wordtoix, algo)  # generate images for customized captions
     end_t = time.time()

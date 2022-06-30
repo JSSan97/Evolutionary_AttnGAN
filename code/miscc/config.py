@@ -19,6 +19,7 @@ __C.WORKERS = 6
 
 __C.RNN_TYPE = 'LSTM'   # 'GRU'
 __C.B_VALIDATION = False
+__C.EVAL_EVERY_CAPTION = False
 __C.B_VALIDATION_IMG_ARRAY = ''
 __C.FIXED_NOISE = ''
 

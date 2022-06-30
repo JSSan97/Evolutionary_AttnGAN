@@ -29,7 +29,7 @@ else:
 dir_path = (os.path.abspath(os.path.join(os.path.realpath(__file__), './.')))
 sys.path.append(dir_path)
 
-WORDS_NUM = 18
+WORDS_NUM = 25
 
 
 def parse_args():

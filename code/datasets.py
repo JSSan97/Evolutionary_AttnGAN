@@ -91,13 +91,14 @@ def get_imgs(img_path, imsize, bbox=None,
 class TextDataset(data.Dataset):
     def __init__(self, data_dir, split='train',
                  base_size=64,
-                 transform=None, target_transform=None):
+                 transform=None, target_transform=None, caption_index=None):
         self.transform = transform
         self.norm = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         self.target_transform = target_transform
         self.embeddings_num = cfg.TEXT.CAPTIONS_PER_IMAGE
+        self.caption_index = caption_index
 
         self.imsize = []
         for i in range(cfg.TREE.BRANCH_NUM):
@@ -302,7 +303,10 @@ class TextDataset(data.Dataset):
         imgs = get_imgs(img_name, self.imsize,
                         bbox, self.transform, normalize=self.norm)
         # random select a sentence
-        sent_ix = random.randint(0, self.embeddings_num)
+        if self.caption_index is not None:
+            sent_ix = self.caption_index
+        else:
+            sent_ix = random.randint(0, self.embeddings_num)
         new_sent_ix = index * self.embeddings_num + sent_ix
         caps, cap_len = self.get_caption(new_sent_ix)
         return imgs, caps, cap_len, cls_id, key
