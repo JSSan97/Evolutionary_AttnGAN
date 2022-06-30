@@ -256,7 +256,7 @@ class GenericTrainer():
             im = Image.fromarray(ndarr)
             im.save(fullpath)
 
-    def sampling(self, split_dir):
+    def sampling(self, split_dir, sentence_number=-1):
         if cfg.TRAIN.NET_G == '':
             print('Error: the path for models is not found!')
         else:
@@ -310,7 +310,7 @@ class GenericTrainer():
                 transforms.ToTensor(),
             ])
 
-            for _ in range(5):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
+            for _ in range(1):  # (cfg.TEXT.CAPTIONS_PER_IMAGE):
                 for step, data in enumerate(self.data_loader, 0):
                     cnt += batch_size
                     if step % 100 == 0:
@@ -357,14 +357,10 @@ class GenericTrainer():
                             validation_imgs.append(image)
 
                         im = Image.fromarray(im)
-                        fullpath = '%s_s%d.png' % (s_tmp, k)
+                        fullpath = '%s_s%d.png' % (s_tmp, sentence_number)
                         im.save(fullpath)
 
-            # Create a dictionary to store the training losses
-            if cfg.B_VALIDATION_IMG_ARRAY:
-                eval = {}
-                eval['validation_imgs'] = validation_imgs
-                np.save(cfg.B_VALIDATION_IMG_ARRAY, eval)
+            return validation_imgs
 
     def gen_example(self, data_dic):
         if cfg.TRAIN.NET_G == '':

@@ -157,8 +157,8 @@ if __name__ == "__main__":
     else:
         '''generate images from pre-extracted embeddings'''
         if cfg.B_VALIDATION:
-            algo.sampling(split_dir)  # generate images for the whole valid dataset
-            if cfg.EVAL_EVERY_CAPTION:
+            validation_images = []
+            if cfg.EVAL_EVERY_CAPTION:  # generate images for every caption in the dataset
                 for i in range(cfg.CAPTIONS_PER_IMAGE):
                     dataset = TextDataset(cfg.DATA_DIR, split_dir,
                                           base_size=cfg.TREE.BASE_SIZE,
@@ -168,8 +168,16 @@ if __name__ == "__main__":
                         dataset, batch_size=cfg.TRAIN.BATCH_SIZE,
                         drop_last=True, shuffle=bshuffle, num_workers=int(cfg.WORKERS))
                     algo = get_algo(output_dir, dataloader, dataset)
-                    algo.sampling(split_dir)
+                    imgs = algo.sampling(split_dir, sentence_number=i+1)
+                    validation_images.append(imgs)
+            else:
+                algo.sampling(split_dir)  # generate images for the whole valid dataset but random caption per image
 
+            # Store the images for inception
+            if cfg.B_VALIDATION_IMG_ARRAY:
+                eval = {}
+                eval['validation_imgs'] = validation_images
+                np.save(cfg.B_VALIDATION_IMG_ARRAY, eval)
         else:
             gen_example(dataset.wordtoix, algo)  # generate images for customized captions
     end_t = time.time()
