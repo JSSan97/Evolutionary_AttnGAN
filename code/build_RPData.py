@@ -29,7 +29,7 @@ def generateSample(dir, rand=False):
             if args.text != "":
                 # TODO: CHANGE THIS TO FIT YOUR NAMING
                 print("{}.txt".format(fname))
-                txt_file = os.path.join(args.text, os.path.basename(dir), "{}.txt".format(fname.split("-")[0][:-2]))
+                txt_file = os.path.join(args.text, os.path.basename(dir), "{}.txt".format(fname.split("-")[0][:-3]))
 
                 print(txt_file)
                 assert os.path.isfile(txt_file), txt_file
