@@ -10,8 +10,7 @@ from nltk.tokenize import RegexpTokenizer
 from tqdm import tqdm
 
 NUM_DIR = 50
-NUM_IMG_PER_DIR = 600
-
+NUM_IMG_PER_DIR = 60
 
 def generateSample(dir, rand=False):
     count = 0
