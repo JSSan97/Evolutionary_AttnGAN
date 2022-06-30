@@ -168,7 +168,7 @@ if __name__ == "__main__":
                         dataset, batch_size=cfg.TRAIN.BATCH_SIZE,
                         drop_last=True, shuffle=bshuffle, num_workers=int(cfg.WORKERS))
                     algo = get_algo(output_dir, dataloader, dataset)
-                    imgs = algo.sampling(split_dir, sentence_number=i+1)
+                    imgs = algo.sampling(split_dir, sentence_number=i)
                     validation_images.append(imgs)
             else:
                 algo.sampling(split_dir)  # generate images for the whole valid dataset but random caption per image
