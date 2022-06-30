@@ -6,7 +6,7 @@ GPU_ID: 3
 WORKERS: 1
 
 B_VALIDATION: True  # True  # False
-B_VALIDATION_IMG_ARRAY: '/content/eval_bird_img_array_600.npy'
+B_VALIDATION_IMG_ARRAY: '' #'/content/eval_bird_img_array_600.npy'
 EVAL_EVERY_CAPTION: True
 
 TREE:
