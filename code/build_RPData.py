@@ -29,6 +29,7 @@ def generateSample(dir, rand=False):
             if args.text != "":
                 # TODO: CHANGE THIS TO FIT YOUR NAMING
                 txt_file = os.path.join(args.text, os.path.basename(dir), "{}.txt".format(fname.split("-")[0][:-2]))
+                print(txt_file)
                 assert os.path.isfile(txt_file), txt_file
                 sentence_num = int(fname[-1])  # TODO: CHANGE THIS TO FIT YOUR NAMING
                 with open(txt_file) as f:
