@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 NUM_DIR = 50
 NUM_IMG_PER_DIR = 600
+TEST_ONLY_CLASSES = ['001', '004', '006', '008', '009', '014', '023', '029', '031', '033', '034', '035', '036', '037', '038', '043', '049', '051', '053', '066', '072', '079', '083', '084', '086', '091', '095', '096', '098', '101', '102', '103', '112', '114', '119', '121', '130', '135', '138', '147', '156', '163', '165', '166', '180', '183', '185', '186', '187', '197']
 
 def generateSample(dir, rand=False):
     count = 0
@@ -65,6 +66,7 @@ def saveTestFiles(data, out, all_caps):
 
     count = 0
     for d in tqdm(data):
+        # The image, the real text, and all texts from the image
         img, real, all_txts = d
 
         # sample 99 fake sentences
@@ -152,6 +154,15 @@ if __name__ == "__main__":
 
             with open("all_texts.txt", mode='w') as f:
                 f.writelines(all_sentences)
+        elif args.cap == 'test_text.txt':
+            text_sentences = []
+            # get total text
+            for subDir in os.listdir(args.text):
+                if subDir[0:3] in TEST_ONLY_CLASSES:
+                    text_sentences += read_all_txt(os.path.join(args.text, subDir))
+
+            with open("test_text.txt", mode='w') as f:
+                f.writelines(text_sentences)
         else:
             print("Specify a valid text file containing all captions, or leave blank to use all texts.")
             quit()
