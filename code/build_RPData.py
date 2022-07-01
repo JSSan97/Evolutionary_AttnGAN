@@ -155,15 +155,15 @@ if __name__ == "__main__":
             with open("all_texts.txt", mode='w') as f:
                 f.writelines(all_sentences)
         elif args.cap == 'test_texts.txt':
-            text_sentences = []
+            test_sentences = []
             # get total text
             for subDir in os.listdir(args.text):
                 if subDir[0:3] in TEST_ONLY_CLASSES:
                     print("Gathering text from : {}".format(subDir))
-                    text_sentences += read_all_txt(os.path.join(args.text, subDir))
+                    test_sentences += read_all_txt(os.path.join(args.text, subDir))
 
             with open("test_texts.txt", mode='w') as f:
-                f.writelines(text_sentences)
+                f.writelines(test_sentences)
         else:
             print("Specify a valid text file containing all captions, or leave blank to use all texts.")
             quit()
