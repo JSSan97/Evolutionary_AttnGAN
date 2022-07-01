@@ -162,7 +162,7 @@ if __name__ == "__main__":
                     print("Gathering text from : {}".format(subDir))
                     text_sentences += read_all_txt(os.path.join(args.text, subDir))
 
-            with open("test_text.txt", mode='w') as f:
+            with open("test_texts.txt", mode='w') as f:
                 f.writelines(text_sentences)
         else:
             print("Specify a valid text file containing all captions, or leave blank to use all texts.")
