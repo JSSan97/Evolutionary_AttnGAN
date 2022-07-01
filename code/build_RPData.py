@@ -154,11 +154,12 @@ if __name__ == "__main__":
 
             with open("all_texts.txt", mode='w') as f:
                 f.writelines(all_sentences)
-        elif args.cap == 'test_text.txt':
+        elif args.cap == 'test_texts.txt':
             text_sentences = []
             # get total text
             for subDir in os.listdir(args.text):
                 if subDir[0:3] in TEST_ONLY_CLASSES:
+                    print("Gathering text from : {}".format(subDir))
                     text_sentences += read_all_txt(os.path.join(args.text, subDir))
 
             with open("test_text.txt", mode='w') as f:
