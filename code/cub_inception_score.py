@@ -132,7 +132,7 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
         eval_imgs = data_iter.next()
         eval_imgs = eval_imgs.cuda()
         eval_imgs = Variable(eval_imgs).cuda()
-        preds[i * batch_size:(i+1) * batch_size] = get_pred(img)
+        preds[i * batch_size:(i+1) * batch_size] = get_pred(eval_imgs)
         i += 1
 
     # dtype = torch.cuda.FloatTensor
