@@ -136,7 +136,8 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
 
         data_iter = iter(data_loader)
         i = 0
-        while i < len(data_loader):
+        while i < 1:
+        #while i < len(data_loader):
             eval_imgs = data_iter.next()
             eval_imgs = eval_imgs.cuda()
             eval_imgs = Variable(eval_imgs).cuda()
