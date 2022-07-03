@@ -35,7 +35,7 @@ class CubEvalDataset(data.Dataset):
         return image
 
     def __len__(self):
-        return 29880
+        return 29280
 
 
 def parse_args():
