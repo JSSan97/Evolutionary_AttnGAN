@@ -116,7 +116,8 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
     model.eval()
 
     print("Num of images {}".format(num_images))
-    preds = np.zeros((len(data_loader), args.classes))
+    print("Num of batches {}".format(len(data_loader)))
+    preds = np.zeros((len(num_images), args.classes))
 
     # Get predictions
 
