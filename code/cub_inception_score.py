@@ -25,7 +25,7 @@ class CubEvalDataset(data.Dataset):
     def get_image_path(self, index):
         with open(self.filenames, 'r') as f:
             all_texts = f.readlines()
-            filename = all_texts[index]
+            filename = all_texts[index].replace('\n', '')
         image_path = os.path.join(self.data_dir, filename)
         return image_path
 
