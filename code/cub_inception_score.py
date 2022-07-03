@@ -68,11 +68,10 @@ def write_sub_filenames(eval_imgs_dir):
         class_directory = os.path.join(eval_imgs_dir, image_folder)
         for image_file in os.listdir(class_directory):
             key = os.path.join(image_folder, image_file) # 001.bird_black/my_bird1.png
-            key = "{}\n".format(key)
             eval_filenames.append(key)
 
         with open("eval_filenames.txt", mode='w') as f:
-            f.writelines(eval_filenames)
+            f.write('\n'.join(eval_filenames))
 
 
 def inception(args):
