@@ -41,6 +41,7 @@ class CubEvalDataset(data.Dataset):
 def parse_args():
     parser = argparse.ArgumentParser(description='Run inception scorer')
     parser.add_argument('eval_imgs_dir', type=str)
+    parser.add_argument('pred_path', type=str)
     # parser.add_argument('--file_path', type=str,
     #                     default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/eval_coco_img_array.npy')
     parser.add_argument('--inception_path', type=str,
@@ -53,6 +54,7 @@ def parse_args():
                         default=20)
     parser.add_argument('--splits', type=int,
                         default=10)
+    parser.add_argument('--use_pred', type=bool, default=False)
     args = parser.parse_args()
     return args
 
@@ -87,7 +89,10 @@ def inception(args):
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=True)
 
-    mean, std = get_inception_score(data_loader=dataloader, model_path=args.inception_v3_model, batch_size=args.batch_size, splits=args.splits, classes=args.classes, num_images=len(dataset))
+    mean, std = get_inception_score(data_loader=dataloader, model_path=args.inception_v3_model,
+                                    batch_size=args.batch_size, splits=args.splits,
+                                    classes=args.classes, num_images=len(dataset),
+                                    use_pred=args.use_pred, pred_path=args.pred_path)
     print("==== Mean ====")
     print(mean)
     print("==== Standard Deviation ====")
@@ -102,7 +107,7 @@ def inception(args):
     inception['std'] = std_list
     np.save(args.inception_path, inception)
 
-def get_inception_score(data_loader, model_path, batch_size, splits, classes, num_images):
+def get_inception_score(data_loader, model_path, batch_size, splits, classes, num_images, use_pred, pred_path):
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
     model.fc = nn.Linear(2048, classes)
@@ -115,29 +120,42 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
     model.to(device)
     model.eval()
 
-    print("Num of images {}".format(num_images))
-    print("Num of batches {}".format(len(data_loader)))
     preds = np.zeros((num_images, classes))
 
-    # Get predictions
+    if not use_pred:
+        print("Num of images {}".format(num_images))
+        print("Num of batches {}".format(len(data_loader)))
+        # Get predictions
 
-    def get_pred(x):
-        # x = up(x)
-        with torch.no_grad():
-            pred = model(x)
-        return torch.nn.functional.softmax(pred[0], dim=0).data.cpu().numpy()
-        # return F.softmax(pred).data.cpu().numpy()
+        def get_pred(x):
+            # x = up(x)
+            with torch.no_grad():
+                pred = model(x)
+            return torch.nn.functional.softmax(pred[0], dim=0).data.cpu().numpy()
+            # return F.softmax(pred).data.cpu().numpy()
 
-    data_iter = iter(data_loader)
-    i = 0
-    while i < len(data_loader):
-        eval_imgs = data_iter.next()
-        eval_imgs = eval_imgs.cuda()
-        eval_imgs = Variable(eval_imgs).cuda()
-        preds[i * batch_size:(i+1) * batch_size] = get_pred(eval_imgs)
-        i += 1
-        if(i % 100 == 0):
-            print("Batches complete {}".format(i))
+        data_iter = iter(data_loader)
+        i = 0
+        while i < len(data_loader):
+            eval_imgs = data_iter.next()
+            eval_imgs = eval_imgs.cuda()
+            eval_imgs = Variable(eval_imgs).cuda()
+            preds[i * batch_size:(i+1) * batch_size] = get_pred(eval_imgs)
+            i += 1
+            if(i % 100 == 0):
+                print("Batches complete {}".format(i))
+
+        print("Saving predictions")
+        with open(pred_path, 'wb') as f:
+            np.save(f, preds)
+
+        print("Finished passing through model")
+    else:
+        print("Loading predictions from {}".format(pred_path))
+        if pred_path:
+            with open(pred_path, 'rb') as f:
+                preds = np.load(pred_path)
+
 
     # dtype = torch.cuda.FloatTensor
     # num_batches = math.ceil(len(images) / batch_size)
@@ -154,7 +172,7 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
     #     preds[i * batch_size:(i * batch_size) + batch_size_i] = get_pred(eval_imgsv)
     #     i += 1
 
-    print("Finished passing through model")
+    print("Computing IS")
     # Now compute the mean kl-div
     split_scores = []
 
