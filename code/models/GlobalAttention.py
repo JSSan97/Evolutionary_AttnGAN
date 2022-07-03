@@ -81,8 +81,8 @@ class GlobalAttentionGeneral(nn.Module):
 
     def forward(self, input, context):
         """
-            input: batch x idf x ih x iw (queryL=ihxiw)
-            context: batch x cdf x sourceL
+            input: batch x idf x ih x iw (queryL=ihxiw)  # Aka hidden state
+            context: batch x cdf x sourceL  # Aka word embeddings
         """
         ih, iw = input.size(2), input.size(3)
         queryL = ih * iw
@@ -94,11 +94,13 @@ class GlobalAttentionGeneral(nn.Module):
         # batch x cdf x sourceL --> batch x cdf x sourceL x 1
         sourceT = context.unsqueeze(3)
         # --> batch x idf x sourceL
+        # The word features are first converted into the common semantic space of the images features by adding a new perceptron layer, i.e., e
         sourceT = self.conv_context(sourceT).squeeze(3)
 
         # Get attention
         # (batch x queryL x idf)(batch x idf x sourceL)
         # -->batch x queryL x sourceL
+        # Then, a word-context vector is computed for each sub-region of the image based on its hidden features h (query).
         attn = torch.bmm(targetT, sourceT)
         # --> batch*queryL x sourceL
         attn = attn.view(batch_size*queryL, sourceL)
