@@ -135,6 +135,8 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
         eval_imgs = Variable(eval_imgs).cuda()
         preds[i * batch_size:(i+1) * batch_size] = get_pred(eval_imgs)
         i += 1
+        if(i % 100):
+            print(i)
 
     # dtype = torch.cuda.FloatTensor
     # num_batches = math.ceil(len(images) / batch_size)
