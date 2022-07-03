@@ -123,7 +123,8 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
 
     def get_pred(x):
         # x = up(x)
-        pred = model(x)
+        with torch.no_grad():
+            pred = model(x)
         return torch.nn.functional.softmax(pred[0], dim=0).data.cpu().numpy()
         # return F.softmax(pred).data.cpu().numpy()
 
