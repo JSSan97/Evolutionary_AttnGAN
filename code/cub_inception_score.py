@@ -129,7 +129,6 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
 
         def get_pred(x):
             # x = up(x)
-            print(x)
             with torch.no_grad():
                 pred = model(x)
             return torch.nn.functional.softmax(pred[0], dim=0).data.cpu().numpy()
@@ -140,8 +139,10 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
         #while i < 1:
         while i < len(data_loader):
             eval_imgs = data_iter.next()
+            print(eval_imgs)
             eval_imgs = eval_imgs.cuda()
             eval_imgs = Variable(eval_imgs).cuda()
+            print(eval_imgs)
             preds[i * batch_size:(i+1) * batch_size] = get_pred(eval_imgs)
             i += 1
             if(i % 100 == 0):
