@@ -98,7 +98,7 @@ def inception(args):
     dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=args.eval_single_class)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
-        drop_last=True, shuffle=True)
+        drop_last=True, shuffle=False)
 
     mean, std = get_inception_score(data_loader=dataloader, model_path=args.inception_v3_model,
                                     batch_size=args.batch_size, splits=args.splits,
