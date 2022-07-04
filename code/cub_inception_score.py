@@ -95,7 +95,7 @@ def inception(args):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
-    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_classes=args.eval_classes)
+    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=args.eval_single_class)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=True)
