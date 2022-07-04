@@ -13,7 +13,7 @@ from scipy.stats import entropy
 import torch.utils.data as data
 
 class CubEvalDataset(data.Dataset):
-    def __init__(self, data_dir, filenames):
+    def __init__(self, data_dir, filenames, eval_class=''):
         self.data_dir = data_dir
         self.filenames = filenames
         self.image_transform = transforms.Compose([
@@ -22,10 +22,20 @@ class CubEvalDataset(data.Dataset):
             transforms.ToTensor(),
         ])
 
-    def get_image_path(self, index):
+        self.eval_class = eval_class
+        self.all_keys = self.get_all_keys()
+        self.length = len(self.all_keys)
+
+    def get_all_keys(self):
         with open(self.filenames, 'r') as f:
             all_texts = f.readlines()
-            filename = all_texts[index].replace('\n', '')
+            if self.eval_class:
+                all_texts = [x for x in all_texts if self.eval_class in x]
+
+        return all_texts
+
+    def get_image_path(self, index):
+        filename = self.all_keys[index].replace('\n', '')
         image_path = os.path.join(self.data_dir, filename)
         return image_path
 
@@ -35,7 +45,7 @@ class CubEvalDataset(data.Dataset):
         return image
 
     def __len__(self):
-        return 29280
+        return self.length
 
 
 def parse_args():
@@ -55,6 +65,7 @@ def parse_args():
     parser.add_argument('--splits', type=int,
                         default=10)
     parser.add_argument('--use_pred', type=bool, default=False)
+    parser.add_argument('--eval_single_class', type=str, default='')
     args = parser.parse_args()
     return args
 
@@ -84,7 +95,7 @@ def inception(args):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
-    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt')
+    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_classes=args.eval_classes)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=True)
