@@ -129,6 +129,7 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
 
         def get_pred(x):
             # x = up(x)
+            print(x)
             with torch.no_grad():
                 pred = model(x)
             return torch.nn.functional.softmax(pred[0], dim=0).data.cpu().numpy()
@@ -177,20 +178,20 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
     # Now compute the mean kl-div
     split_scores = []
 
-    # for k in range(splits):
-    #     part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
-    #     py = np.mean(part, axis=0)
-    #     scores = []
-    #     for i in range(part.shape[0]):
-    #         pyx = part[i, :]
-    #         scores.append(entropy(pyx, py))
-    #     split_scores.append(np.exp(np.mean(scores)))
-
     for k in range(splits):
         part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
-        kl = (part * (np.log(part) - np.log(np.expand_dims(np.mean(part, 0), 0))))
-        kl = np.mean(np.sum(kl, 1))
-        split_scores.append(np.exp(kl))
+        py = np.mean(part, axis=0)
+        scores = []
+        for i in range(part.shape[0]):
+            pyx = part[i, :]
+            scores.append(entropy(pyx, py))
+        split_scores.append(np.exp(np.mean(scores)))
+
+    # for k in range(splits):
+    #     part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
+    #     kl = (part * (np.log(part) - np.log(np.expand_dims(np.mean(part, 0), 0))))
+    #     kl = np.mean(np.sum(kl, 1))
+    #     split_scores.append(np.exp(kl))
 
     return np.mean(split_scores), np.std(split_scores)
 
