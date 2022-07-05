@@ -120,6 +120,8 @@ def inception(args, model, save=False, class_name=''):
         inception['std'] = std_list
         np.save(args.inception_path, inception)
 
+    return mean, std
+
 def load_model(classes, model_path):
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
@@ -214,8 +216,16 @@ if __name__ == "__main__":
 
     model = load_model(args.classes, args.inception_v3_model)
     if args.eval_single_class:
+        index = 0
+        class_is_scores = {}
+
         for class_ids in TEST_ONLY_CLASSES:
             print("Evaluating class {}".format(class_ids))
-            inception(args, model, save=False, class_name=class_ids)
+            mean, std = inception(args, model, save=False, class_name=class_ids)
+            class_is_scores[class_ids] = (mean, std)
+            index += 1
+            np.save(args.inception_path, inception)
+
+
     else:
-        inception(args, save=True)
+        _, _ = inception(args, save=True)
