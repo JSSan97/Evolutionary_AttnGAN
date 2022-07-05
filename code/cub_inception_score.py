@@ -89,7 +89,7 @@ def write_sub_filenames(eval_imgs_dir):
             f.write('\n'.join(eval_filenames))
 
 
-def inception(args, save=False, class_name=''):
+def inception(args, model, save=False, class_name=''):
     if not os.path.isfile('eval_filenames.txt'):
         write_sub_filenames(args.eval_imgs_dir)
 
@@ -102,7 +102,7 @@ def inception(args, save=False, class_name=''):
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=shuffle)
 
-    preds = get_predictions(data_loader=dataloader, model_path=args.inception_v3_model,
+    preds = get_predictions(data_loader=dataloader, model=model,
                                     batch_size=args.batch_size,
                                     classes=args.classes, num_images=len(dataset),
                                     use_pred=args.use_pred, pred_path=args.pred_path, save=save)
@@ -122,7 +122,7 @@ def inception(args, save=False, class_name=''):
         inception['std'] = std_list
         np.save(args.inception_path, inception)
 
-def get_predictions(data_loader, model_path, batch_size, classes, num_images, use_pred, pred_path, save):
+def load_model(classes, model_path):
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
     model.fc = nn.Linear(2048, classes)
@@ -134,7 +134,10 @@ def get_predictions(data_loader, model_path, batch_size, classes, num_images, us
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     model.eval()
+    return model
 
+
+def get_predictions(data_loader, model, batch_size, classes, num_images, use_pred, pred_path, save):
     preds = np.zeros((num_images, classes))
 
     if not use_pred:
@@ -210,9 +213,10 @@ def load_inception_scores(inception_path):
 if __name__ == "__main__":
     args = parse_args()
 
+    model = load_model(args.classes, args.inception_v3_model)
     if args.eval_single_class:
         for class_ids in TEST_ONLY_CLASSES:
             print("Evaluating class {}".format(class_ids))
-            inception(args, save=False, class_name=class_ids)
+            inception(args, model, save=False, class_name=class_ids)
     else:
         inception(args, save=True)
