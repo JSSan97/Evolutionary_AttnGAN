@@ -53,9 +53,7 @@ class CubEvalDataset(data.Dataset):
 def parse_args():
     parser = argparse.ArgumentParser(description='Run inception scorer')
     parser.add_argument('eval_imgs_dir', type=str)
-    parser.add_argument('pred_path', type=str)
-    # parser.add_argument('--file_path', type=str,
-    #                     default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/eval_coco_img_array.npy')
+    parser.add_argument('pred_path', type=str, default='')
     parser.add_argument('--inception_path', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inception_attngan2.npy')
     parser.add_argument('--inception_v3_model', type=str,
@@ -164,7 +162,7 @@ def get_predictions(data_loader, model, batch_size, classes, num_images, use_pre
             if(i % 100 == 0):
                 print("Batches complete {}".format(i))
 
-        if save:
+        if save and pred_path:
             print("Saving predictions")
             with open(pred_path, 'wb') as f:
                 np.save(f, preds)
