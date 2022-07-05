@@ -12,6 +12,8 @@ from train_inception_v3_with_cub import InceptionAux
 from scipy.stats import entropy
 import torch.utils.data as data
 
+TEST_ONLY_CLASSES = ['001.', '004.', '006.', '008.', '009.', '014.', '023.', '029.', '031.', '033.', '034.', '035.', '036.', '037.', '038.', '043.', '049.', '051.', '053.', '066.', '072.', '079.', '083.', '084.', '086.', '091.', '095.', '096.', '098.', '101.', '102.', '103.', '112.', '114.', '119.', '121.', '130.', '135.', '138.', '147.', '156.', '163.', '165.', '166.', '180.', '183.', '185.', '186.', '187.', '197.']
+
 class CubEvalDataset(data.Dataset):
     def __init__(self, data_dir, filenames, eval_class=''):
         self.data_dir = data_dir
@@ -65,7 +67,7 @@ def parse_args():
     parser.add_argument('--splits', type=int,
                         default=10)
     parser.add_argument('--use_pred', type=bool, default=False)
-    parser.add_argument('--eval_single_class', type=str, default='')
+    parser.add_argument('--eval_single_class', type=bool, default=False)
     args = parser.parse_args()
     return args
 
@@ -87,16 +89,15 @@ def write_sub_filenames(eval_imgs_dir):
             f.write('\n'.join(eval_filenames))
 
 
-def inception(args):
+def inception(args, save=False, class_name=''):
     if not os.path.isfile('eval_filenames.txt'):
-        print("Writing class_folder/filename to text file")
         write_sub_filenames(args.eval_imgs_dir)
 
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
     shuffle = False
-    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=args.eval_single_class)
+    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=shuffle)
@@ -104,23 +105,24 @@ def inception(args):
     preds = get_predictions(data_loader=dataloader, model_path=args.inception_v3_model,
                                     batch_size=args.batch_size,
                                     classes=args.classes, num_images=len(dataset),
-                                    use_pred=args.use_pred, pred_path=args.pred_path)
+                                    use_pred=args.use_pred, pred_path=args.pred_path, save=save)
     mean, std = get_inception_score(preds, args.splits, len(dataset))
     print("==== Mean ====")
     print(mean)
     print("==== Standard Deviation ====")
     print(std)
 
-    mean_list, std_list = load_inception_scores(args.inception_path)
-    mean_list.append(mean)
-    std_list.append(std)
+    if save:
+        mean_list, std_list = load_inception_scores(args.inception_path)
+        mean_list.append(mean)
+        std_list.append(std)
 
-    inception = {}
-    inception['mean'] = mean_list
-    inception['std'] = std_list
-    np.save(args.inception_path, inception)
+        inception = {}
+        inception['mean'] = mean_list
+        inception['std'] = std_list
+        np.save(args.inception_path, inception)
 
-def get_predictions(data_loader, model_path, batch_size, classes, num_images, use_pred, pred_path):
+def get_predictions(data_loader, model_path, batch_size, classes, num_images, use_pred, pred_path, save):
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
     model.fc = nn.Linear(2048, classes)
@@ -159,11 +161,12 @@ def get_predictions(data_loader, model_path, batch_size, classes, num_images, us
             if(i % 100 == 0):
                 print("Batches complete {}".format(i))
 
-        print("Saving predictions")
-        with open(pred_path, 'wb') as f:
-            np.save(f, preds)
+        if save:
+            print("Saving predictions")
+            with open(pred_path, 'wb') as f:
+                np.save(f, preds)
 
-        print("Finished passing through model")
+            print("Finished passing through model")
     else:
         print("Loading predictions from {}".format(pred_path))
         if pred_path:
@@ -206,4 +209,10 @@ def load_inception_scores(inception_path):
 
 if __name__ == "__main__":
     args = parse_args()
-    inception(args)
+
+    if args.eval_single_class:
+        for class_ids in TEST_ONLY_CLASSES:
+            print("Evaluating class {}".format(class_ids))
+            inception(args, save=False, class_name=class_ids)
+    else:
+        inception(args, save=True)
