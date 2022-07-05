@@ -95,15 +95,17 @@ def inception(args):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
+    shuffle = False
     dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=args.eval_single_class)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
-        drop_last=True, shuffle=True)
+        drop_last=True, shuffle=shuffle)
 
-    mean, std = get_inception_score(data_loader=dataloader, model_path=args.inception_v3_model,
-                                    batch_size=args.batch_size, splits=args.splits,
+    preds = get_predictions(data_loader=dataloader, model_path=args.inception_v3_model,
+                                    batch_size=args.batch_size,
                                     classes=args.classes, num_images=len(dataset),
                                     use_pred=args.use_pred, pred_path=args.pred_path)
+    mean, std = get_inception_score(preds, args.splits, len(dataset))
     print("==== Mean ====")
     print(mean)
     print("==== Standard Deviation ====")
@@ -118,7 +120,7 @@ def inception(args):
     inception['std'] = std_list
     np.save(args.inception_path, inception)
 
-def get_inception_score(data_loader, model_path, batch_size, splits, classes, num_images, use_pred, pred_path):
+def get_predictions(data_loader, model_path, batch_size, classes, num_images, use_pred, pred_path):
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=classes)
     model.fc = nn.Linear(2048, classes)
@@ -168,22 +170,9 @@ def get_inception_score(data_loader, model_path, batch_size, splits, classes, nu
             with open(pred_path, 'rb') as f:
                 preds = np.load(pred_path)
 
+    return preds
 
-    # dtype = torch.cuda.FloatTensor
-    # num_batches = math.ceil(len(images) / batch_size)
-    # i = 0
-    #
-    # while i < num_batches:
-    #     eval_imgs = images[i * batch_size: (i+1) * batch_size]
-    #     # print(eval_imgs.shape)
-    #     eval_imgs = torch.stack(eval_imgs)
-    #
-    #     eval_imgs = eval_imgs.type(dtype)
-    #     eval_imgsv = Variable(eval_imgs)
-    #     batch_size_i = eval_imgs.shape[0]
-    #     preds[i * batch_size:(i * batch_size) + batch_size_i] = get_pred(eval_imgsv)
-    #     i += 1
-
+def get_inception_score(preds, splits, num_images):
     print("Computing IS")
     # Now compute the mean kl-div
     split_scores = []
