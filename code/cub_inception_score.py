@@ -136,6 +136,7 @@ def load_model(classes, model_path):
 
 
 def get_predictions(data_loader, model, batch_size, classes, num_images, use_pred, pred_path, save):
+    num_images = num_images - (num_images % batch_size)
     preds = np.zeros((num_images, classes))
 
     if not use_pred:
