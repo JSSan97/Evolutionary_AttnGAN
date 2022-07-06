@@ -92,7 +92,7 @@ def inception(args, model, save=False, class_name=''):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
-    shuffle = true
+    shuffle = True
     dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
@@ -226,4 +226,4 @@ if __name__ == "__main__":
 
 
     else:
-        _, _ = inception(args, save=True)
+        _, _ = inception(args, model, save=True)
