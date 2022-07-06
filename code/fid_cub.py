@@ -117,6 +117,8 @@ def fid(args, model, class_name):
         drop_last=True, shuffle=shuffle)
 
     activation1, activation2 = get_feature_vector(model, data_loader)
+    print(activation1.shape)
+    print(activation2.shape)
     fid_score = calculate_fid(activation1, activation2)
 
     return fid_score
