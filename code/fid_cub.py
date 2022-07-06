@@ -68,7 +68,7 @@ class CubDataset(data.Dataset):
 def parse_args():
     parser = argparse.ArgumentParser(description='Run inception scorer')
     parser.add_argument('eval_imgs_dir', type=str)
-    parser.add_argument('--ground_truth_dir', type=str, default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/images')
+    parser.add_argument('--ground_truth_dir', type=str, default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds/CUB_200_2011/images')
     parser.add_argument('--inception_v3_model', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth')
     parser.add_argument('--classes', type=int,
