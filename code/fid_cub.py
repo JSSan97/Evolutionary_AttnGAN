@@ -37,6 +37,7 @@ class CubDataset(data.Dataset):
     def get_all_keys(self):
         with open(self.filenames, 'r') as f:
             all_keys = f.readlines()
+            all_keys = [x.replace('\n', '') for x in all_keys]
 
             if self.eval_class:
                 # Remove extension and sentence num e.g. _s0.png
