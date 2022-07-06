@@ -138,7 +138,7 @@ def get_feature_vector(model, data_loader):
     output_feat_2 = model(eval_imgs)
     vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy().flatten()
 
-    return output_feat_1, output_feat_2
+    return vec_feat_1, vec_feat_2
 
 def calculate_fid(act1, act2):
     # calculate mean and covariance statistics
