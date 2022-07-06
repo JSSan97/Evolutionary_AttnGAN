@@ -3,13 +3,11 @@ import argparse
 import os
 import torch.nn as nn
 import torch
-import math
 
 from PIL import Image
 from torchvision import transforms
 from torch.autograd import Variable
 from train_inception_v3_with_cub import InceptionAux
-from scipy.stats import entropy
 import torch.utils.data as data
 
 TEST_ONLY_CLASSES = ['001.', '004.', '006.', '008.', '009.', '014.', '023.', '029.', '031.', '033.', '034.', '035.', '036.', '037.', '038.', '043.', '049.', '051.', '053.', '066.', '072.', '079.', '083.', '084.', '086.', '091.', '095.', '096.', '098.', '101.', '102.', '103.', '112.', '114.', '119.', '121.', '130.', '135.', '138.', '147.', '156.', '163.', '165.', '166.', '180.', '183.', '185.', '186.', '187.', '197.']
@@ -94,7 +92,7 @@ def inception(args, model, save=False, class_name=''):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
-    shuffle = False
+    shuffle = true
     dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
