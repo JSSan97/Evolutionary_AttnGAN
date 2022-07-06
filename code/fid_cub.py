@@ -132,6 +132,9 @@ def get_feature_vector(model, data_loader):
     eval_imgs = eval_imgs.cuda()
     eval_imgs = Variable(eval_imgs).cuda()
 
+    print(ground_truths.shape)
+    print(eval_imgs.shapes)
+
     output_feat_1 = model(ground_truths)
     print(output_feat_1.shape)
     # vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy().flatten()
