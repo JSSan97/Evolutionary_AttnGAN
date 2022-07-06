@@ -51,13 +51,21 @@ class CubDataset(data.Dataset):
 
         return all_keys
 
+    def get_eval_img(self, key):
+        sentence_num = random.randint(0, 9)
+        eval_img = os.path.join(self.eval_dir, "{}_s{}.png".format(key, sentence_num))
+        return eval_img
+
     def __getitem__(self, index):
         key = self.all_keys[index].replace('\n', '')
         ground_truth_img = os.path.join(self.ground_truth_dir, "{}.jpg".format(key))
         ground_truth_img = self.image_transform(Image.open(ground_truth_img).convert('RGB'))
 
-        sentence_num = random.randint(0, 9)
-        eval_img = os.path.join(self.eval_dir, "{}_s{}.png".format(key, sentence_num))
+        eval_img = self.get_eval_img(key)
+        while not os.path.exists(eval_img):
+            print("This image does not exists: {}".format(eval_img))
+            eval_img = self.get_eval_img(key)
+
         eval_img = self.image_transform(Image.open(eval_img).convert('RGB'))
 
         return ground_truth_img, eval_img
