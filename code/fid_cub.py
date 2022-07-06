@@ -74,8 +74,8 @@ def parse_args():
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth')
     parser.add_argument('--classes', type=int,
                         default=50)
-    parser.add_argument('--batch_size', type=int,
-                        default=20)
+    parser.add_argument('--results_path', type=str,
+                        default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/fid_scores/birds_attngan2_600.npy')
     args = parser.parse_args()
     return args
 
@@ -117,8 +117,6 @@ def fid(args, model, class_name):
         drop_last=True, shuffle=shuffle)
 
     activation1, activation2 = get_feature_vector(model, data_loader)
-    print(activation1.shape)
-    print(activation2.shape)
     fid_score = calculate_fid(activation1, activation2)
 
     return fid_score
@@ -133,11 +131,9 @@ def get_feature_vector(model, data_loader):
     eval_imgs = Variable(eval_imgs).cuda()
 
     output_feat_1 = model(ground_truths)
-    print(type(output_feat_1))
     vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy()
 
     output_feat_2 = model(eval_imgs)
-    print(type(output_feat_2))
     vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy()
 
     return vec_feat_1, vec_feat_2
@@ -160,10 +156,10 @@ def calculate_fid(act1, act2):
 if __name__ == "__main__":
     args = parse_args()
     model = load_model(args.classes, args.inception_v3_model)
-
+    class_fid_scores = {}
     for class_id in TEST_ONLY_CLASSES:
         print("===== Class: {} =====".format(class_id))
         fid_score = fid(args, model, class_id)
         print(fid_score)
-
-
+        class_fid_scores[class_id] = fid
+        np.save(args.results_path, class_fid_scores)
