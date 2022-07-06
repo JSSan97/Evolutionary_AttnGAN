@@ -134,11 +134,11 @@ def get_feature_vector(model, data_loader):
 
     output_feat_1 = model(ground_truths)
     print(type(output_feat_1))
-    vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy().flatten()
+    vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy()
 
     output_feat_2 = model(eval_imgs)
     print(type(output_feat_2))
-    vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy().flatten()
+    vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy()
 
     return vec_feat_1, vec_feat_2
 
