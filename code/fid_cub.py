@@ -6,6 +6,7 @@ import random
 import torch.utils.data as data
 import numpy as np
 
+from torch.autograd import Variable
 from numpy import cov
 from numpy import trace
 from numpy import iscomplexobj
@@ -123,6 +124,11 @@ def fid(args, model, class_name):
 def get_feature_vector(model, data_loader):
     data_iter = iter(data_loader)
     ground_truths, eval_imgs = data_iter.next()
+
+    ground_truths = ground_truths.cuda()
+    ground_truths = Variable(ground_truths).cuda()
+    eval_imgs = eval_imgs.cuda()
+    eval_imgs = Variable(eval_imgs).cuda()
 
     output_feat_1 = model(ground_truths)
     vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy().flatten()
