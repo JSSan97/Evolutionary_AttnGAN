@@ -12,10 +12,10 @@ TREE:
 
 TRAIN:
     FLAG: True
-    NET_G: '/content/drive/MyDrive/Github/output/birds_ie_attn2_tuned_2022_07_04_13_55_49/Model/netG_epoch_550.pth'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
+    NET_G: '/content/drive/MyDrive/Github/output/IE-AttnGAN_Birds_Tuned/birds_ie_attn2_tuned_2022_07_05_14_12_08/Model/netG_epoch_600.pth'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 24  # 22
-    MAX_EPOCH: 600
+    MAX_EPOCH: 650
     SNAPSHOT_INTERVAL: 10
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
