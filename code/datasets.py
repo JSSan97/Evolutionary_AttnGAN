@@ -322,7 +322,7 @@ class CubInceptionDataset(data.Dataset):
 
         self.transform = transform
         self.data_dir = data_dir
-        self.filenames = self.load_text_data(self.data_dir)
+        self.filenames = self.load_text_data(self.data_dir, split)
         self.class_id = self.load_class_id(data_dir, split)
 
         print("Filenames : {}".format(len(self.filenames)))
