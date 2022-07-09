@@ -56,6 +56,7 @@ def parse_args():
     parser.add_argument('--cfg', dest='cfg_file',
                         help='optional config file',
                         default='code/cfg/bird_attn2.yml', type=str)
+    parser.add_argument('--split', type=str, default='test')
     parser.add_argument('--gpu', dest='gpu_id', type=int, default=0)
     parser.add_argument('--epochs', type=int, default=100, help='Training Epochs')
     parser.add_argument('--batch_size', type=int, default=24, help='Batch Training')
@@ -135,11 +136,12 @@ def main(args):
     else:
         cfg.CUDA = False
 
-    split_dir, bshuffle = 'train', True
+    split_dir = 'test'
+    bshuffle = True
 
-    if not cfg.TRAIN.FLAG:
+    if args.split == 'train':
         # bshuffle = False
-        split_dir = 'test'
+        split_dir = 'train'
 
     ## Load Model and modify classes
     model = torch.hub.load('pytorch/vision:v0.11.0', 'inception_v3', pretrained=False, num_classes=args.classes)

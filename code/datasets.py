@@ -317,13 +317,13 @@ class TextDataset(data.Dataset):
 
 
 class CubInceptionDataset(data.Dataset):
-    def __init__(self, data_dir, split='train',
+    def __init__(self, data_dir, split='test',
                  transform=None):
 
         self.transform = transform
         self.data_dir = data_dir
         self.filenames = self.load_text_data(self.data_dir)
-        self.class_id = self.load_class_id(data_dir, len(self.filenames))
+        self.class_id = self.load_class_id(data_dir, split)
 
         print("Filenames : {}".format(len(self.filenames)))
         print("Class IDs : {}".format(len(self.class_id)))
@@ -339,16 +339,18 @@ class CubInceptionDataset(data.Dataset):
             filenames = []
         return filenames
 
-    def load_text_data(self, data_dir):
+    def load_text_data(self, data_dir, split):
         train_names = self.load_filenames(data_dir, 'train')
         test_names = self.load_filenames(data_dir, 'test')
 
         ## filenames = train_names + test_names
-
-        filenames = test_names
+        if split == 'test':
+            filenames = test_names
+        else:
+            filenames = train_names
         return filenames
 
-    def load_class_id(self, data_dir, total_num):
+    def load_class_id(self, data_dir, split):
         train_path = os.path.join(data_dir, 'train')
         test_path = os.path.join(data_dir, 'test')
         if os.path.isfile(train_path + '/class_info.pickle'):
@@ -359,11 +361,15 @@ class CubInceptionDataset(data.Dataset):
             with open(test_path + '/class_info.pickle', 'rb') as f:
                 test_class_id = pickle.load(f, encoding="bytes")
 
+        class_ids = test_class_id
+
+        if split == 'train':
+            class_ids = train_class_id
 
         new_list = []
         index = 1
         temp = 1
-        for i in test_class_id:
+        for i in class_ids:
             if i == temp:
                 new_list.append(index)
             else:
