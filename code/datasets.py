@@ -368,7 +368,7 @@ class CubInceptionDataset(data.Dataset):
 
         new_list = []
         index = 1
-        temp = 1
+        temp = class_ids[0]
         for i in class_ids:
             if i == temp:
                 new_list.append(index)
