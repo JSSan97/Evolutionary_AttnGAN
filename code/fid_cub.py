@@ -126,10 +126,10 @@ def fid(args, model, class_name):
 
     gt_data_loader = torch.utils.data.DataLoader(
         gt_dataset, batch_size=len(gt_dataset),
-        drop_last=True, shuffle=shuffle)
+        drop_last=False, shuffle=shuffle)
     eval_data_loader = torch.utils.data.DataLoader(
         eval_dataset, batch_size=len(gt_dataset),
-        drop_last=True, shuffle=shuffle)
+        drop_last=False, shuffle=shuffle)
 
     activation1, activation2 = get_feature_vector(model, gt_data_loader, eval_data_loader)
 
