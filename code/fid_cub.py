@@ -133,7 +133,7 @@ def fid(args, model, class_name):
 
     activation1, activation2 = get_feature_vector(model, gt_data_loader, eval_data_loader)
 
-    print(activation2.shape)
+    # print(activation2.shape)
     fid_score = calculate_fid(activation1, activation2)
 
     return fid_score
@@ -148,11 +148,12 @@ def get_feature_vector(model, gt_data_loader, eval_data_loader):
     output_feat_1 = model(ground_truths)
     vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy()
 
-    eval_data_iter = iter(eval_data_loader)
+    # eval_data_iter = iter(eval_data_loader)
     vec_feats_2 = []
-    i = 0
-    while i < len(eval_data_loader):
-        eval_imgs = eval_data_iter.next()
+    # i = 0
+    for i, sample_batch in enumerate(eval_data_loader, 0):
+        # eval_imgs = eval_data_iter.next()
+        eval_imgs = sample_batch
         eval_imgs = eval_imgs.cuda()
         eval_imgs = Variable(eval_imgs).cuda()
         output_feat_2 = model(eval_imgs)
