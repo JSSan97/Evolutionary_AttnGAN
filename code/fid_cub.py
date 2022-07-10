@@ -14,16 +14,17 @@ from PIL import Image
 from scipy.linalg import sqrtm
 from torchvision.models.feature_extraction import get_graph_node_names
 from torchvision.models.feature_extraction import create_feature_extractor
-from cub_inception_score import write_sub_filenames
+from cub_inception_score import write_sub_filenames, CubEvalDataset
 from train_inception_v3_with_cub import InceptionAux
 from torchvision import transforms
 
 TEST_ONLY_CLASSES = ['001.', '004.', '006.', '008.', '009.', '014.', '023.', '029.', '031.', '033.', '034.', '035.', '036.', '037.', '038.', '043.', '049.', '051.', '053.', '066.', '072.', '079.', '083.', '084.', '086.', '091.', '095.', '096.', '098.', '101.', '102.', '103.', '112.', '114.', '119.', '121.', '130.', '135.', '138.', '147.', '156.', '163.', '165.', '166.', '180.', '183.', '185.', '186.', '187.', '197.']
 
 class CubDataset(data.Dataset):
-    def __init__(self, ground_truth_dir, eval_dir, filenames, eval_class=''):
+    def __init__(self, ground_truth_dir, filenames, eval_class=''):
+    # def __init__(self, ground_truth_dir, eval_dir, filenames, eval_class=''):
         self.ground_truth_dir = ground_truth_dir
-        self.eval_dir = eval_dir
+        # self.eval_dir = eval_dir
         self.filenames = filenames
         self.image_transform = transforms.Compose([
             transforms.Resize(299),
@@ -51,24 +52,25 @@ class CubDataset(data.Dataset):
 
         return all_keys
 
-    def get_eval_img(self, key):
-        sentence_num = random.randint(0, 9)
-        eval_img = os.path.join(self.eval_dir, "{}_s{}.png".format(key, sentence_num))
-        return eval_img
+    # def get_eval_img(self, key):
+    #     sentence_num = random.randint(0, 9)
+    #     eval_img = os.path.join(self.eval_dir, "{}_s{}.png".format(key, sentence_num))
+    #     return eval_img
 
     def __getitem__(self, index):
         key = self.all_keys[index].replace('\n', '')
         ground_truth_img = os.path.join(self.ground_truth_dir, "{}.jpg".format(key))
         ground_truth_img = self.image_transform(Image.open(ground_truth_img).convert('RGB'))
 
-        eval_img = self.get_eval_img(key)
-        while not os.path.exists(eval_img):
-            print("This image does not exists: {}".format(eval_img))
-            eval_img = self.get_eval_img(key)
-
-        eval_img = self.image_transform(Image.open(eval_img).convert('RGB'))
-
-        return ground_truth_img, eval_img
+        # eval_img = self.get_eval_img(key)
+        # while not os.path.exists(eval_img):
+        #     print("This image does not exists: {}".format(eval_img))
+        #     eval_img = self.get_eval_img(key)
+        #
+        # eval_img = self.image_transform(Image.open(eval_img).convert('RGB'))
+        #
+        # return ground_truth_img, eval_img
+        return ground_truth_img
 
     def __len__(self):
         return self.length
@@ -116,31 +118,38 @@ def fid(args, model, class_name):
     if not os.path.isfile('eval_filenames.txt'):
         write_sub_filenames(args.eval_imgs_dir)
 
-    dataset = CubDataset(args.ground_truth_dir, args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
+    # gt_dataset = CubDataset(args.ground_truth_dir, args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
+    gt_dataset = CubDataset(args.ground_truth_dir, 'eval_filenames.txt', eval_class=class_name)
+    eval_dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
 
-    shuffle = True
+    shuffle = False
 
-    data_loader = torch.utils.data.DataLoader(
-        dataset, batch_size=len(dataset),
+    gt_data_loader = torch.utils.data.DataLoader(
+        gt_dataset, batch_size=len(gt_dataset),
+        drop_last=True, shuffle=shuffle)
+    eval_data_loader = torch.utils.data.DataLoader(
+        eval_dataset, batch_size=len(eval_dataset),
         drop_last=True, shuffle=shuffle)
 
-    activation1, activation2 = get_feature_vector(model, data_loader)
+    activation1, activation2 = get_feature_vector(model, gt_data_loader, eval_data_loader)
     fid_score = calculate_fid(activation1, activation2)
 
     return fid_score
 
-def get_feature_vector(model, data_loader):
-    data_iter = iter(data_loader)
-    ground_truths, eval_imgs = data_iter.next()
-
+def get_feature_vector(model, gt_data_loader, eval_data_loader):
+    gt_data_iter = iter(gt_data_loader)
+    # ground_truths, eval_imgs = data_iter.next()
+    ground_truths = gt_data_iter.next()
     ground_truths = ground_truths.cuda()
     ground_truths = Variable(ground_truths).cuda()
-    eval_imgs = eval_imgs.cuda()
-    eval_imgs = Variable(eval_imgs).cuda()
 
     output_feat_1 = model(ground_truths)
     vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy()
 
+    eval_data_iter = iter(eval_data_loader)
+    eval_imgs = eval_data_iter.next()
+    eval_imgs = eval_imgs.cuda()
+    eval_imgs = Variable(eval_imgs).cuda()
     output_feat_2 = model(eval_imgs)
     vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy()
 
