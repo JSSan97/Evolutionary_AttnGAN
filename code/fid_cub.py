@@ -160,7 +160,7 @@ def get_feature_vector(model, gt_data_loader, eval_data_loader):
         vec_feats_2.append(vec_feat_2)
         i += 1
 
-    return vec_feat_1, np.array(vec_feats_2)
+    return vec_feat_1, np.concatenate(vec_feats_2)
 
 def calculate_fid(act1, act2):
     # calculate mean and covariance statistics
