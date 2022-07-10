@@ -128,10 +128,12 @@ def fid(args, model, class_name):
         gt_dataset, batch_size=len(gt_dataset),
         drop_last=True, shuffle=shuffle)
     eval_data_loader = torch.utils.data.DataLoader(
-        eval_dataset, batch_size=len(eval_dataset),
+        eval_dataset, batch_size=len(gt_dataset),
         drop_last=True, shuffle=shuffle)
 
     activation1, activation2 = get_feature_vector(model, gt_data_loader, eval_data_loader)
+
+    print(activation2.shape)
     fid_score = calculate_fid(activation1, activation2)
 
     return fid_score
@@ -147,13 +149,18 @@ def get_feature_vector(model, gt_data_loader, eval_data_loader):
     vec_feat_1 = output_feat_1['flatten'].cpu().detach().numpy()
 
     eval_data_iter = iter(eval_data_loader)
-    eval_imgs = eval_data_iter.next()
-    eval_imgs = eval_imgs.cuda()
-    eval_imgs = Variable(eval_imgs).cuda()
-    output_feat_2 = model(eval_imgs)
-    vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy()
+    vec_feats_2 = []
+    i = 0
+    while i < len(eval_data_loader):
+        eval_imgs = eval_data_iter.next()
+        eval_imgs = eval_imgs.cuda()
+        eval_imgs = Variable(eval_imgs).cuda()
+        output_feat_2 = model(eval_imgs)
+        vec_feat_2 = output_feat_2['flatten'].cpu().detach().numpy()
+        vec_feats_2.append(vec_feat_2)
+        i += 1
 
-    return vec_feat_1, vec_feat_2
+    return vec_feat_1, np.array(vec_feats_2)
 
 def calculate_fid(act1, act2):
     # calculate mean and covariance statistics
