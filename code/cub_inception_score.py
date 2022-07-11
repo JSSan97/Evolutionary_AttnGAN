@@ -107,9 +107,6 @@ def inception(args, model, eval_filenames, save=False, class_name=''):
                                     classes=args.classes, num_images=len(dataset),
                                     use_pred=args.use_pred, pred_path=args.pred_path, save=save)
 
-    print(len(dataset))
-    print(preds.shape)
-    print(preds[-1])
     mean, std = get_inception_score(preds, args.splits, len(dataset))
     print("==== Mean ====")
     print(mean)
