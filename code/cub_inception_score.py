@@ -106,6 +106,9 @@ def inception(args, model, eval_filenames, save=False, class_name=''):
                                     batch_size=args.batch_size,
                                     classes=args.classes, num_images=len(dataset),
                                     use_pred=args.use_pred, pred_path=args.pred_path, save=save)
+
+    print(len(dataset))
+    print(preds.shape)
     mean, std = get_inception_score(preds, args.splits, len(dataset))
     print("==== Mean ====")
     print(mean)
@@ -227,7 +230,7 @@ if __name__ == "__main__":
 
     if not os.path.isfile(filenames):
         print("Writing filenames in {}".format(filenames))
-        write_sub_filenames(args.eval_imgs_dir,filenames, eval_classes)
+        write_sub_filenames(args.eval_imgs_dir, filenames, eval_classes)
 
     if args.eval_single_class:
         index = 0
