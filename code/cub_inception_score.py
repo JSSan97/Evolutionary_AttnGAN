@@ -70,7 +70,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def write_sub_filenames(eval_imgs_dir):
+def write_sub_filenames(eval_imgs_dir, filename, classes):
     '''
     Images are in seperate class folders, so we want to map the image to filenames
     Used in dataloadeer.
@@ -78,27 +78,25 @@ def write_sub_filenames(eval_imgs_dir):
     # Look through all class image folders
     eval_filenames = []
     for image_folder in os.listdir(eval_imgs_dir):
-        # Get full path of class image folder
-        class_directory = os.path.join(eval_imgs_dir, image_folder)
-        for image_file in os.listdir(class_directory):
-            key = os.path.join(image_folder, image_file) # 001.bird_black/my_bird1.png
-            eval_filenames.append(key)
+        if [id for id in classes if id in image_folder]:
+            # Get full path of class image folder
+            class_directory = os.path.join(eval_imgs_dir, image_folder)
+            for image_file in os.listdir(class_directory):
+                key = os.path.join(image_folder, image_file) # 001.bird_black/my_bird1.png
+                eval_filenames.append(key)
 
-        with open("eval_filenames.txt", mode='w') as f:
-            f.write('\n'.join(eval_filenames))
+            with open(filename, mode='w') as f:
+                f.write('\n'.join(eval_filenames))
 
 
-def inception(args, model, save=False, class_name=''):
-    if not os.path.isfile('eval_filenames.txt'):
-        write_sub_filenames(args.eval_imgs_dir)
-
+def inception(args, model, eval_filenames, save=False, class_name=''):
     # eval = np.load(args.file_path, allow_pickle=True)
     # eval = np.ndarray.tolist(eval)
     # images = eval['validation_imgs']
     shuffle = False
     if class_name:
         shuffle = True
-    dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
+    dataset = CubEvalDataset(args.eval_imgs_dir, eval_filenames, eval_class=class_name)
     dataloader = torch.utils.data.DataLoader(
         dataset, batch_size=args.batch_size,
         drop_last=True, shuffle=shuffle)
@@ -218,14 +216,18 @@ if __name__ == "__main__":
     args = parse_args()
 
     model = load_model(args.classes, args.inception_v3_model)
+    if args.classes == 50:
+        eval_classes = TEST_ONLY_CLASSES
+        if not os.path.isfile('eval_test_filenames.txt'):
+            write_sub_filenames(args.eval_imgs_dir, "eval_test_filenames.txt", eval_classes)
+    elif args.classes == 150:
+        eval_classes = TRAIN_ONLY_CLASSES
+        if not os.path.isfile('eval_train_filenames.txt'):
+            write_sub_filenames(args.eval_imgs_dir, "eval_train_filenames.txt", eval_classes)
+
     if args.eval_single_class:
         index = 0
         class_is_scores = {}
-
-        if args.classes == 50:
-            eval_classes = TEST_ONLY_CLASSES
-        elif args.classes == 150:
-            eval_classes = TRAIN_ONLY_CLASSES
 
         for class_ids in eval_classes:
             print("Evaluating class {}".format(class_ids))
