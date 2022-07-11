@@ -218,12 +218,14 @@ if __name__ == "__main__":
     model = load_model(args.classes, args.inception_v3_model)
     if args.classes == 50:
         eval_classes = TEST_ONLY_CLASSES
-        if not os.path.isfile('eval_test_filenames.txt'):
-            write_sub_filenames(args.eval_imgs_dir, "eval_test_filenames.txt", eval_classes)
+        filenames = 'eval_test_filenames.txt'
+
     elif args.classes == 150:
         eval_classes = TRAIN_ONLY_CLASSES
-        if not os.path.isfile('eval_train_filenames.txt'):
-            write_sub_filenames(args.eval_imgs_dir, "eval_train_filenames.txt", eval_classes)
+        filenames = 'eval_train_filenames.txt'
+
+    if not os.path.isfile(filenames):
+        write_sub_filenames(args.eval_imgs_dir,filenames, eval_classes)
 
     if args.eval_single_class:
         index = 0
@@ -231,11 +233,11 @@ if __name__ == "__main__":
 
         for class_ids in eval_classes:
             print("Evaluating class {}".format(class_ids))
-            mean, std = inception(args, model, save=False, class_name=class_ids)
+            mean, std = inception(args, model, filenames, save=False, class_name=class_ids)
             class_is_scores[class_ids] = (mean, std)
             index += 1
             np.save(args.inception_path, inception)
 
 
     else:
-        _, _ = inception(args, model, save=True)
+        _, _ = inception(args, model, filenames, save=True)

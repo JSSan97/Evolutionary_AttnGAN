@@ -119,13 +119,10 @@ def load_model(classes, model_path):
 
     return feat_inception
 
-def fid(args, model, class_name):
-    if not os.path.isfile('eval_filenames.txt'):
-        write_sub_filenames(args.eval_imgs_dir)
-
+def fid(args, model, class_name, filenames):
     # gt_dataset = CubDataset(args.ground_truth_dir, args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
-    gt_dataset = CubDataset(args.ground_truth_dir, 'eval_filenames.txt', eval_class=class_name)
-    eval_dataset = CubEvalDataset(args.eval_imgs_dir, 'eval_filenames.txt', eval_class=class_name)
+    gt_dataset = CubDataset(args.ground_truth_dir, filenames, eval_class=class_name)
+    eval_dataset = CubEvalDataset(args.eval_imgs_dir, filenames, eval_class=class_name)
 
     shuffle = False
 
@@ -194,12 +191,20 @@ if __name__ == "__main__":
     class_fid_scores = {}
     if args.classes == 50:
         eval_classes = TEST_ONLY_CLASSES
+        filenames = 'eval_test_filenames.txt'
+        if not os.path.isfile(filenames):
+            write_sub_filenames(args.eval_imgs_dir, filenames, eval_classes)
+
     elif args.classes == 150:
         eval_classes = TRAIN_ONLY_CLASSES
+        filenames = 'eval_train_filenames.txt'
+        if not os.path.isfile(filenames):
+            write_sub_filenames(args.eval_imgs_dir, filenames, eval_classes)
+
 
     for class_id in eval_classes:
         print("===== Class: {} =====".format(class_id))
-        fid_score = fid(args, model, class_id)
+        fid_score = fid(args, model, class_id, filenames)
         print(fid_score)
         class_fid_scores[class_id] = fid
         np.save(args.results_path, class_fid_scores)
