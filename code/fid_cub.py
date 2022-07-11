@@ -131,7 +131,7 @@ def fid(args, model, class_name):
         drop_last=False, shuffle=shuffle)
 
     bs = len(gt_dataset)
-    if(args.batch_size != -1)
+    if args.batch_size != -1:
         bs = args.batch_size
 
     eval_data_loader = torch.utils.data.DataLoader(
