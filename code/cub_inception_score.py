@@ -85,8 +85,8 @@ def write_sub_filenames(eval_imgs_dir, filename, classes):
                 key = os.path.join(image_folder, image_file) # 001.bird_black/my_bird1.png
                 eval_filenames.append(key)
 
-            with open(filename, mode='w') as f:
-                f.write('\n'.join(eval_filenames))
+        with open(filename, mode='w') as f:
+            f.write('\n'.join(eval_filenames))
 
 
 def inception(args, model, eval_filenames, save=False, class_name=''):
