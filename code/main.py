@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument('--gpu', dest='gpu_id', type=int, default=-1)
     parser.add_argument('--data_dir', dest='data_dir', type=str, default='')
     parser.add_argument('--manualSeed', type=int, help='manual seed')
+    parser.add_argument('--test_split_dir', type=str, default='')
     args = parser.parse_args()
     return args
 
@@ -161,7 +162,8 @@ if __name__ == "__main__":
             if cfg.EVAL_EVERY_CAPTION:  # generate images for every caption in the dataset
                 for i in range(cfg.TEXT.CAPTIONS_PER_IMAGE):
                     ## Remove when needed!
-                    split_dir = 'train'
+                    if args.test_split_dir:
+                        split_dir = args.test_split_dir
 
                     dataset = TextDataset(cfg.DATA_DIR, split_dir,
                                           base_size=cfg.TREE.BASE_SIZE,
