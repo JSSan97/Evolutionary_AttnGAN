@@ -86,6 +86,8 @@ def parse_args():
                         default=50)
     parser.add_argument('--results_path', type=str,
                         default='/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/fid_scores/birds_attngan2_600.npy')
+    parser.add_argument('--batch_size', type=int,
+                        default=-1)
     args = parser.parse_args()
     return args
 
@@ -127,8 +129,13 @@ def fid(args, model, class_name):
     gt_data_loader = torch.utils.data.DataLoader(
         gt_dataset, batch_size=len(gt_dataset),
         drop_last=False, shuffle=shuffle)
+
+    bs = len(gt_dataset)
+    if(args.batch_size != -1)
+        bs = args.batch_size
+
     eval_data_loader = torch.utils.data.DataLoader(
-        eval_dataset, batch_size=len(gt_dataset),
+        eval_dataset, batch_size=bs,
         drop_last=False, shuffle=shuffle)
 
     activation1, activation2 = get_feature_vector(model, gt_data_loader, eval_data_loader)
