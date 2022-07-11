@@ -225,6 +225,7 @@ if __name__ == "__main__":
         filenames = 'eval_train_filenames.txt'
 
     if not os.path.isfile(filenames):
+        print("Writing filenames in {}".format(filenames))
         write_sub_filenames(args.eval_imgs_dir,filenames, eval_classes)
 
     if args.eval_single_class:
