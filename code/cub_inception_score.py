@@ -3,7 +3,7 @@ import argparse
 import os
 import torch.nn as nn
 import torch
-
+from scipy.stats import entropy
 from PIL import Image
 from torchvision import transforms
 from torch.autograd import Variable
@@ -189,21 +189,21 @@ def get_inception_score(preds, splits, num_images):
     print("Computing IS")
     # Now compute the mean kl-div
     split_scores = []
-    #
-    # for k in range(splits):
-    #     part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
-    #     py = np.mean(part, axis=0)
-    #     scores = []
-    #     for i in range(part.shape[0]):
-    #         pyx = part[i, :]
-    #         scores.append(entropy(pyx, py))
-    #     split_scores.append(np.exp(np.mean(scores)))
 
     for k in range(splits):
         part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
-        kl = (part * (np.log(part) - np.log(np.expand_dims(np.mean(part, 0), 0))))
-        kl = np.mean(np.sum(kl, 1))
-        split_scores.append(np.exp(kl))
+        py = np.mean(part, axis=0)
+        scores = []
+        for i in range(part.shape[0]):
+            pyx = part[i, :]
+            scores.append(entropy(pyx, py))
+        split_scores.append(np.exp(np.mean(scores)))
+
+    # for k in range(splits):
+    #     part = preds[k * (num_images // splits): (k+1) * (num_images // splits), :]
+    #     kl = (part * (np.log(part) - np.log(np.expand_dims(np.mean(part, 0), 0))))
+    #     kl = np.mean(np.sum(kl, 1))
+    #     split_scores.append(np.exp(kl))
 
     return np.mean(split_scores), np.std(split_scores)
 
