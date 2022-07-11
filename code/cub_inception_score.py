@@ -81,6 +81,7 @@ def write_sub_filenames(eval_imgs_dir, filename, classes):
         if [id for id in classes if id in image_folder]:
             # Get full path of class image folder
             class_directory = os.path.join(eval_imgs_dir, image_folder)
+            print("Looking at directory {}".format(class_directory))
             for image_file in os.listdir(class_directory):
                 key = os.path.join(image_folder, image_file) # 001.bird_black/my_bird1.png
                 eval_filenames.append(key)
