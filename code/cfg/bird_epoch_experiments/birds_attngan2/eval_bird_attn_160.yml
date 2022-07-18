@@ -6,7 +6,9 @@ GPU_ID: 3
 WORKERS: 1
 
 B_VALIDATION: True  # True  # False
-B_VALIDATION_IMG_ARRAY: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/img_array/eval_bird_img_array_160.npy'
+B_VALIDATION_IMG_ARRAY: '' #'/content/eval_bird_img_array_600.npy'
+EVAL_EVERY_CAPTION: True
+
 TREE:
     BRANCH_NUM: 3
 
