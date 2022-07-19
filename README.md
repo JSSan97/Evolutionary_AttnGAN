@@ -1,7 +1,7 @@
 # Evo-AttnGAN and IE-AttnGAN
 
 This is the pytorch project that extends AttnGAN
-Evo-AttnGAN introduces the evolutionary training from Evolutiionary-GAN (E-GAN) and
+Evo-AttnGAN introducing the evolutionary training from Evolutiionary-GAN (E-GAN) and
 IE-AttnGAN from Improved-Evolutionary-GAN (IE-GAN) applied to the text-to-image based GAN AttnGAN. 
 Evo-AttnGAN and IE-AttnGAN proposes changes to the fitness function and mutation objective functions as highlighted in 
 the dissertation.
