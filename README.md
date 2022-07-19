@@ -1,15 +1,13 @@
-# AttnGAN (Python 3, Pytorch 1.0)
+# Evo-AttnGAN and IE-AttnGAN
 
-Pytorch implementation for reproducing AttnGAN results in the paper [AttnGAN: Fine-Grained Text to Image Generation
-with Attentional Generative Adversarial Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_AttnGAN_Fine-Grained_Text_CVPR_2018_paper.pdf) by Tao Xu, Pengchuan Zhang, Qiuyuan Huang, Han Zhang, Zhe Gan, Xiaolei Huang, Xiaodong He. (This work was performed when Tao was an intern with Microsoft Research). 
-
-<img src="framework.png" width="900px" height="350px"/>
-
+This is the pytorch project that extends AttnGAN
+Evo-AttnGAN introduces the evolutionary training from Evolutiionary-GAN (E-GAN) and
+IE-AttnGAN from Improved-Evolutionary-GAN (IE-GAN) applied to the text-to-image based GAN AttnGAN. 
+Evo-AttnGAN and IE-AttnGAN proposes changes to the fitness function and mutation objective functions as highlighted in 
+the dissertation.
 
 ### Dependencies
 python 3.6+
-
-Pytorch 1.0+
 
 In addition, please add the project folder to PYTHONPATH and `pip install` the following packages:
 - `python-dateutil`
@@ -21,70 +19,57 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 
 
 
-**Data**
+**Data** (Credit goes to Original Authors)
 
-1. Download our preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) [coco](https://drive.google.com/open?id=1rSnbIGNDGZeHlsUlLdahj0RJ9oo6lgH9) and save them to `data/`
+1. Download our preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/`
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
-3. Download [coco](http://cocodataset.org/#download) dataset and extract the images to `data/coco/`
 
 
 
 **Training**
-- Pre-train DAMSM models:
-  - For bird dataset: `python pretrain_DAMSM.py --cfg cfg/DAMSM/bird.yml --gpu 0`
-  - For coco dataset: `python pretrain_DAMSM.py --cfg cfg/DAMSM/coco.yml --gpu 1`
- 
-- Train AttnGAN models:
-  - For bird dataset: `python main.py --cfg cfg/bird_attn2.yml --gpu 2`
-  - For coco dataset: `python main.py --cfg cfg/coco_attn2.yml --gpu 3`
+- Pre-train DAMSM models (Credit goes to Original Authors):
+  - For bird dataset: `python pretrain_DAMSM.py --cfg cfg/DAMSM/bird.yml --gpu 0` 
 
-- `*.yml` files are example configuration files for training/evaluation our models.
+- Train models for the bird dataset:
+  - `python main.py --cfg cfg/bird_attn2.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_evo_attn2.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_ie_attn2.yml --gpu 0`
+
+- `*.yml` files are example configuration files for training/evaluation the models.
 
 
 
-**Pretrained Model**
-- [DAMSM for bird](https://drive.google.com/open?id=1GNUKjVeyWYBJ8hEU-yrfYQpDOkxEyP3V). Download and save it to `DAMSMencoders/`
-- [DAMSM for coco](https://drive.google.com/open?id=1zIrXCE9F6yfbEJIbNP5-YrEe2pZcPSGJ). Download and save it to `DAMSMencoders/`
+**Pretrained Models from the original authors**
+- [DAMSM for bird](https://drive.google.com/open?id=1GNUKjVeyWYBJ8hEU-yrfYQpDOkxEyP3V). Download and save it to `DAMSMencoders/`. 
 - [AttnGAN for bird](https://drive.google.com/open?id=1lqNG75suOuR_8gjoEPYNp8VyT_ufPPig). Download and save it to `models/`
-- [AttnGAN for coco](https://drive.google.com/open?id=1i9Xkg9nU74RAvkcqKE-rJYhjvzKAMnCi). Download and save it to `models/`
 
-- [AttnDCGAN for bird](https://drive.google.com/open?id=19TG0JUoXurxsmZLaJ82Yo6O0UJ6aDBpg). Download and save it to `models/`
-  - This is an variant of AttnGAN which applies the propsoed attention mechanisms to DCGAN framework. 
+**My pretrained models**
+- All generator models can be found. Ensure to change cfg yml to point to the path of the generator if using to evaluate the model: 
+- CUB Inception Model (For inception scoring and FID):
+  - Alternatively train your own CUB inception model. See 'train_inception_v3_with_cub.py'
 
-**Sampling**
-- Run `python main.py --cfg cfg/eval_bird.yml --gpu 1` to generate examples from captions in files listed in "./data/birds/example_filenames.txt". Results are saved to `DAMSMencoders/`. 
-- Change the `eval_*.yml` files to generate images from other pre-trained models. 
-- Input your own sentence in "./data/birds/example_captions.txt" if you wannt to generate images from customized sentences. 
+**Evaluating Models**
 
-**Validation**
-- To generate images for all captions in the validation dataset, change B_VALIDATION to True in the eval_*.yml. and then run `python main.py --cfg cfg/eval_bird.yml --gpu 1`
-- We compute inception score for models trained on birds using [StackGAN-inception-model](https://github.com/hanzhanggit/StackGAN-inception-model).
-- We compute inception score for models trained on coco using [improved-gan/inception_score](https://github.com/openai/improved-gan/tree/master/inception_score).
+First run models to output images (see .yml file to see configurations. Note that B_Validation means to run from all test classes. all_captions runs all captions of the test classes), e.g:
+  - `python main.py --cfg cfg/bird_epoch_experiments/birds_attngan2/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_epoch_experiments/birds_evo_attngan2/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_epoch_experiments/birds_ie_attngan2/eval_bird_attn_700.yml --gpu 0`
+
+Inception scoring. Change paths as necessary. Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
+calculating the inception score can take long, especially if evaluating images of all captions in the test classes.
+  - `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_700/valid/single --pred_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_predictions/birds_attngan2_700.npy --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth`
+
+Inception scoring of each test class.
+- `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_700/valid/single --eval_single_class=True --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth --inception_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_scores/classes_ie_attngan2_700.npy`
+
+FID scoring of each test class.
+- `!python3 code/fid_cub.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_700/valid/single --results_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/fid_scores/birds_ie_attngan2_700.npy --batch_size=30`
 
 
-**Examples generated by AttnGAN [[Blog]](https://blogs.microsoft.com/ai/drawing-ai/)**
+### AttnGAN
+See original Pytorch implementation: https://github.com/taoxugit/AttnGAN
+and paper [AttnGAN: Fine-Grained Text to Image Generation
+with Attentional Generative Adversarial Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_AttnGAN_Fine-Grained_Text_CVPR_2018_paper.pdf) by Tao Xu, Pengchuan Zhang, Qiuyuan Huang, Han Zhang, Zhe Gan, Xiaolei Huang, Xiaodong He.
 
- bird example              |  coco example
-:-------------------------:|:-------------------------:
-![](https://github.com/taoxugit/AttnGAN/blob/master/example_bird.png)  |  ![](https://github.com/taoxugit/AttnGAN/blob/master/example_coco.png)
 
 
-### Creating an API
-[Evaluation code](eval) embedded into a callable containerized API is included in the `eval\` folder.
-
-### Citing AttnGAN
-If you find AttnGAN useful in your research, please consider citing:
-
-```
-@article{Tao18attngan,
-  author    = {Tao Xu, Pengchuan Zhang, Qiuyuan Huang, Han Zhang, Zhe Gan, Xiaolei Huang, Xiaodong He},
-  title     = {AttnGAN: Fine-Grained Text to Image Generation with Attentional Generative Adversarial Networks},
-  Year = {2018},
-  booktitle = {{CVPR}}
-}
-```
-
-**Reference**
-
-- [StackGAN++: Realistic Image Synthesis with Stacked Generative Adversarial Networks](https://arxiv.org/abs/1710.10916) [[code]](https://github.com/hanzhanggit/StackGAN-v2)
-- [Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks](https://arxiv.org/abs/1511.06434) [[code]](https://github.com/carpedm20/DCGAN-tensorflow)
