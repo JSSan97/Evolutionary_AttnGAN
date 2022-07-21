@@ -44,7 +44,7 @@ EVO:
     QUALITY_UNCONDITIONAL_LAMBDA: 0.5
     WORD_LOSS_LAMBDA: 0.8
     SENTENCE_LOSS_LAMBDA: 0.8
-    RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_ie_tuned_attngan2_mutation_count.npy'
+    RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_ie_tuned_attngan2_08_mutation_count.npy'
 
 TEXT:
     EMBEDDING_DIM: 256
