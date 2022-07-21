@@ -360,8 +360,11 @@ class ImprovedEvoTraining(GenericTrainer):
         cond_output = netD.COND_DNET(fake_features, sent_emb, logits=False)
         uncond_output = netD.UNCOND_DNET(fake_features, logits=False)
 
-        Fq = (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_output) + \
-             (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_output)
+
+        Fc = (cfg.EVO.QUALITY_CONDITIONAL_LAMBDA * cond_output)
+        Fu = (cfg.EVO.QUALITY_UNCONDITIONAL_LAMBDA * uncond_output)
+
+        Fq = Fc + Fu
 
         Fd = torch.empty(0)
         if cfg.CUDA:
@@ -391,7 +394,9 @@ class ImprovedEvoTraining(GenericTrainer):
         # print(f)
         # print(F_critic)
 
-        print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
+        print("F: {}, Fu: {}, Fc: {} Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
+                                                             Fu.mean().item(),
+                                                             Fc.mean().item(),
                                                              Fq.mean().item(),
                                                              Fd.mean().item(), Fw, Fs))
 
