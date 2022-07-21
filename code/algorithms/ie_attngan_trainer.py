@@ -391,8 +391,8 @@ class ImprovedEvoTraining(GenericTrainer):
         # print(f)
         # print(F_critic)
 
-        # print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
-        #                                                      Fq.mean().item(),
-        #                                                      Fd.mean().item(), Fw, Fs))
+        print("F: {}, Fq: {}, Fd: {}, Fw: {}, Fs: {}".format(f,
+                                                             Fq.mean().item(),
+                                                             Fd.mean().item(), Fw, Fs))
 
         return f, F_critic
