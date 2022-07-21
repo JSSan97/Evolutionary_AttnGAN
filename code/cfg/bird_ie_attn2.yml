@@ -15,7 +15,7 @@ TRAIN:
     NET_G: '/content/drive/MyDrive/Github/output/IE-AttnGAN_Birds/birds_ie_attn2_2022_07_17_15_11_26/Model/netG_epoch_1000.pth'  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 24  # 22
-    MAX_EPOCH: 1000
+    MAX_EPOCH: 1010
     SNAPSHOT_INTERVAL: 10
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002

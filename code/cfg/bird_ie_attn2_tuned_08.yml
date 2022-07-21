@@ -15,7 +15,7 @@ TRAIN:
     NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
     B_NET_D: True
     BATCH_SIZE: 24  # 22
-    MAX_EPOCH: 650
+    MAX_EPOCH: 800
     SNAPSHOT_INTERVAL: 10
     DISCRIMINATOR_LR: 0.0002
     GENERATOR_LR: 0.0002
