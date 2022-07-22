@@ -1,10 +1,7 @@
 # Evo-AttnGAN and IE-AttnGAN
 
-This is the pytorch project that extends AttnGAN
-Evo-AttnGAN introducing the evolutionary training from Evolutiionary-GAN (E-GAN) and
+Evo-AttnGAN introduces the evolutionary training from Evolutiionary-GAN (E-GAN) and
 IE-AttnGAN from Improved-Evolutionary-GAN (IE-GAN) applied to the text-to-image based GAN AttnGAN. 
-Evo-AttnGAN and IE-AttnGAN proposes changes to the fitness function and mutation objective functions as highlighted in 
-the dissertation.
 
 ### Dependencies
 python 3.6+
@@ -18,12 +15,10 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 - `scikit-image`
 
 
-
 **Data** (Credit goes to Original Authors)
 
 1. Download our preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/`
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
-
 
 
 **Training**
