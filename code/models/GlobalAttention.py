@@ -94,7 +94,7 @@ class GlobalAttentionGeneral(nn.Module):
         # batch x cdf x sourceL --> batch x cdf x sourceL x 1
         sourceT = context.unsqueeze(3)
         # --> batch x idf x sourceL
-        # The word features are first converted into the common semantic space of the images features by adding a new perceptron layer, i.e., e
+        # The word features are first converted into the common semantic space of the images features by adding a new perceptron layer, i.e., e'
         sourceT = self.conv_context(sourceT).squeeze(3)
 
         # Get attention
@@ -108,7 +108,7 @@ class GlobalAttentionGeneral(nn.Module):
             # batch_size x sourceL --> batch_size*queryL x sourceL
             mask = self.mask.repeat(queryL, 1)
             attn.data.masked_fill_(mask.data, -float('inf'))
-        attn = self.sm(attn)  # Eq. (2)
+        attn = self.sm(attn)  # Eq. (2), Softmax
         # --> batch x queryL x sourceL
         attn = attn.view(batch_size, queryL, sourceL)
         # --> batch x sourceL x queryL
