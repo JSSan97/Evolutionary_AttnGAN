@@ -232,7 +232,7 @@ class GenericTrainer():
                                     None, batch_size)
         img_set, _ = \
             build_super_images(fake_imgs[i].detach().cpu(),
-                               captions, self.ixtoword, att_maps, att_sze)
+                               captions, self.ixtoword, att_maps, att_sze, nvis=16)
         if img_set is not None:
             im = Image.fromarray(img_set)
             im.save(save_path)
