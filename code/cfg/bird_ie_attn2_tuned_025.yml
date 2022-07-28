@@ -1,0 +1,51 @@
+CONFIG_NAME: 'ie_attn2_tuned_025'
+
+DATASET_NAME: 'birds'
+DATA_DIR: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds'
+GPU_ID: 0
+WORKERS: 4
+
+
+TREE:
+    BRANCH_NUM: 3
+
+
+TRAIN:
+    FLAG: True
+    NET_G: ''  # '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_AttnGAN2.pth'
+    B_NET_D: True
+    BATCH_SIZE: 24  # 22
+    MAX_EPOCH: 800
+    SNAPSHOT_INTERVAL: 10
+    DISCRIMINATOR_LR: 0.0002
+    GENERATOR_LR: 0.0002
+    #
+    NET_E: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/DAMSMencoders/bird/text_encoder200.pth'
+    SMOOTH:
+        GAMMA1: 4.0  # 1,2,5 good 4 best  10&100bad
+        GAMMA2: 5.0
+        GAMMA3: 10.0  # 10good 1&100bad
+        LAMBDA: 5.0
+
+
+GAN:
+    DF_DIM: 64
+    GF_DIM: 32
+    Z_DIM: 100
+    R_NUM: 2
+
+EVO:
+    EVOLUTION_TRAINING: True
+    IE_GAN_TRAINING: True
+    MUTATIONS: 3
+    DIVERSITY_LAMBDA: 0.05
+    DISCRIMINATOR_UPDATES: 1
+    QUALITY_CONDITIONAL_LAMBDA: 0.5
+    QUALITY_UNCONDITIONAL_LAMBDA: 0.5
+    WORD_LOSS_LAMBDA: 0.25
+    SENTENCE_LOSS_LAMBDA: 0.25
+    RECORD_MUTATION: '/content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/bird_ie_tuned_attngan2_mutation_count.npy'
+
+TEXT:
+    EMBEDDING_DIM: 256
+    CAPTIONS_PER_IMAGE: 10
