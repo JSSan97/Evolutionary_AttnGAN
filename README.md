@@ -1,7 +1,8 @@
 # Evo-AttnGAN and IE-AttnGAN
 
-Evo-AttnGAN introduces the evolutionary training from Evolutiionary-GAN (E-GAN) and
-IE-AttnGAN from Improved-Evolutionary-GAN (IE-GAN) applied to the text-to-image based GAN AttnGAN. 
+Evo-AttnGAN introduces the evolutionary training from Evolutionary-GAN (E-GAN) and Improved Evolutionary GAN
+(IE-GAN) to the text-to-image based GAN: AttnGAN. New fitness components are introduced in the fitness function 
+and changes are made to the loss functions.
 
 ### Dependencies
 python 3.6+
@@ -17,7 +18,7 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 
 **Data** (Credit goes to Original Authors)
 
-1. Download our preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/`
+1. Download the preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/`
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
 
 
@@ -31,7 +32,6 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
   - `python main.py --cfg cfg/bird_ie_attn2.yml --gpu 0`
 
 - `*.yml` files are example configuration files for training/evaluation the models.
-
 
 
 **Pretrained Models from the original authors**
