@@ -16,9 +16,9 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 - `scikit-image`
 
 
-**Data** (Credit goes to Original Authors)
+**Dataset and Metadata**
 
-1. Download the preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/`
+1. Download the preprocessed metadata for [birds](https://drive.google.com/open?id=1O_LtUP9sch09QH3s_EBAgLEctBQ5JBSJ) and save them to `data/` (Credit goes to Original Authors)
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
 
 
