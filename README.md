@@ -45,12 +45,18 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 
 **Evaluating Models**
 
-First run models to output images (see .yml file to see configurations. Note that B_Validation means to run from all test classes. all_captions runs all captions of the test classes), e.g:
-  - `python main.py --cfg cfg/bird_epoch_experiments/birds_attngan2/eval_bird_attn_700.yml --gpu 0`
-  - `python main.py --cfg cfg/bird_epoch_experiments/birds_evo_attngan2/eval_bird_attn_700.yml --gpu 0`
-  - `python main.py --cfg cfg/bird_epoch_experiments/birds_ie_attngan2/eval_bird_attn_700.yml --gpu 0`
 
-Inception scoring. Change paths as necessary. Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
+First run models to output images e.g:
+  - `python main.py --cfg cfg/bird_eval_experiments/birds_attngan2/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_eval_experiments/birds_evo_attngan2/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2_tuned_05/eval_bird_attn_700.yml --gpu 0`
+  - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2_tuned_05/eval_bird_attn_700.yml --gpu 0`
+
+See .yml file to see configurations. Note that B_Validation means to run from all test classes. all_captions runs all captions of the test classes.
+Ensure NET_G parameter points to the path of the generator model
+
+Inception scoring. Change arguments as necessary (see cub_inception_score.py). Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
 calculating the inception score can take long, especially if evaluating images of all captions in the test classes.
   - `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_700/valid/single --pred_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_predictions/birds_attngan2_700.npy --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth`
 
