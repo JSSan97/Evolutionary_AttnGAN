@@ -39,14 +39,15 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 - [AttnGAN for bird](https://drive.google.com/open?id=1lqNG75suOuR_8gjoEPYNp8VyT_ufPPig). Download and save it to `models/`
 
 **My pretrained models**
-- All generator models can be found. Ensure to change cfg yml to point to the path of the generator if using to evaluate the model: 
-- CUB Inception Model (For inception scoring and FID):
+- All generator models can be found here. Ensure to change cfg yml to point to the path of the generator 
+if using to evaluate the model: https://drive.google.com/drive/folders/1AwvcwkXaQZ2yPcAQubUlvtBG_T0auS1i?usp=sharing
+- CUB Inception Model (For inception scoring and FID): https://drive.google.com/file/d/1ZkTuUaaQb3CVh3XpQi6_w1PYkv3CtV4r/view?usp=sharing
   - Alternatively train your own CUB inception model. See 'train_inception_v3_with_cub.py'
 
 **Evaluating Models**
 
 
-First run models to output images e.g:
+First run models to output images. The output images will be in a directory of where the generator model is (NET_G parameter of cfg file).
   - `python main.py --cfg cfg/bird_eval_experiments/birds_attngan2/eval_bird_attn_700.yml --gpu 0`
   - `python main.py --cfg cfg/bird_eval_experiments/birds_evo_attngan2/eval_bird_attn_700.yml --gpu 0`
   - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2/eval_bird_attn_700.yml --gpu 0`
@@ -56,15 +57,19 @@ First run models to output images e.g:
 See .yml file to see configurations. Note that B_Validation means to run from all test classes. all_captions runs all captions of the test classes.
 Ensure NET_G parameter points to the path of the generator model
 
-Inception scoring. Change arguments as necessary (see cub_inception_score.py). Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
+Inception scoring. Change arguments as necessary (see cub_inception_score.py), the first argument is the path to the output images. Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
 calculating the inception score can take long, especially if evaluating images of all captions in the test classes.
-  - `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_700/valid/single --pred_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_predictions/birds_attngan2_700.npy --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth`
+- `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_attngan2/birds_attngan2_700/valid/single --pred_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_predictions/birds_attngan2_700.npy --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth`
 
-Inception scoring of each test class.
+Inception scoring of each test class. E.g.
 - `!python3 code/cub_inception_score.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_700/valid/single --eval_single_class=True --splits=10 --batch_size=20 --inception_v3_model /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/inceptionV3_Cl50_100.pth --inception_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/inception_scores/classes_ie_attngan2_700.npy`
 
-FID scoring of each test class.
+FID scoring of each test class. E.g.
 - `!python3 code/fid_cub.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_700/valid/single --results_path /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/fid_scores/birds_ie_attngan2_700.npy --batch_size=30`
+
+R-Precision. First command sets up the data for R-Precision calculation in ./RP_DATA. Second commands evaluates to retrieve R-Precision score. E.g.
+- `!python3 code/build_RPData.py /content/drive/MyDrive/Github/Evolutionary_AttnGAN/models/birds_experiments/birds_ie_attngan2/birds_ie_attngan2_700/valid/single -t /content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds/text`
+- `!python3 code/eval_RP.py ./RP_DATA  /content/drive/MyDrive/Github/Evolutionary_AttnGAN/data/birds/attngan_captions.pickle --cfg /content/drive/MyDrive/Github/Evolutionary_AttnGAN/code/cfg/bird_eval_experiments/birds_ie_attngan2/eval_bird_attn_700.yml`
 
 
 ### AttnGAN
