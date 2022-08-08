@@ -39,8 +39,8 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 - [AttnGAN for bird](https://drive.google.com/open?id=1lqNG75suOuR_8gjoEPYNp8VyT_ufPPig). Download and save it to `models/`
 
 **My pretrained models**
-- All generator models can be found here. https://drive.google.com/drive/folders/1AwvcwkXaQZ2yPcAQubUlvtBG_T0auS1i?usp=sharing
-- CUB Inception Model (For inception scoring and FID): https://drive.google.com/file/d/1ZkTuUaaQb3CVh3XpQi6_w1PYkv3CtV4r/view?usp=sharing
+- All generator models can be found here. Download and save it to `models/`.  https://drive.google.com/drive/folders/1AwvcwkXaQZ2yPcAQubUlvtBG_T0auS1i?usp=sharing
+- CUB Inception Model (For inception scoring and FID). Download and save it to `models/`: https://drive.google.com/file/d/1ZkTuUaaQb3CVh3XpQi6_w1PYkv3CtV4r/view?usp=sharing
   - Alternatively train your own CUB inception model. See 'train_inception_v3_with_cub.py'
 
 **Evaluating Models**
