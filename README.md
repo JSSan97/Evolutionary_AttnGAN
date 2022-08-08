@@ -1,7 +1,7 @@
 # Evo-AttnGAN and IE-AttnGAN
 
-Evo-AttnGAN introduces the evolutionary training from Evolutionary-GAN (E-GAN) and Improved Evolutionary GAN
-(IE-GAN) to the text-to-image based GAN: AttnGAN. New fitness components are introduced in the fitness function 
+Evo-AttnGAN and IE-AttnGAN introduces the evolutionary training from Evolutionary-GAN (E-GAN) and Improved Evolutionary GAN
+(IE-GAN) to the text-to-image based GAN: AttnGAN respectively. New fitness components are introduced in the fitness function 
 and changes are made to the loss functions.
 
 ### Dependencies
