@@ -5,6 +5,8 @@ Evo-AttnGAN introduces the evolutionary training from Evolutionary-GAN (E-GAN) a
 and changes are made to the loss functions.
 
 ### Dependencies
+**Skip if using an environment with these dependencies. E.g. Google Colab.**
+
 python 3.6+
 
 In addition, please add the project folder to PYTHONPATH and `pip install` the following packages:
@@ -22,7 +24,7 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
 
 
-**Training (Optionally Skip and use DAMSM and Pretrained Models Below)**
+**Training (Optionally skip and use DAMSM model and Pretrained Models Below)**
 - Pre-train DAMSM models:
   - For bird dataset: `python pretrain_DAMSM.py --cfg cfg/DAMSM/bird.yml --gpu 0` 
 
