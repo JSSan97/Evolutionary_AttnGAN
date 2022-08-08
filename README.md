@@ -22,7 +22,7 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 2. Download the [birds](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html) image data. Extract them to `data/birds/`
 
 
-**Training**
+**Training (Optionally Skip and use DAMSM and Pretrained Models Below)**
 - Pre-train DAMSM models:
   - For bird dataset: `python pretrain_DAMSM.py --cfg cfg/DAMSM/bird.yml --gpu 0` 
 
@@ -39,15 +39,14 @@ In addition, please add the project folder to PYTHONPATH and `pip install` the f
 - [AttnGAN for bird](https://drive.google.com/open?id=1lqNG75suOuR_8gjoEPYNp8VyT_ufPPig). Download and save it to `models/`
 
 **My pretrained models**
-- All generator models can be found here. Ensure to change cfg yml to point to the path of the generator 
-if using to evaluate the model: https://drive.google.com/drive/folders/1AwvcwkXaQZ2yPcAQubUlvtBG_T0auS1i?usp=sharing
+- All generator models can be found here. https://drive.google.com/drive/folders/1AwvcwkXaQZ2yPcAQubUlvtBG_T0auS1i?usp=sharing
 - CUB Inception Model (For inception scoring and FID): https://drive.google.com/file/d/1ZkTuUaaQb3CVh3XpQi6_w1PYkv3CtV4r/view?usp=sharing
   - Alternatively train your own CUB inception model. See 'train_inception_v3_with_cub.py'
 
 **Evaluating Models**
 
 
-First run models to output images. The output images will be in a directory of where the generator model is (NET_G parameter of cfg file).
+First run models to output images. The output images will be in a directory of where the generator model is (ensure to configure NET_G parameter of cfg file to point to the generator model).
   - `python main.py --cfg cfg/bird_eval_experiments/birds_attngan2/eval_bird_attn_700.yml --gpu 0`
   - `python main.py --cfg cfg/bird_eval_experiments/birds_evo_attngan2/eval_bird_attn_700.yml --gpu 0`
   - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2/eval_bird_attn_700.yml --gpu 0`
