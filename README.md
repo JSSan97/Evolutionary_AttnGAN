@@ -54,7 +54,7 @@ First run models to output images. The output images will be in a directory of w
   - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2_tuned_05/eval_bird_attn_700.yml --gpu 0`
   - `python main.py --cfg cfg/bird_eval_experiments/birds_ie_attngan2_tuned_05/eval_bird_attn_700.yml --gpu 0`
 
-See .yml file to see configurations. Note that B_Validation means to run from all test classes. all_captions runs all captions of the test classes.
+See .yml file to see configurations. Note that B_VALIDATION=True runs captions from all test classes. if B_VALIDATION=True, EVAL_EVERY_CAPTION runs all captions of the test classes, otherwise it samples a caption for every image. If B_VALIDATION=False, then the program uses the captions in example_captions.txt to be used as input.
 Ensure NET_G parameter points to the path of the generator model
 
 Inception scoring. Change arguments as necessary (see cub_inception_score.py), the first argument is the path to the output images. Note that pred_path saves predictions into an npy file, toggle --use_pred to use an existing npy file. This is to save time as
@@ -76,6 +76,3 @@ R-Precision. First command sets up the data for R-Precision calculation in ./RP_
 See original Pytorch implementation: https://github.com/taoxugit/AttnGAN
 and paper [AttnGAN: Fine-Grained Text to Image Generation
 with Attentional Generative Adversarial Networks](http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_AttnGAN_Fine-Grained_Text_CVPR_2018_paper.pdf) by Tao Xu, Pengchuan Zhang, Qiuyuan Huang, Han Zhang, Zhe Gan, Xiaolei Huang, Xiaodong He.
-
-
-
