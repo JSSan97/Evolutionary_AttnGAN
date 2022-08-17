@@ -345,6 +345,9 @@ def mkdir_p(path):
         else:
             raise
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 def load_image_from_tensor(image, show=False, save=True, output_path=None):
   '''
   image: 3-dimensional tensor of shape e.g (3, 256, 256) or 4 for multiple e.g. (16, 3, 256, 256)

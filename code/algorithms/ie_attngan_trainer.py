@@ -15,6 +15,7 @@ from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discri
 import time
 import os
 
+from utils import count_parameters
 from algorithms.trainer import GenericTrainer
 
 
@@ -53,10 +54,15 @@ class ImprovedEvoTraining(GenericTrainer):
 
     def train(self):
         text_encoder, image_encoder, netG, netsD, start_epoch = self.build_models()
+
+        print(count_parameters(netG))
+        print(count_parameters(netsD[0]))
+        print(count_parameters(netsD[1]))
+        print(count_parameters(netsD[2]))
+
         avg_param_G = copy_G_params(netG)
         optimizerG, optimizersD = self.define_optimizers(netG, netsD)
         real_labels, fake_labels, match_labels = self.prepare_labels()
-        fake_imgs = None
 
         batch_size = self.batch_size
         nz = cfg.GAN.Z_DIM
