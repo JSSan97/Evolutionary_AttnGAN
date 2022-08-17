@@ -8,14 +8,13 @@ import numpy as np
 from torch.autograd import Variable
 
 from miscc.config import cfg
-from miscc.utils import weights_init, load_params, copy_G_params
+from miscc.utils import weights_init, load_params, copy_G_params, count_parameters
 from datasets import prepare_data
 from miscc.losses import discriminator_loss, evo_generator_loss, KL_loss, discriminator_loss_with_logits, \
     get_word_and_sentence_loss
 import time
 import os
 
-from utils import count_parameters
 from algorithms.trainer import GenericTrainer
 
 
