@@ -100,9 +100,6 @@ class ImprovedEvoTraining(GenericTrainer):
                 num_words = words_embs.size(2)
                 if mask.size(1) > num_words:
                     mask = mask[:, :num_words]
-                print(captions)
-                print(mask)
-                print(mask.shape)
 
                 ###########################################################
                 # (2) Evolutionary Phase: Update G Networks and Select Best
