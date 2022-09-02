@@ -156,7 +156,6 @@ if __name__ == "__main__":
     if cfg.TRAIN.FLAG:
         algo.train()
     else:
-        '''generate images from pre-extracted embeddings'''
         if cfg.B_VALIDATION:
             validation_images = []
             if cfg.EVAL_EVERY_CAPTION:  # generate images for every caption in the dataset

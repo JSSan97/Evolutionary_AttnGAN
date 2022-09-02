@@ -76,6 +76,7 @@ class ResBlock(nn.Module):
 
 # ############## Text2Image Encoder-Decoder #######
 class RNN_ENCODER(nn.Module):
+    # Text Encoder
     def __init__(self, ntoken, ninput=300, drop_prob=0.5,
                  nhidden=128, nlayers=1, bidirectional=True):
         super(RNN_ENCODER, self).__init__()
@@ -163,6 +164,7 @@ class RNN_ENCODER(nn.Module):
 
 
 class CNN_ENCODER(nn.Module):
+    # Image Encoder
     def __init__(self, nef):
         super(CNN_ENCODER, self).__init__()
         if cfg.TRAIN.FLAG:
